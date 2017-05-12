@@ -1,0 +1,31 @@
+module completion/colorer/CLikeLanguage-cc-esv
+
+imports
+  completion/colorer/Common-cc-esv
+
+colorer
+  _.Start-Plhdr                : gray   
+  _.Program-Plhdr              : gray   
+  _.Structure-Plhdr            : gray   
+  _.Function-Plhdr             : gray   
+  _.If-Plhdr                   : gray   
+  _.CodeBlock-Plhdr            : gray   
+  _.IfElse-Plhdr               : gray   
+  _.Statement-Plhdr            : gray   
+  _.IfHeader-Plhdr             : gray   
+  _.Variable-Plhdr             : gray   
+  _.Parameter-Plhdr            : gray   
+  _.ExpressionComparator-Plhdr : gray   
+  _.Term-Plhdr                 : gray   
+  _.Factor-Plhdr               : gray   
+  _.Expression-Plhdr           : gray   
+  _.INT-Plhdr                  : gray   
+  _.CHAR-Plhdr                 : gray   
+  _.BOOLEAN-Plhdr              : gray   
+  _.Primitive-Plhdr            : gray   
+  _.ID-Plhdr                   : gray   
+  _.Argument-Plhdr             : gray   
+  _.OperatorTerm-Plhdr         : gray   
+  _.OperatorFactor-Plhdr       : gray   
+  _.OperatorComparator-Plhdr   : gray   
+  _.Type-Plhdr                 : gray   

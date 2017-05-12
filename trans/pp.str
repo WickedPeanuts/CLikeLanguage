@@ -1,0 +1,49 @@
+module pp
+
+imports
+
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/editor/refactoring/-
+  pp/CLikeLanguage-parenthesize
+  pp/CLikeLanguage-pp
+
+rules
+
+  editor-format:
+    (node, _, ast, path, project-path) -> (filename, result)
+    with
+      ext      := <get-extension> path
+    ; filename := <guarantee-extension(|$[pp.[ext]])> path
+    ; result   := <pp-debug> node
+
+rules
+  
+  pp-CLikeLanguage-string =
+    parenthesize-CLikeLanguage
+    ; prettyprint-CLikeLanguage-start-symbols
+    ; !V([], <id>)
+    ; box2text-string(|120)
+      
+  pp-partial-CLikeLanguage-string =
+    parenthesize-CLikeLanguage
+    ; prettyprint-CLikeLanguage
+    ; !V([], <id>)
+    ; box2text-string(|120)
+    
+  pp-partial-CLikeLanguage-string(|sort) =
+    parenthesize-CLikeLanguage
+    ; prettyprint-CLikeLanguage(|sort)
+    ; !V([], <id>)
+    ; box2text-string(|120)  
+      
+  pp-debug :
+    ast -> result
+    with
+       result := <pp-CLikeLanguage-string> ast
+    <+ <bottomup(try(not(is-string); not(is-list); not(pp-CLikeLanguage-string); debug(!"cannot pp ")))> ast
+    ;  result := ""
+
+rules
+  
+  construct-textual-change = construct-textual-change(pp-partial-CLikeLanguage-string, parenthesize, override-reconstruction, resugar)

@@ -1,0 +1,172 @@
+module pp/Common-pp
+
+imports
+  libstratego-gpp
+  libspoofax/sdf/pp
+  libspoofax/term/origin
+  libstratego-sglr
+  signatures/Common-sig
+
+
+strategies
+  prettyprint-example =
+    prettyprint-CLikeLanguage
+
+  prettyprint-CLikeLanguage =
+    fail
+
+  prettyprint-CLikeLanguage(|sort) =
+    fail
+
+
+strategies
+  prettyprint-SDF-start-symbols =
+    prettyprint-CLikeLanguage-start-symbols
+
+  prettyprint-CLikeLanguage-start-symbols =
+    fail
+
+
+strategies
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-ID
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-INT
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-CHAR
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-BOOLEAN
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-STRING
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-StringChar
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-BackSlashChar
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-CommentChar
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-InsideComment
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-NewLineEOF
+
+  prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-EOF
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-ID>
+    where <?"ID"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-INT>
+    where <?"INT"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-CHAR>
+    where <?"CHAR"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-BOOLEAN>
+    where <?"BOOLEAN"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-STRING>
+    where <?"STRING"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-StringChar>
+    where <?"StringChar"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-BackSlashChar>
+    where <?"BackSlashChar"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-CommentChar>
+    where <?"CommentChar"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-InsideComment>
+    where <?"InsideComment"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-NewLineEOF>
+    where <?"NewLineEOF"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-EOF>
+    where <?"EOF"> sort
+
+  prettyprint-CLikeLanguage-ID =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-INT =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-CHAR =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-BOOLEAN =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-STRING =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-StringChar =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-BackSlashChar =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-CommentChar =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-InsideComment =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-NewLineEOF =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-EOF =
+    ![S(<is-string>)]
+
+  prettyprint-CLikeLanguage-ID :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-ID> h
+
+  prettyprint-CLikeLanguage-INT :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-INT> h
+
+  prettyprint-CLikeLanguage-CHAR :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-CHAR> h
+
+  prettyprint-CLikeLanguage-BOOLEAN :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-BOOLEAN> h
+
+  prettyprint-CLikeLanguage-STRING :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-STRING> h
+
+  prettyprint-CLikeLanguage-StringChar :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-StringChar> h
+
+  prettyprint-CLikeLanguage-BackSlashChar :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-BackSlashChar> h
+
+  prettyprint-CLikeLanguage-CommentChar :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-CommentChar> h
+
+  prettyprint-CLikeLanguage-InsideComment :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-InsideComment> h
+
+  prettyprint-CLikeLanguage-NewLineEOF :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-NewLineEOF> h
+
+  prettyprint-CLikeLanguage-EOF :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-EOF> h

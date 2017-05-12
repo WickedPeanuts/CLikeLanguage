@@ -1,0 +1,77 @@
+module CLikeLanguage
+
+imports
+  
+  Common
+
+context-free start-symbols
+  
+  Start
+
+sorts Variable Expression Code Parameter
+
+context-free syntax
+  
+  Start.Program = "program" ID "{" Program* "}"
+  
+  Program.Structure = Structure
+  Program.Function = Function  
+  
+  Structure.Declaration = "struct" ID "{" Variable* "}" ";"
+  Function.Declaration = Type ID "(" Parameter* ")" CodeBlock
+  
+  CodeBlock.Block = "{" Statement* "}"
+  
+  Statement.If = If
+  Statement.While = "while" "(" Expression ")" CodeBlock
+  Statement.VariableDeclaration = Variable
+  Statement.Attribution = ID "=" Expression ";"
+  
+  If.Block = IfHeader CodeBlock IfElse?
+  If.Single = IfHeader Statement IfElse?
+  IfElse.Block = "else" CodeBlock
+  IfElse.Single = "else" Statement
+  IfHeader.Declaration = "if" "(" Expression ")"  
+   
+  Variable.Declaration = Type ID ";"
+  Variable.DeclarationArray = Type ID "[];"
+  Variable.DeclarationInst =  Type ID "=" Expression ";"
+      
+  Parameter.Parameter = Type ID
+  Parameter.Separator = Parameter "," Parameter {left}
+  
+  Argument.Parameter = Expression
+  Argument.Separator = Expression "," Expression {left}
+  
+  ExpressionComparator.Comparator = Expression OperatorComparator Expression {left}
+  Expression.Comparator = ExpressionComparator  {left}
+  Expression.Term = Term {left}
+  Expression.Term = Expression OperatorTerm Term {left}
+  Term.Factor = Factor {left}
+  Term.Factor = Term  OperatorFactor Factor {left}
+  Factor.Primitive = Primitive {left}
+  Factor.Expression ="(" Expression ")" {left}
+  
+  Primitive.Num = INT
+  Primitive.Char = CHAR
+  Primitive.Boolean = BOOLEAN
+  Primitive.Variable = ID
+  Primitive.Function = ID "(" Argument* ")"
+  
+  OperatorTerm.Add = "+"
+  OperatorTerm.Sub = "-"
+  OperatorFactor.Mul = "*"
+  OperatorFactor.Div = "/"  
+  OperatorComparator.Equal = "=="
+  OperatorComparator.Diff = "!="
+  OperatorComparator.GT = ">"
+  OperatorComparator.GTE = ">="
+  OperatorComparator.LT = "<"
+  OperatorComparator.LTE = "<="
+  OperatorComparator.And = "&&"
+  OperatorComparator.Or = "||"
+  
+  Type.Void = [void]
+  Type.Integer = [int]
+  Type.Char = [char]
+  Type.Boolean = [bool]

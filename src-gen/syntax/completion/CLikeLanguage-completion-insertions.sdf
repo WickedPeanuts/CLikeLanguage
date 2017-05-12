@@ -1,0 +1,73 @@
+module completion/CLikeLanguage-completion-insertions
+imports CLikeLanguage
+
+imports completion/Common-completion-insertions
+
+exports
+  context-free start-symbols
+    Start Program Structure Function If CodeBlock IfElse Statement IfHeader
+    Variable Parameter ExpressionComparator Term Factor Expression INT CHAR
+    BOOLEAN Primitive ID Argument OperatorTerm OperatorFactor OperatorComparator
+    Type
+
+  context-free syntax
+    COMPLETION-INSERTION -> Start                {cons("Start-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Program              {cons("Program-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Structure            {cons("Structure-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Function             {cons("Function-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> If                   {cons("If-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> CodeBlock            {cons("CodeBlock-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> IfElse               {cons("IfElse-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Statement            {cons("Statement-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> IfHeader             {cons("IfHeader-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Variable             {cons("Variable-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Parameter            {cons("Parameter-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ExpressionComparator {cons("ExpressionComparator-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Term                 {cons("Term-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Factor               {cons("Factor-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Expression           {cons("Expression-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> INT                  {cons("INT-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> CHAR                 {cons("CHAR-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> BOOLEAN              {cons("BOOLEAN-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Primitive            {cons("Primitive-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ID                   {cons("ID-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Argument             {cons("Argument-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorTerm         {cons("OperatorTerm-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorFactor       {cons("OperatorFactor-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorComparator   {cons("OperatorComparator-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Type                 {cons("Type-Plhdr"), placeholder-insertion}
+
+  lexical syntax
+    COMPLETION-INSERTION -> "program" {literal-completion}
+    COMPLETION-INSERTION -> "struct"  {literal-completion}
+    COMPLETION-INSERTION -> "{"       {literal-completion}
+    COMPLETION-INSERTION -> "}"       {literal-completion}
+    COMPLETION-INSERTION -> "while"   {literal-completion}
+    COMPLETION-INSERTION -> "else"    {literal-completion}
+    COMPLETION-INSERTION -> "if"      {literal-completion}
+    COMPLETION-INSERTION -> "[];"     {literal-completion}
+    COMPLETION-INSERTION -> "="       {literal-completion}
+    COMPLETION-INSERTION -> ";"       {literal-completion}
+    COMPLETION-INSERTION -> ","       {literal-completion}
+    COMPLETION-INSERTION -> "("       {literal-completion}
+    COMPLETION-INSERTION -> ")"       {literal-completion}
+    COMPLETION-INSERTION -> "+"       {literal-completion}
+    COMPLETION-INSERTION -> "-"       {literal-completion}
+    COMPLETION-INSERTION -> "*"       {literal-completion}
+    COMPLETION-INSERTION -> "/"       {literal-completion}
+    COMPLETION-INSERTION -> "=="      {literal-completion}
+    COMPLETION-INSERTION -> "!="      {literal-completion}
+    COMPLETION-INSERTION -> ">"       {literal-completion}
+    COMPLETION-INSERTION -> ">="      {literal-completion}
+    COMPLETION-INSERTION -> "<"       {literal-completion}
+    COMPLETION-INSERTION -> "<="      {literal-completion}
+    COMPLETION-INSERTION -> "&&"      {literal-completion}
+    COMPLETION-INSERTION -> "||"      {literal-completion}
+    COMPLETION-INSERTION -> "void"    {literal-completion}
+    COMPLETION-INSERTION -> "int"     {literal-completion}
+    COMPLETION-INSERTION -> "char"    {literal-completion}
+    COMPLETION-INSERTION -> "bool"    {literal-completion}
+
+exports
+  lexical syntax
+     -> COMPLETION-INSERTION 

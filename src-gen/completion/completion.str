@@ -1,0 +1,48 @@
+module completion
+
+imports
+  
+  libspoofax/editor/completion/-
+  completion/CLikeLanguage-cp
+  pp/-
+  pp
+ 
+  
+rules
+  
+  get-proposals-empty-program-CLikeLanguage                         = ?(sort, _); 
+                                                                 get-proposals-empty-program(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-left-recursive-CLikeLanguage                        = ?(sort, _); 
+                                                                 get-proposals-left-recursive(pp-partial-CLikeLanguage-string, parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-right-recursive-CLikeLanguage                       = ?(sort, _); 
+                                                                 get-proposals-right-recursive(pp-partial-CLikeLanguage-string, parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-placeholder-CLikeLanguage                           = ?(sort, _, _, _);
+                                                                 get-proposals-placeholder(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-optional-CLikeLanguage                              = ?(sort, _, _);
+                                                                 get-proposals-optional(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-list-CLikeLanguage                                  = ?(sort, _, _, _);
+                                                                 get-proposals-list(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-incorrect-programs-CLikeLanguage                    = ?(sort, _, _, _, _);
+                                                                 get-proposals-incorrect-programs(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-incorrect-programs-nested-CLikeLanguage             = ?(sort, _, _, _, _, _);
+                                                                 get-proposals-incorrect-programs-nested(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)
+  get-proposals-incorrect-programs-single-placeholder-CLikeLanguage = ?(sort, _, _, _, _, _, _);
+                                                                 get-proposals-incorrect-programs-single-placeholder(pp-partial-CLikeLanguage-string(|sort), parenthesize-CLikeLanguage, 
+                                                                                             CLikeLanguage-get-indent, CLikeLanguage-get-leading-ws, 
+                                                                                             CLikeLanguage-get-separator)

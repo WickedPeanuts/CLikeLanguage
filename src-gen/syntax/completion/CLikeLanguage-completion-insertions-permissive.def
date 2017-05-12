@@ -1,0 +1,294 @@
+definition
+
+module completion/Common-completion-insertions
+imports Common
+
+exports
+  sorts WATER WATERTOKEN WATERTOKENSTART WATERTOKENSEPARATOR WATERTOKENSTAR
+
+  lexical syntax
+    [A-Za-z0-9\_]                  -> WATERTOKENSTART     {recover, avoid}
+    WATERTOKENSTART [A-Za-z0-9\_]* -> WATERTOKEN          
+    ~[A-Za-z0-9\_\ \t\12\r\n\*]    -> WATERTOKENSEPARATOR {recover, avoid}
+    "*"                            -> WATERTOKENSTAR      {recover, avoid}
+    WATERTOKEN                     -> WATER               
+    WATERTOKENSEPARATOR            -> WATER               
+    WATERTOKENSTAR                 -> WATER               
+                                   -> WATEREOF            
+
+  lexical restrictions
+    WATERTOKEN -/- [A-Za-z0-9\_]
+    WATERTOKENSTAR -/- [\/]
+
+  context-free syntax
+    WATER -> LAYOUT {cons("WATER")}
+
+  (
+
+  sorts WATEREOF
+
+  lexical restrictions
+    WATEREOF -/- ~[]
+
+  lexical syntax
+    %% Lexical insertion recovery rules                           
+    "'"                                  -> INSERTOPENQUOTE       {recover}
+    INSERTOPENQUOTE [a-zA-Z] "\n"        -> CHAR                  {cons("INSERTEND")}
+    INSERTOPENQUOTE [a-zA-Z] WATEREOF    -> CHAR                  {cons("INSERTEND")}
+                                         -> "'"                   {recover, cons("INSERTION")}
+                                         -> "true"                {recover, cons("INSERTION")}
+                                         -> "false"               {recover, cons("INSERTION")}
+    "\""                                 -> INSERTOPENQUOTE       {recover}
+    INSERTOPENQUOTE StringChar* "\n"     -> STRING                {cons("INSERTEND")}
+    INSERTOPENQUOTE StringChar* WATEREOF -> STRING                {cons("INSERTEND")}
+    "/*"                                 -> INSERTSTART           {recover}
+    INSERTSTART InsideComment* WATEREOF  -> LAYOUT                {cons("INSERTEND")}
+                                         -> "program"             {recover, cons("INSERTION")}
+                                         -> "struct"              {recover, cons("INSERTION")}
+                                         -> "{"                   {recover, cons("INSERTION")}
+                                         -> "}"                   {recover, cons("INSERTION")}
+                                         -> "if"                  {recover, cons("INSERTION")}
+                                         -> "("                   {recover, cons("INSERTION")}
+                                         -> "[];"                 {recover, cons("INSERTION")}
+                                         -> "="                   {recover, cons("INSERTION")}
+                                         -> ";"                   {recover, cons("INSERTION")}
+                                         -> ")"                   {recover, cons("INSERTION")}
+                                         -> "+"                   {recover, cons("INSERTION")}
+                                         -> "-"                   {recover, cons("INSERTION")}
+                                         -> "*"                   {recover, cons("INSERTION")}
+                                         -> "/"                   {recover, cons("INSERTION")}
+                                         -> "=="                  {recover, cons("INSERTION")}
+                                         -> "!="                  {recover, cons("INSERTION")}
+                                         -> ">"                   {recover, cons("INSERTION")}
+                                         -> ">="                  {recover, cons("INSERTION")}
+                                         -> "<"                   {recover, cons("INSERTION")}
+                                         -> "<="                  {recover, cons("INSERTION")}
+                                         -> "&&"                  {recover, cons("INSERTION")}
+                                         -> "||"                  {recover, cons("INSERTION")}
+                                         -> "void"                {recover, cons("INSERTION")}
+                                         -> "int"                 {recover, cons("INSERTION")}
+                                         -> "char"                {recover, cons("INSERTION")}
+                                         -> "bool"                {recover, cons("INSERTION")}
+                                         -> "$Start"              {recover, cons("INSERTION")}
+                                         -> "$Program"            {recover, cons("INSERTION")}
+                                         -> "$Structure"          {recover, cons("INSERTION")}
+                                         -> "$Function"           {recover, cons("INSERTION")}
+                                         -> "$IfHeader"           {recover, cons("INSERTION")}
+                                         -> "$Variable"           {recover, cons("INSERTION")}
+                                         -> "$INT"                {recover, cons("INSERTION")}
+                                         -> "$CHAR"               {recover, cons("INSERTION")}
+                                         -> "$BOOLEAN"            {recover, cons("INSERTION")}
+                                         -> "$ID"                 {recover, cons("INSERTION")}
+                                         -> "$OperatorTerm"       {recover, cons("INSERTION")}
+                                         -> "$OperatorFactor"     {recover, cons("INSERTION")}
+                                         -> "$OperatorComparator" {recover, cons("INSERTION")}
+                                         -> "$Type"               {recover, cons("INSERTION")}
+
+  syntax
+    %% Kernel syntax insertion recovery rules   
+
+  )
+
+  lexical syntax
+     -> COMPLETION-INSERTION 
+
+module Common
+exports
+  lexical syntax
+    [a-zA-Z] [a-zA-Z0-9]*    -> ID            
+    BOOLEAN                  -> ID            {reject}
+    "-"? [0-9]+              -> INT           
+    "'" [a-zA-Z] "'"         -> CHAR          
+    "true" | "false"         -> BOOLEAN       
+    "\"" StringChar* "\""    -> STRING        
+    ~[\"\n]                  -> StringChar    
+    "\\\""                   -> StringChar    
+    BackSlashChar            -> StringChar    
+    "\\"                     -> BackSlashChar 
+    [\ \t\n\r]               -> LAYOUT        
+    [\*]                     -> CommentChar   
+    "/*" InsideComment* "*/" -> LAYOUT        
+    ~[\*]                    -> InsideComment 
+    CommentChar              -> InsideComment 
+    "//" ~[\n\r]* NewLineEOF -> LAYOUT        
+    [\n\r]                   -> NewLineEOF    
+    EOF                      -> NewLineEOF    
+                             -> EOF           
+
+  lexical restrictions
+    CommentChar -/- [\/]
+    INT -/- [0-9]
+    ID -/- [a-zA-Z0-9\_]
+    EOF -/- ~[]
+    BackSlashChar -/- [\"]
+
+  context-free restrictions
+    LAYOUT? -/- [\ \t\n\r]
+    LAYOUT? -/- [\/] . [\/]
+    LAYOUT? -/- [\/] . [\*]
+
+module CLikeLanguage
+imports Common
+
+exports
+  context-free start-symbols
+    Start
+
+  sorts Variable Expression Code Parameter
+
+  context-free syntax
+    "program" ID "{" Program* "}"            -> Start                {cons("Program")}
+    Structure                                -> Program              {cons("Structure")}
+    Function                                 -> Program              {cons("Function")}
+    "struct" ID "{" Variable* "}" ";"        -> Structure            {cons("Declaration")}
+    Type ID "(" Parameter* ")" CodeBlock     -> Function             {cons("Declaration")}
+    "{" Statement* "}"                       -> CodeBlock            {cons("Block")}
+    If                                       -> Statement            {cons("If")}
+    "while" "(" Expression ")" CodeBlock     -> Statement            {cons("While")}
+    Variable                                 -> Statement            {cons("VariableDeclaration")}
+    ID "=" Expression ";"                    -> Statement            {cons("Attribution")}
+    IfHeader CodeBlock IfElse?               -> If                   {cons("Block")}
+    IfHeader Statement IfElse?               -> If                   {cons("Single")}
+    "else" CodeBlock                         -> IfElse               {cons("Block")}
+    "else" Statement                         -> IfElse               {cons("Single")}
+    "if" "(" Expression ")"                  -> IfHeader             {cons("Declaration")}
+    Type ID ";"                              -> Variable             {cons("Declaration")}
+    Type ID "[];"                            -> Variable             {cons("DeclarationArray")}
+    Type ID "=" Expression ";"               -> Variable             {cons("DeclarationInst")}
+    Type ID                                  -> Parameter            {cons("Parameter")}
+    Parameter "," Parameter                  -> Parameter            {cons("Separator"), left}
+    Expression                               -> Argument             {cons("Parameter")}
+    Expression "," Expression                -> Argument             {cons("Separator"), left}
+    Expression OperatorComparator Expression -> ExpressionComparator {cons("Comparator"), left}
+    ExpressionComparator                     -> Expression           {cons("Comparator"), left}
+    Term                                     -> Expression           {cons("Term"), left}
+    Expression OperatorTerm Term             -> Expression           {cons("Term"), left}
+    Factor                                   -> Term                 {cons("Factor"), left}
+    Term OperatorFactor Factor               -> Term                 {cons("Factor"), left}
+    Primitive                                -> Factor               {cons("Primitive"), left}
+    "(" Expression ")"                       -> Factor               {cons("Expression"), left}
+    INT                                      -> Primitive            {cons("Num")}
+    CHAR                                     -> Primitive            {cons("Char")}
+    BOOLEAN                                  -> Primitive            {cons("Boolean")}
+    ID                                       -> Primitive            {cons("Variable")}
+    ID "(" Argument* ")"                     -> Primitive            {cons("Function")}
+    "+"                                      -> OperatorTerm         {cons("Add")}
+    "-"                                      -> OperatorTerm         {cons("Sub")}
+    "*"                                      -> OperatorFactor       {cons("Mul")}
+    "/"                                      -> OperatorFactor       {cons("Div")}
+    "=="                                     -> OperatorComparator   {cons("Equal")}
+    "!="                                     -> OperatorComparator   {cons("Diff")}
+    ">"                                      -> OperatorComparator   {cons("GT")}
+    ">="                                     -> OperatorComparator   {cons("GTE")}
+    "<"                                      -> OperatorComparator   {cons("LT")}
+    "<="                                     -> OperatorComparator   {cons("LTE")}
+    "&&"                                     -> OperatorComparator   {cons("And")}
+    "||"                                     -> OperatorComparator   {cons("Or")}
+    "void"                                   -> Type                 {cons("Void")}
+    "int"                                    -> Type                 {cons("Integer")}
+    "char"                                   -> Type                 {cons("Char")}
+    "bool"                                   -> Type                 {cons("Boolean")}
+
+  lexical syntax
+    
+
+  context-free syntax
+    "$Start"                -> Start                {cons("Start-Plhdr"), placeholder}
+    "$Program"              -> Program              {cons("Program-Plhdr"), placeholder}
+    "$Structure"            -> Structure            {cons("Structure-Plhdr"), placeholder}
+    "$Function"             -> Function             {cons("Function-Plhdr"), placeholder}
+    "$If"                   -> If                   {cons("If-Plhdr"), placeholder}
+    "$CodeBlock"            -> CodeBlock            {cons("CodeBlock-Plhdr"), placeholder}
+    "$IfElse"               -> IfElse               {cons("IfElse-Plhdr"), placeholder}
+    "$Statement"            -> Statement            {cons("Statement-Plhdr"), placeholder}
+    "$IfHeader"             -> IfHeader             {cons("IfHeader-Plhdr"), placeholder}
+    "$Variable"             -> Variable             {cons("Variable-Plhdr"), placeholder}
+    "$Parameter"            -> Parameter            {cons("Parameter-Plhdr"), placeholder}
+    "$ExpressionComparator" -> ExpressionComparator {cons("ExpressionComparator-Plhdr"), placeholder}
+    "$Term"                 -> Term                 {cons("Term-Plhdr"), placeholder}
+    "$Factor"               -> Factor               {cons("Factor-Plhdr"), placeholder}
+    "$Expression"           -> Expression           {cons("Expression-Plhdr"), placeholder}
+    "$INT"                  -> INT                  {cons("INT-Plhdr"), placeholder}
+    "$CHAR"                 -> CHAR                 {cons("CHAR-Plhdr"), placeholder}
+    "$BOOLEAN"              -> BOOLEAN              {cons("BOOLEAN-Plhdr"), placeholder}
+    "$Primitive"            -> Primitive            {cons("Primitive-Plhdr"), placeholder}
+    "$ID"                   -> ID                   {cons("ID-Plhdr"), placeholder}
+    "$Argument"             -> Argument             {cons("Argument-Plhdr"), placeholder}
+    "$OperatorTerm"         -> OperatorTerm         {cons("OperatorTerm-Plhdr"), placeholder}
+    "$OperatorFactor"       -> OperatorFactor       {cons("OperatorFactor-Plhdr"), placeholder}
+    "$OperatorComparator"   -> OperatorComparator   {cons("OperatorComparator-Plhdr"), placeholder}
+    "$Type"                 -> Type                 {cons("Type-Plhdr"), placeholder}
+
+module completion/CLikeLanguage-completion-insertions
+imports CLikeLanguage
+
+imports completion/Common-completion-insertions
+
+exports
+  context-free start-symbols
+    Start Program Structure Function If CodeBlock IfElse Statement IfHeader
+    Variable Parameter ExpressionComparator Term Factor Expression INT CHAR
+    BOOLEAN Primitive ID Argument OperatorTerm OperatorFactor OperatorComparator
+    Type
+
+  context-free syntax
+    COMPLETION-INSERTION -> Start                {cons("Start-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Program              {cons("Program-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Structure            {cons("Structure-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Function             {cons("Function-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> If                   {cons("If-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> CodeBlock            {cons("CodeBlock-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> IfElse               {cons("IfElse-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Statement            {cons("Statement-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> IfHeader             {cons("IfHeader-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Variable             {cons("Variable-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Parameter            {cons("Parameter-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ExpressionComparator {cons("ExpressionComparator-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Term                 {cons("Term-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Factor               {cons("Factor-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Expression           {cons("Expression-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> INT                  {cons("INT-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> CHAR                 {cons("CHAR-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> BOOLEAN              {cons("BOOLEAN-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Primitive            {cons("Primitive-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ID                   {cons("ID-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Argument             {cons("Argument-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorTerm         {cons("OperatorTerm-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorFactor       {cons("OperatorFactor-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> OperatorComparator   {cons("OperatorComparator-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Type                 {cons("Type-Plhdr"), placeholder-insertion}
+
+  lexical syntax
+    COMPLETION-INSERTION -> "program" {literal-completion}
+    COMPLETION-INSERTION -> "struct"  {literal-completion}
+    COMPLETION-INSERTION -> "{"       {literal-completion}
+    COMPLETION-INSERTION -> "}"       {literal-completion}
+    COMPLETION-INSERTION -> "while"   {literal-completion}
+    COMPLETION-INSERTION -> "else"    {literal-completion}
+    COMPLETION-INSERTION -> "if"      {literal-completion}
+    COMPLETION-INSERTION -> "[];"     {literal-completion}
+    COMPLETION-INSERTION -> "="       {literal-completion}
+    COMPLETION-INSERTION -> ";"       {literal-completion}
+    COMPLETION-INSERTION -> ","       {literal-completion}
+    COMPLETION-INSERTION -> "("       {literal-completion}
+    COMPLETION-INSERTION -> ")"       {literal-completion}
+    COMPLETION-INSERTION -> "+"       {literal-completion}
+    COMPLETION-INSERTION -> "-"       {literal-completion}
+    COMPLETION-INSERTION -> "*"       {literal-completion}
+    COMPLETION-INSERTION -> "/"       {literal-completion}
+    COMPLETION-INSERTION -> "=="      {literal-completion}
+    COMPLETION-INSERTION -> "!="      {literal-completion}
+    COMPLETION-INSERTION -> ">"       {literal-completion}
+    COMPLETION-INSERTION -> ">="      {literal-completion}
+    COMPLETION-INSERTION -> "<"       {literal-completion}
+    COMPLETION-INSERTION -> "<="      {literal-completion}
+    COMPLETION-INSERTION -> "&&"      {literal-completion}
+    COMPLETION-INSERTION -> "||"      {literal-completion}
+    COMPLETION-INSERTION -> "void"    {literal-completion}
+    COMPLETION-INSERTION -> "int"     {literal-completion}
+    COMPLETION-INSERTION -> "char"    {literal-completion}
+    COMPLETION-INSERTION -> "bool"    {literal-completion}
+
+exports
+  lexical syntax
+     -> COMPLETION-INSERTION 

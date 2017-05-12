@@ -1,0 +1,79 @@
+module ds-signatures/CLikeLanguage-sig
+
+imports ds-signatures/Common-sig
+
+signature
+    sorts
+      Start
+      Program
+      Structure
+      Function
+      CodeBlock
+      Statement
+      If
+      IfElse
+      IfHeader
+      Variable
+      Parameter
+      Argument
+      ExpressionComparator
+      Expression
+      Term
+      Factor
+      Primitive
+      OperatorTerm
+      OperatorFactor
+      OperatorComparator
+      Type
+    constructors
+      Program : ID * List(Program) -> Start 
+      Structure : Structure -> Program 
+      Function : Function -> Program 
+      Declaration : ID * List(Variable) -> Structure 
+      Declaration : Type * ID * List(Parameter) * CodeBlock -> Function 
+      Block : List(Statement) -> CodeBlock 
+      If : If -> Statement 
+      While : Expression * CodeBlock -> Statement 
+      VariableDeclaration : Variable -> Statement 
+      Attribution : ID * Expression -> Statement 
+      Block : IfHeader * CodeBlock * IfElse -> If 
+      Single : IfHeader * Statement * IfElse -> If 
+      Block : CodeBlock -> IfElse 
+      Single : Statement -> IfElse 
+      Declaration : Expression -> IfHeader 
+      Declaration : Type * ID -> Variable 
+      DeclarationArray : Type * ID -> Variable 
+      DeclarationInst : Type * ID * Expression -> Variable 
+      Parameter : Type * ID -> Parameter 
+      Separator : Parameter * Parameter -> Parameter 
+      Parameter : Expression -> Argument 
+      Separator : Expression * Expression -> Argument 
+      Comparator : Expression * OperatorComparator * Expression -> ExpressionComparator 
+      Comparator : ExpressionComparator -> Expression 
+      Term : Term -> Expression 
+      Term : Expression * OperatorTerm * Term -> Expression 
+      Factor : Factor -> Term 
+      Factor : Term * OperatorFactor * Factor -> Term 
+      Primitive : Primitive -> Factor 
+      Expression : Expression -> Factor 
+      Num : INT -> Primitive 
+      Char : CHAR -> Primitive 
+      Boolean : BOOLEAN -> Primitive 
+      Variable : ID -> Primitive 
+      Function : ID * List(Argument) -> Primitive 
+      Add : OperatorTerm 
+      Sub : OperatorTerm 
+      Mul : OperatorFactor 
+      Div : OperatorFactor 
+      Equal : OperatorComparator 
+      Diff : OperatorComparator 
+      GT : OperatorComparator 
+      GTE : OperatorComparator 
+      LT : OperatorComparator 
+      LTE : OperatorComparator 
+      And : OperatorComparator 
+      Or : OperatorComparator 
+      Void : Type 
+      Integer : Type 
+      Char : Type 
+      Boolean : Type 
