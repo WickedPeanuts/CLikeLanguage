@@ -2,6 +2,7 @@ module clikelanguage
 
 imports
   
+  signatures/CLikeLanguage-sig
   completion/completion
   pp
   outline
@@ -14,3 +15,34 @@ rules // Debugging
     with
       filename := <guarantee-extension(|"aterm")> path
     ; result   := node
+
+  gera-xgcc:
+    (node, position, ast, path, project-path) -> ("assembly.txt", <gera-prog> ast)
+    
+  gera-prog:
+     Program(i, ld)  -> 
+     $[
+       .file	1	"assembly.c"
+       .section	.mdebug.abi32
+       .previous
+       
+       [<gera-variaveisGlobais> (ld)]
+       
+       .ident "GCC: (GNU) 4.9.0"
+     ]
+     
+  gera-variaveisGlobais:
+  	[] -> ""
+  gera-variaveisGlobais:
+    [Declaration(head, tail)|t] ->
+    $[
+      asdf [head]
+    ]
+  gera-variaveisGlobais:
+    (n,[]) -> ""
+  gera-variaveisGlobais:
+    (n) ->
+    $[
+      #Variavel Global [n]
+  	  .comm	[n],4,4
+  	]

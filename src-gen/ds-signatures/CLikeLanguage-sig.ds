@@ -6,6 +6,7 @@ signature
     sorts
       Start
       Program
+      GlobalVariable
       Structure
       Function
       CodeBlock
@@ -16,10 +17,7 @@ signature
       Variable
       Parameter
       Argument
-      ExpressionComparator
       Expression
-      Term
-      Factor
       Primitive
       OperatorTerm
       OperatorFactor
@@ -27,8 +25,12 @@ signature
       Type
     constructors
       Program : ID * List(Program) -> Start 
+      GlobalVariable : GlobalVariable -> Program 
       Structure : Structure -> Program 
       Function : Function -> Program 
+      Declaration : Type * ID -> GlobalVariable 
+      DeclarationArray : Type * ID -> GlobalVariable 
+      DeclarationInst : Type * ID * Expression -> GlobalVariable 
       Declaration : ID * List(Variable) -> Structure 
       Declaration : Type * ID * List(Parameter) * CodeBlock -> Function 
       Block : List(Statement) -> CodeBlock 
@@ -48,14 +50,11 @@ signature
       Separator : Parameter * Parameter -> Parameter 
       Parameter : Expression -> Argument 
       Separator : Expression * Expression -> Argument 
-      Comparator : Expression * OperatorComparator * Expression -> ExpressionComparator 
-      Comparator : ExpressionComparator -> Expression 
-      Term : Term -> Expression 
-      Term : Expression * OperatorTerm * Term -> Expression 
-      Factor : Factor -> Term 
-      Factor : Term * OperatorFactor * Factor -> Term 
-      Primitive : Primitive -> Factor 
-      Expression : Expression -> Factor 
+      Add : Expression * OperatorTerm * Expression -> Expression 
+      Mul : Expression * OperatorFactor * Expression -> Expression 
+      Logic : Expression * OperatorComparator * Expression -> Expression 
+      Primitive : Primitive -> Expression 
+      Expression : Expression -> Expression 
       Num : INT -> Primitive 
       Char : CHAR -> Primitive 
       Boolean : BOOLEAN -> Primitive 

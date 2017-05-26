@@ -28,6 +28,16 @@ rules
 
   suggest-completions(|completions):
     Program-Plhdr() -> <add-completions(
+                        | ( "GlobalVariable"
+                          , GlobalVariable(
+                              <try(inline-completions(|Program-Plhdr()))> GlobalVariable-Plhdr()
+                            )
+                          )
+                        )
+                        ; fail> completions
+
+  suggest-completions(|completions):
+    Program-Plhdr() -> <add-completions(
                         | ( "Structure"
                           , Structure(
                               <try(inline-completions(|Program-Plhdr()))> Structure-Plhdr()
@@ -45,6 +55,40 @@ rules
                           )
                         )
                         ; fail> completions
+
+  suggest-completions(|completions):
+    GlobalVariable-Plhdr() -> <add-completions(
+                               | ( "Declaration"
+                                 , Declaration(
+                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
+                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
+                                   )
+                                 )
+                               )
+                               ; fail> completions
+
+  suggest-completions(|completions):
+    GlobalVariable-Plhdr() -> <add-completions(
+                               | ( "DeclarationArray"
+                                 , DeclarationArray(
+                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
+                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
+                                   )
+                                 )
+                               )
+                               ; fail> completions
+
+  suggest-completions(|completions):
+    GlobalVariable-Plhdr() -> <add-completions(
+                               | ( "DeclarationInst"
+                                 , DeclarationInst(
+                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
+                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
+                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> Expression-Plhdr()
+                                   )
+                                 )
+                               )
+                               ; fail> completions
 
   suggest-completions(|completions):
     Structure-Plhdr() -> <add-completions(
@@ -250,90 +294,60 @@ rules
                          ; fail> completions
 
   suggest-completions(|completions):
-    ExpressionComparator-Plhdr() -> <add-completions(
-                                     | ( "Comparator"
-                                       , Comparator(
-                                           <try(inline-completions(|ExpressionComparator-Plhdr()))> Expression-Plhdr()
-                                         , <try(inline-completions(|ExpressionComparator-Plhdr()))> OperatorComparator-Plhdr()
-                                         , <try(inline-completions(|ExpressionComparator-Plhdr()))> Expression-Plhdr()
-                                         )
-                                       )
-                                     )
-                                     ; fail> completions
-
-  suggest-completions(|completions):
     Expression-Plhdr() -> <add-completions(
-                           | ( "Comparator"
-                             , Comparator(
-                                 <try(inline-completions(|Expression-Plhdr()))> ExpressionComparator-Plhdr()
-                               )
-                             )
-                           )
-                           ; fail> completions
-
-  suggest-completions(|completions):
-    Expression-Plhdr() -> <add-completions(
-                           | ( "Term"
-                             , Term(
-                                 <try(inline-completions(|Expression-Plhdr()))> Term-Plhdr()
-                               )
-                             )
-                           )
-                           ; fail> completions
-
-  suggest-completions(|completions):
-    Expression-Plhdr() -> <add-completions(
-                           | ( "Term"
-                             , Term(
+                           | ( "Add"
+                             , Add(
                                  <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
                                , <try(inline-completions(|Expression-Plhdr()))> OperatorTerm-Plhdr()
-                               , <try(inline-completions(|Expression-Plhdr()))> Term-Plhdr()
+                               , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
                                )
                              )
                            )
                            ; fail> completions
 
   suggest-completions(|completions):
-    Term-Plhdr() -> <add-completions(
-                     | ( "Factor"
-                       , Factor(
-                           <try(inline-completions(|Term-Plhdr()))> Factor-Plhdr()
-                         )
-                       )
-                     )
-                     ; fail> completions
-
-  suggest-completions(|completions):
-    Term-Plhdr() -> <add-completions(
-                     | ( "Factor"
-                       , Factor(
-                           <try(inline-completions(|Term-Plhdr()))> Term-Plhdr()
-                         , <try(inline-completions(|Term-Plhdr()))> OperatorFactor-Plhdr()
-                         , <try(inline-completions(|Term-Plhdr()))> Factor-Plhdr()
-                         )
-                       )
-                     )
-                     ; fail> completions
-
-  suggest-completions(|completions):
-    Factor-Plhdr() -> <add-completions(
-                       | ( "Primitive"
-                         , Primitive(
-                             <try(inline-completions(|Factor-Plhdr()))> Primitive-Plhdr()
+    Expression-Plhdr() -> <add-completions(
+                           | ( "Mul"
+                             , Mul(
+                                 <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                               , <try(inline-completions(|Expression-Plhdr()))> OperatorFactor-Plhdr()
+                               , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                               )
+                             )
                            )
-                         )
-                       )
-                       ; fail> completions
+                           ; fail> completions
 
   suggest-completions(|completions):
-    Factor-Plhdr() -> <add-completions(
-                       | ( "Expression"
-                         , Expression(
-                             <try(inline-completions(|Factor-Plhdr()))> Expression-Plhdr()
+    Expression-Plhdr() -> <add-completions(
+                           | ( "Logic"
+                             , Logic(
+                                 <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                               , <try(inline-completions(|Expression-Plhdr()))> OperatorComparator-Plhdr()
+                               , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                               )
+                             )
                            )
-                         )
-                       )
-                       ; fail> completions
+                           ; fail> completions
+
+  suggest-completions(|completions):
+    Expression-Plhdr() -> <add-completions(
+                           | ( "Primitive"
+                             , Primitive(
+                                 <try(inline-completions(|Expression-Plhdr()))> Primitive-Plhdr()
+                               )
+                             )
+                           )
+                           ; fail> completions
+
+  suggest-completions(|completions):
+    Expression-Plhdr() -> <add-completions(
+                           | ( "Expression"
+                             , Expression(
+                                 <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                               )
+                             )
+                           )
+                           ; fail> completions
 
   suggest-completions(|completions):
     Primitive-Plhdr() -> <add-completions(
@@ -468,43 +482,47 @@ rules
                           ; fail> completions
     where <is-Parameter-completion-sort> sort
 
-  is-left-recursive :
-    "Expression" -> <id>
-
   suggest-completions-left-rec(|completions):
     (sort, orig-term) -> <add-completions(
-                          | ( "Term"
-                            , Term(
+                          | ( "Add"
+                            , Add(
                                 orig-term
                               , <try(inline-completions(|Expression-Plhdr()))> OperatorTerm-Plhdr()
-                              , <try(inline-completions(|Expression-Plhdr()))> Term-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
                               )
                             )
                           )
                           ; fail> completions
     where <is-Expression-completion-sort> sort
 
-  is-Expression-completion-sort :
-    "Expression" -> <id>
-
-  is-left-recursive :
-    "Term" -> <id>
-
   suggest-completions-left-rec(|completions):
     (sort, orig-term) -> <add-completions(
-                          | ( "Factor"
-                            , Factor(
+                          | ( "Mul"
+                            , Mul(
                                 orig-term
-                              , <try(inline-completions(|Term-Plhdr()))> OperatorFactor-Plhdr()
-                              , <try(inline-completions(|Term-Plhdr()))> Factor-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> OperatorFactor-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
                               )
                             )
                           )
                           ; fail> completions
-    where <is-Term-completion-sort> sort
+    where <is-Expression-completion-sort> sort
 
-  is-Term-completion-sort :
-    "Term" -> <id>
+  is-left-recursive :
+    "Expression" -> <id>
+
+  suggest-completions-left-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "Logic"
+                            , Logic(
+                                orig-term
+                              , <try(inline-completions(|Expression-Plhdr()))> OperatorComparator-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-Expression-completion-sort> sort
 
   is-right-recursive :
     "Parameter" -> <id>
@@ -523,6 +541,62 @@ rules
 
   is-Parameter-completion-sort :
     "Parameter" -> <id>
+
+  suggest-completions-right-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "Add"
+                            , Add(
+                                <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> OperatorTerm-Plhdr()
+                              , orig-term
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-Expression-completion-sort> sort
+
+  suggest-completions-right-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "Mul"
+                            , Mul(
+                                <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> OperatorFactor-Plhdr()
+                              , orig-term
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-Expression-completion-sort> sort
+
+  is-right-recursive :
+    "Expression" -> <id>
+
+  suggest-completions-right-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "Logic"
+                            , Logic(
+                                <try(inline-completions(|Expression-Plhdr()))> Expression-Plhdr()
+                              , <try(inline-completions(|Expression-Plhdr()))> OperatorComparator-Plhdr()
+                              , orig-term
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-Expression-completion-sort> sort
+
+  is-Expression-completion-sort :
+    "Expression" -> <id>
+
+  is-left-recursive :
+    "GlobalVariable" -> <is-left-recursive> "Program"
+    where <not(is-lexical-completion-sort)> "GlobalVariable"
+
+  is-right-recursive :
+    "GlobalVariable" -> <is-right-recursive> "Program"
+    where <not(is-lexical-completion-sort)> "GlobalVariable"
+
+  is-Program-completion-sort :
+    "GlobalVariable" -> <id>
 
   is-left-recursive :
     "Structure" -> <is-left-recursive> "Program"
@@ -580,47 +654,14 @@ rules
     "Expression" -> <id>
 
   is-left-recursive :
-    "ExpressionComparator" -> <is-left-recursive> "Expression"
-    where <not(is-lexical-completion-sort)> "ExpressionComparator"
-
-  is-right-recursive :
-    "ExpressionComparator" -> <is-right-recursive> "Expression"
-    where <not(is-lexical-completion-sort)> "ExpressionComparator"
-
-  is-Expression-completion-sort :
-    "ExpressionComparator" -> <id>
-
-  is-left-recursive :
-    "Term" -> <is-left-recursive> "Expression"
-    where <not(is-lexical-completion-sort)> "Term"
-
-  is-right-recursive :
-    "Term" -> <is-right-recursive> "Expression"
-    where <not(is-lexical-completion-sort)> "Term"
-
-  is-Expression-completion-sort :
-    "Term" -> <id>
-
-  is-left-recursive :
-    "Factor" -> <is-left-recursive> "Term"
-    where <not(is-lexical-completion-sort)> "Factor"
-
-  is-right-recursive :
-    "Factor" -> <is-right-recursive> "Term"
-    where <not(is-lexical-completion-sort)> "Factor"
-
-  is-Term-completion-sort :
-    "Factor" -> <id>
-
-  is-left-recursive :
-    "Primitive" -> <is-left-recursive> "Factor"
+    "Primitive" -> <is-left-recursive> "Expression"
     where <not(is-lexical-completion-sort)> "Primitive"
 
   is-right-recursive :
-    "Primitive" -> <is-right-recursive> "Factor"
+    "Primitive" -> <is-right-recursive> "Expression"
     where <not(is-lexical-completion-sort)> "Primitive"
 
-  is-Factor-completion-sort :
+  is-Expression-completion-sort :
     "Primitive" -> <id>
 
   is-left-recursive :
@@ -677,6 +718,9 @@ rules
     ?Program-Plhdr()
 
   is-SDF-placeholder =
+    ?GlobalVariable-Plhdr()
+
+  is-SDF-placeholder =
     ?Structure-Plhdr()
 
   is-SDF-placeholder =
@@ -702,15 +746,6 @@ rules
 
   is-SDF-placeholder =
     ?Parameter-Plhdr()
-
-  is-SDF-placeholder =
-    ?ExpressionComparator-Plhdr()
-
-  is-SDF-placeholder =
-    ?Term-Plhdr()
-
-  is-SDF-placeholder =
-    ?Factor-Plhdr()
 
   is-SDF-placeholder =
     ?Expression-Plhdr()

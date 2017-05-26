@@ -9,110 +9,107 @@ signature
     Variable Expression Code Parameter
 
   constructors
-    Program                    : ID * List(Program) -> Start
-    Structure                  : Structure -> Program
-    Function                   : Function -> Program
-    Declaration                : ID * List(Variable) -> Structure
-    Declaration                : Type * ID * List(Parameter) * CodeBlock -> Function
-    Block                      : List(Statement) -> CodeBlock
-    If                         : If -> Statement
-    While                      : Expression * CodeBlock -> Statement
-    VariableDeclaration        : Variable -> Statement
-    Attribution                : ID * Expression -> Statement
-    Block                      : IfHeader * CodeBlock * Option(IfElse) -> If
-    Single                     : IfHeader * Statement * Option(IfElse) -> If
-    Block                      : CodeBlock -> IfElse
-    Single                     : Statement -> IfElse
-    Declaration                : Expression -> IfHeader
-    Declaration                : Type * ID -> Variable
-    DeclarationArray           : Type * ID -> Variable
-    DeclarationInst            : Type * ID * Expression -> Variable
-    Parameter                  : Type * ID -> Parameter
-    Separator                  : Parameter * Parameter -> Parameter
-    Parameter                  : Expression -> Argument
-    Separator                  : Expression * Expression -> Argument
-    Comparator                 : Expression * OperatorComparator * Expression -> ExpressionComparator
-    Comparator                 : ExpressionComparator -> Expression
-    Term                       : Term -> Expression
-    Term                       : Expression * OperatorTerm * Term -> Expression
-    Factor                     : Factor -> Term
-    Factor                     : Term * OperatorFactor * Factor -> Term
-    Primitive                  : Primitive -> Factor
-    Expression                 : Expression -> Factor
-    Num                        : INT -> Primitive
-    Char                       : CHAR -> Primitive
-    Boolean                    : BOOLEAN -> Primitive
-    Variable                   : ID -> Primitive
-    Function                   : ID * List(Argument) -> Primitive
-    Add                        : OperatorTerm
-    Sub                        : OperatorTerm
-    Mul                        : OperatorFactor
-    Div                        : OperatorFactor
-    Equal                      : OperatorComparator
-    Diff                       : OperatorComparator
-    GT                         : OperatorComparator
-    GTE                        : OperatorComparator
-    LT                         : OperatorComparator
-    LTE                        : OperatorComparator
-    And                        : OperatorComparator
-    Or                         : OperatorComparator
-    Void                       : Type
-    Integer                    : Type
-    Char                       : Type
-    Boolean                    : Type
-    Start-Plhdr                : Start
-    Program-Plhdr              : Program
-    Structure-Plhdr            : Structure
-    Function-Plhdr             : Function
-    If-Plhdr                   : If
-    CodeBlock-Plhdr            : CodeBlock
-    IfElse-Plhdr               : IfElse
-    Statement-Plhdr            : Statement
-    IfHeader-Plhdr             : IfHeader
-    Variable-Plhdr             : Variable
-    Parameter-Plhdr            : Parameter
-    ExpressionComparator-Plhdr : ExpressionComparator
-    Term-Plhdr                 : Term
-    Factor-Plhdr               : Factor
-    Expression-Plhdr           : Expression
-    INT-Plhdr                  : INT
-    CHAR-Plhdr                 : CHAR
-    BOOLEAN-Plhdr              : BOOLEAN
-    Primitive-Plhdr            : Primitive
-    ID-Plhdr                   : ID
-    Argument-Plhdr             : Argument
-    OperatorTerm-Plhdr         : OperatorTerm
-    OperatorFactor-Plhdr       : OperatorFactor
-    OperatorComparator-Plhdr   : OperatorComparator
-    Type-Plhdr                 : Type
-    Start-Plhdr                : COMPLETION-INSERTION -> Start
-    Program-Plhdr              : COMPLETION-INSERTION -> Program
-    Structure-Plhdr            : COMPLETION-INSERTION -> Structure
-    Function-Plhdr             : COMPLETION-INSERTION -> Function
-    If-Plhdr                   : COMPLETION-INSERTION -> If
-    CodeBlock-Plhdr            : COMPLETION-INSERTION -> CodeBlock
-    IfElse-Plhdr               : COMPLETION-INSERTION -> IfElse
-    Statement-Plhdr            : COMPLETION-INSERTION -> Statement
-    IfHeader-Plhdr             : COMPLETION-INSERTION -> IfHeader
-    Variable-Plhdr             : COMPLETION-INSERTION -> Variable
-    Parameter-Plhdr            : COMPLETION-INSERTION -> Parameter
-    ExpressionComparator-Plhdr : COMPLETION-INSERTION -> ExpressionComparator
-    Term-Plhdr                 : COMPLETION-INSERTION -> Term
-    Factor-Plhdr               : COMPLETION-INSERTION -> Factor
-    Expression-Plhdr           : COMPLETION-INSERTION -> Expression
-    INT-Plhdr                  : COMPLETION-INSERTION -> INT
-    CHAR-Plhdr                 : COMPLETION-INSERTION -> CHAR
-    BOOLEAN-Plhdr              : COMPLETION-INSERTION -> BOOLEAN
-    Primitive-Plhdr            : COMPLETION-INSERTION -> Primitive
-    ID-Plhdr                   : COMPLETION-INSERTION -> ID
-    Argument-Plhdr             : COMPLETION-INSERTION -> Argument
-    OperatorTerm-Plhdr         : COMPLETION-INSERTION -> OperatorTerm
-    OperatorFactor-Plhdr       : COMPLETION-INSERTION -> OperatorFactor
-    OperatorComparator-Plhdr   : COMPLETION-INSERTION -> OperatorComparator
-    Type-Plhdr                 : COMPLETION-INSERTION -> Type
-    Program-Opt-Plhdr          : Program
-    Variable-Opt-Plhdr         : Variable
-    Parameter-Opt-Plhdr        : Parameter
-    Statement-Opt-Plhdr        : Statement
-    IfElse-Opt-Plhdr           : IfElse
-    Argument-Opt-Plhdr         : Argument
+    Program                  : ID * List(Program) -> Start
+    GlobalVariable           : GlobalVariable -> Program
+    Structure                : Structure -> Program
+    Function                 : Function -> Program
+    Declaration              : Type * ID -> GlobalVariable
+    DeclarationArray         : Type * ID -> GlobalVariable
+    DeclarationInst          : Type * ID * Expression -> GlobalVariable
+    Declaration              : ID * List(Variable) -> Structure
+    Declaration              : Type * ID * List(Parameter) * CodeBlock -> Function
+    Block                    : List(Statement) -> CodeBlock
+    If                       : If -> Statement
+    While                    : Expression * CodeBlock -> Statement
+    VariableDeclaration      : Variable -> Statement
+    Attribution              : ID * Expression -> Statement
+    Block                    : IfHeader * CodeBlock * Option(IfElse) -> If
+    Single                   : IfHeader * Statement * Option(IfElse) -> If
+    Block                    : CodeBlock -> IfElse
+    Single                   : Statement -> IfElse
+    Declaration              : Expression -> IfHeader
+    Declaration              : Type * ID -> Variable
+    DeclarationArray         : Type * ID -> Variable
+    DeclarationInst          : Type * ID * Expression -> Variable
+    Parameter                : Type * ID -> Parameter
+    Separator                : Parameter * Parameter -> Parameter
+    Parameter                : Expression -> Argument
+    Separator                : Expression * Expression -> Argument
+    Add                      : Expression * OperatorTerm * Expression -> Expression
+    Mul                      : Expression * OperatorFactor * Expression -> Expression
+    Logic                    : Expression * OperatorComparator * Expression -> Expression
+    Primitive                : Primitive -> Expression
+    Expression               : Expression -> Expression
+    Num                      : INT -> Primitive
+    Char                     : CHAR -> Primitive
+    Boolean                  : BOOLEAN -> Primitive
+    Variable                 : ID -> Primitive
+    Function                 : ID * List(Argument) -> Primitive
+    Add                      : OperatorTerm
+    Sub                      : OperatorTerm
+    Mul                      : OperatorFactor
+    Div                      : OperatorFactor
+    Equal                    : OperatorComparator
+    Diff                     : OperatorComparator
+    GT                       : OperatorComparator
+    GTE                      : OperatorComparator
+    LT                       : OperatorComparator
+    LTE                      : OperatorComparator
+    And                      : OperatorComparator
+    Or                       : OperatorComparator
+    Void                     : Type
+    Integer                  : Type
+    Char                     : Type
+    Boolean                  : Type
+    Start-Plhdr              : Start
+    Program-Plhdr            : Program
+    GlobalVariable-Plhdr     : GlobalVariable
+    Structure-Plhdr          : Structure
+    Function-Plhdr           : Function
+    If-Plhdr                 : If
+    CodeBlock-Plhdr          : CodeBlock
+    IfElse-Plhdr             : IfElse
+    Statement-Plhdr          : Statement
+    IfHeader-Plhdr           : IfHeader
+    Variable-Plhdr           : Variable
+    Parameter-Plhdr          : Parameter
+    Expression-Plhdr         : Expression
+    INT-Plhdr                : INT
+    CHAR-Plhdr               : CHAR
+    BOOLEAN-Plhdr            : BOOLEAN
+    Primitive-Plhdr          : Primitive
+    ID-Plhdr                 : ID
+    Argument-Plhdr           : Argument
+    OperatorTerm-Plhdr       : OperatorTerm
+    OperatorFactor-Plhdr     : OperatorFactor
+    OperatorComparator-Plhdr : OperatorComparator
+    Type-Plhdr               : Type
+    Start-Plhdr              : COMPLETION-INSERTION -> Start
+    Program-Plhdr            : COMPLETION-INSERTION -> Program
+    GlobalVariable-Plhdr     : COMPLETION-INSERTION -> GlobalVariable
+    Structure-Plhdr          : COMPLETION-INSERTION -> Structure
+    Function-Plhdr           : COMPLETION-INSERTION -> Function
+    If-Plhdr                 : COMPLETION-INSERTION -> If
+    CodeBlock-Plhdr          : COMPLETION-INSERTION -> CodeBlock
+    IfElse-Plhdr             : COMPLETION-INSERTION -> IfElse
+    Statement-Plhdr          : COMPLETION-INSERTION -> Statement
+    IfHeader-Plhdr           : COMPLETION-INSERTION -> IfHeader
+    Variable-Plhdr           : COMPLETION-INSERTION -> Variable
+    Parameter-Plhdr          : COMPLETION-INSERTION -> Parameter
+    Expression-Plhdr         : COMPLETION-INSERTION -> Expression
+    INT-Plhdr                : COMPLETION-INSERTION -> INT
+    CHAR-Plhdr               : COMPLETION-INSERTION -> CHAR
+    BOOLEAN-Plhdr            : COMPLETION-INSERTION -> BOOLEAN
+    Primitive-Plhdr          : COMPLETION-INSERTION -> Primitive
+    ID-Plhdr                 : COMPLETION-INSERTION -> ID
+    Argument-Plhdr           : COMPLETION-INSERTION -> Argument
+    OperatorTerm-Plhdr       : COMPLETION-INSERTION -> OperatorTerm
+    OperatorFactor-Plhdr     : COMPLETION-INSERTION -> OperatorFactor
+    OperatorComparator-Plhdr : COMPLETION-INSERTION -> OperatorComparator
+    Type-Plhdr               : COMPLETION-INSERTION -> Type
+    Program-Opt-Plhdr        : Program
+    Variable-Opt-Plhdr       : Variable
+    Parameter-Opt-Plhdr      : Parameter
+    Statement-Opt-Plhdr      : Statement
+    IfElse-Opt-Plhdr         : IfElse
+    Argument-Opt-Plhdr       : Argument

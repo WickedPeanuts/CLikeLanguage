@@ -14,8 +14,13 @@ context-free syntax
   
   Start.Program = "program" ID "{" Program* "}"
   
+  Program.GlobalVariable = GlobalVariable
   Program.Structure = Structure
   Program.Function = Function  
+  
+  GlobalVariable.Declaration = Type ID ";"
+  GlobalVariable.DeclarationArray = Type ID "[];"
+  GlobalVariable.DeclarationInst = Type ID "=" Expression ";"
   
   Structure.Declaration = "struct" ID "{" Variable* "}" ";"
   Function.Declaration = Type ID "(" Parameter* ")" CodeBlock
@@ -43,14 +48,11 @@ context-free syntax
   Argument.Parameter = Expression
   Argument.Separator = Expression "," Expression {left}
   
-  ExpressionComparator.Comparator = Expression OperatorComparator Expression {left}
-  Expression.Comparator = ExpressionComparator  {left}
-  Expression.Term = Term {left}
-  Expression.Term = Expression OperatorTerm Term {left}
-  Term.Factor = Factor {left}
-  Term.Factor = Term  OperatorFactor Factor {left}
-  Factor.Primitive = Primitive {left}
-  Factor.Expression ="(" Expression ")" {left}
+  Expression.Add = [[Expression] [OperatorTerm] [Expression]] {left}
+  Expression.Mul = [[Expression] [OperatorFactor] [Expression]] {left}
+  Expression.Logic = [[Expression] [OperatorComparator] [Expression]] {left}
+  Expression.Primitive = Primitive
+  Expression.Expression ="(" Expression ")"
   
   Primitive.Num = INT
   Primitive.Char = CHAR
@@ -75,3 +77,8 @@ context-free syntax
   Type.Integer = [int]
   Type.Char = [char]
   Type.Boolean = [bool]
+  
+  context-free priorities
+  
+  Expression.Mul > {left: Expression.Add} > Expression.Logic
+  

@@ -16,32 +16,41 @@ strategies
 rules
 
   CLikeLanguageParenthesize :
-    Primitive(t_0) -> Primitive(Parenthetical(t_0))
-    where <(?Primitive(_) + fail)> t_0
+    Mul(t_0, t_1, t_2) -> Mul(Parenthetical(t_0), t_1, t_2)
+    where <(?Logic(_, _, _)
+            + ?Add(_, _, _)
+            + fail)> t_0
 
   CLikeLanguageParenthesize :
-    Factor(t_0, t_1, t_2) -> Factor(t_0, t_1, Parenthetical(t_2))
-    where <(?Factor(_, _, _) + fail)> t_2
+    Mul(t_0, t_1, t_2) -> Mul(t_0, Parenthetical(t_1), t_2)
+    where <(?Logic(_, _, _)
+            + ?Add(_, _, _)
+            + fail)> t_1
 
   CLikeLanguageParenthesize :
-    Factor(t_0) -> Factor(Parenthetical(t_0))
-    where <(?Factor(_) + fail)> t_0
+    Mul(t_0, t_1, t_2) -> Mul(t_0, t_1, Parenthetical(t_2))
+    where <(?Logic(_, _, _)
+            + ?Add(_, _, _)
+            + ?Mul(_, _, _)
+            + fail)> t_2
 
   CLikeLanguageParenthesize :
-    Term(t_0, t_1, t_2) -> Term(t_0, t_1, Parenthetical(t_2))
-    where <(?Term(_, _, _) + fail)> t_2
+    Add(t_0, t_1, t_2) -> Add(Parenthetical(t_0), t_1, t_2)
+    where <(?Logic(_, _, _) + fail)> t_0
 
   CLikeLanguageParenthesize :
-    Term(t_0) -> Term(Parenthetical(t_0))
-    where <(?Term(_) + fail)> t_0
+    Add(t_0, t_1, t_2) -> Add(t_0, Parenthetical(t_1), t_2)
+    where <(?Logic(_, _, _) + fail)> t_1
 
   CLikeLanguageParenthesize :
-    Comparator(t_0) -> Comparator(Parenthetical(t_0))
-    where <(?Comparator(_) + fail)> t_0
+    Add(t_0, t_1, t_2) -> Add(t_0, t_1, Parenthetical(t_2))
+    where <(?Logic(_, _, _)
+            + ?Add(_, _, _)
+            + fail)> t_2
 
   CLikeLanguageParenthesize :
-    Comparator(t_0, t_1, t_2) -> Comparator(t_0, t_1, Parenthetical(t_2))
-    where <(?Comparator(_, _, _) + fail)> t_2
+    Logic(t_0, t_1, t_2) -> Logic(t_0, t_1, Parenthetical(t_2))
+    where <(?Logic(_, _, _) + fail)> t_2
 
   CLikeLanguageParenthesize :
     Separator(t_0, t_1) -> Separator(t_0, Parenthetical(t_1))
