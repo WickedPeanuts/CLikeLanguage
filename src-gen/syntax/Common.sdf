@@ -7,6 +7,7 @@ exports
     "'" [a-zA-Z] "'"         -> CHAR          
     "true" | "false"         -> BOOLEAN       
     "\"" StringChar* "\""    -> STRING        
+    "%c" | "%i" | "%s"       -> INPUT         
     ~[\"\n]                  -> StringChar    
     "\\\""                   -> StringChar    
     BackSlashChar            -> StringChar    

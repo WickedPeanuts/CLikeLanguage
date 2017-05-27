@@ -30,19 +30,16 @@ rules // Debugging
        
        .ident "GCC: (GNU) 4.9.0"
      ]
-     
+  gera-program:
+    [] -> $[]
+  gera-program:
+    (a) -> $[asdf [a]]   
+  gera-program:
+    [(head,tail)] -> $[[head] [<gera-variaveisGlobais> tail]]
+   
   gera-variaveisGlobais:
-  	[] -> ""
+  	[] -> $[]
   gera-variaveisGlobais:
-    [Declaration(head, tail)|t] ->
-    $[
-      asdf [head]
-    ]
+    (a) -> $[asdf [a]] 
   gera-variaveisGlobais:
-    (n,[]) -> ""
-  gera-variaveisGlobais:
-    (n) ->
-    $[
-      #Variavel Global [n]
-  	  .comm	[n],4,4
-  	]
+    [(head,tail)] -> $[[head] [<gera-variaveisGlobais> tail]]

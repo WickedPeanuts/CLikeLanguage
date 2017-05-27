@@ -6,8 +6,9 @@ imports completion/Common-completion-insertions
 exports
   context-free start-symbols
     Start Program GlobalVariable Structure Function If CodeBlock IfElse
-    Statement IfHeader Variable Parameter Expression INT CHAR BOOLEAN Primitive
-    ID Argument OperatorTerm OperatorFactor OperatorComparator Type
+    Statement IfHeader Variable Parameter Expression INT CHAR BOOLEAN Argument
+    OperatorTerm OperatorFactor OperatorComparator Type Primitive BasicFunction
+    INPUT ID
 
   context-free syntax
     COMPLETION-INSERTION -> Start              {cons("Start-Plhdr"), placeholder-insertion}
@@ -26,13 +27,15 @@ exports
     COMPLETION-INSERTION -> INT                {cons("INT-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> CHAR               {cons("CHAR-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> Primitive          {cons("Primitive-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> ID                 {cons("ID-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Argument           {cons("Argument-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Type               {cons("Type-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Primitive          {cons("Primitive-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> BasicFunction      {cons("BasicFunction-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> INPUT              {cons("INPUT-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ID                 {cons("ID-Plhdr"), placeholder-insertion}
 
   lexical syntax
     COMPLETION-INSERTION -> "program" {literal-completion}
@@ -40,14 +43,13 @@ exports
     COMPLETION-INSERTION -> "{"       {literal-completion}
     COMPLETION-INSERTION -> "}"       {literal-completion}
     COMPLETION-INSERTION -> "while"   {literal-completion}
+    COMPLETION-INSERTION -> "break;"  {literal-completion}
+    COMPLETION-INSERTION -> "return"  {literal-completion}
     COMPLETION-INSERTION -> "else"    {literal-completion}
     COMPLETION-INSERTION -> "if"      {literal-completion}
     COMPLETION-INSERTION -> "[];"     {literal-completion}
     COMPLETION-INSERTION -> "="       {literal-completion}
     COMPLETION-INSERTION -> ";"       {literal-completion}
-    COMPLETION-INSERTION -> ","       {literal-completion}
-    COMPLETION-INSERTION -> "("       {literal-completion}
-    COMPLETION-INSERTION -> ")"       {literal-completion}
     COMPLETION-INSERTION -> "+"       {literal-completion}
     COMPLETION-INSERTION -> "-"       {literal-completion}
     COMPLETION-INSERTION -> "*"       {literal-completion}
@@ -64,6 +66,11 @@ exports
     COMPLETION-INSERTION -> "int"     {literal-completion}
     COMPLETION-INSERTION -> "char"    {literal-completion}
     COMPLETION-INSERTION -> "bool"    {literal-completion}
+    COMPLETION-INSERTION -> "print"   {literal-completion}
+    COMPLETION-INSERTION -> "scan"    {literal-completion}
+    COMPLETION-INSERTION -> "("       {literal-completion}
+    COMPLETION-INSERTION -> ","       {literal-completion}
+    COMPLETION-INSERTION -> ")"       {literal-completion}
 
 exports
   lexical syntax

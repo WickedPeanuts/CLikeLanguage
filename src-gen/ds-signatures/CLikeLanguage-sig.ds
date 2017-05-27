@@ -23,6 +23,7 @@ signature
       OperatorFactor
       OperatorComparator
       Type
+      BasicFunction
     constructors
       Program : ID * List(Program) -> Start 
       GlobalVariable : GlobalVariable -> Program 
@@ -38,6 +39,8 @@ signature
       While : Expression * CodeBlock -> Statement 
       VariableDeclaration : Variable -> Statement 
       Attribution : ID * Expression -> Statement 
+      Break : Statement 
+      Return : Expression -> Statement 
       Block : IfHeader * CodeBlock * IfElse -> If 
       Single : IfHeader * Statement * IfElse -> If 
       Block : CodeBlock -> IfElse 
@@ -76,3 +79,5 @@ signature
       Integer : Type 
       Char : Type 
       Boolean : Type 
+      printPrimitive : Primitive -> BasicFunction 
+      scan : List(INPUT) * List(ID) -> BasicFunction 

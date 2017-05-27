@@ -31,6 +31,8 @@ context-free syntax
   Statement.While = "while" "(" Expression ")" CodeBlock
   Statement.VariableDeclaration = Variable
   Statement.Attribution = ID "=" Expression ";"
+  Statement.Break = "break;"
+  Statement.Return = "return" Expression ";"
   
   If.Block = IfHeader CodeBlock IfElse?
   If.Single = IfHeader Statement IfElse?
@@ -77,6 +79,9 @@ context-free syntax
   Type.Integer = [int]
   Type.Char = [char]
   Type.Boolean = [bool]
+  
+  BasicFunction.printPrimitive = "print" "(" Primitive ")"
+  BasicFunction.scan = "scan"  "(" INPUT* "," ID* ")"
   
   context-free priorities
   

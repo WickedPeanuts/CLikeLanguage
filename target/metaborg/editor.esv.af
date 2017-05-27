@@ -22,6 +22,7 @@ Module(
         , [OpenEditor()]
         , [ Action(String("\"Format\""), Strategy("editor-format"), [Source()])
           , Action(String("\"Show parsed AST\""), Strategy("debug-show-aterm"), [Source()])
+          , Action(String("\"Generate .s File\""), Strategy("gera-xgcc"), [Source()])
           ]
         )
       ]
@@ -131,6 +132,7 @@ Module(
       ""
     , [ ColorRule(ConstructorOnly(Constructor("Start-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Program-Plhdr")), AttributeRef("gray"))
+      , ColorRule(ConstructorOnly(Constructor("GlobalVariable-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Structure-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Function-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("If-Plhdr")), AttributeRef("gray"))
@@ -140,9 +142,6 @@ Module(
       , ColorRule(ConstructorOnly(Constructor("IfHeader-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Variable-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Parameter-Plhdr")), AttributeRef("gray"))
-      , ColorRule(ConstructorOnly(Constructor("ExpressionComparator-Plhdr")), AttributeRef("gray"))
-      , ColorRule(ConstructorOnly(Constructor("Term-Plhdr")), AttributeRef("gray"))
-      , ColorRule(ConstructorOnly(Constructor("Factor-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Expression-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("INT-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("CHAR-Plhdr")), AttributeRef("gray"))

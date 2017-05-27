@@ -163,6 +163,20 @@ rules
                           ; fail> completions
 
   suggest-completions(|completions):
+    Statement-Plhdr() -> <add-completions(|("Break", Break()))
+                          ; fail> completions
+
+  suggest-completions(|completions):
+    Statement-Plhdr() -> <add-completions(
+                          | ( "Return"
+                            , Return(
+                                <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+
+  suggest-completions(|completions):
     If-Plhdr() -> <add-completions(
                    | ( "Block"
                      , Block(
@@ -464,6 +478,24 @@ rules
     Type-Plhdr() -> <add-completions(|("Boolean", Boolean()))
                      ; fail> completions
 
+  suggest-completions(|completions):
+    BasicFunction-Plhdr() -> <add-completions(
+                              | ( "printPrimitive"
+                                , printPrimitive(
+                                    <try(inline-completions(|BasicFunction-Plhdr()))> Primitive-Plhdr()
+                                  )
+                                )
+                              )
+                              ; fail> completions
+
+  suggest-completions(|completions):
+    BasicFunction-Plhdr() -> <add-completions(
+                              | ( "scan"
+                                , scan(CURSOR_ELEMENT(), CURSOR_ELEMENT())
+                                )
+                              )
+                              ; fail> completions
+
 
 rules
 
@@ -760,12 +792,6 @@ rules
     ?BOOLEAN-Plhdr()
 
   is-SDF-placeholder =
-    ?Primitive-Plhdr()
-
-  is-SDF-placeholder =
-    ?ID-Plhdr()
-
-  is-SDF-placeholder =
     ?Argument-Plhdr()
 
   is-SDF-placeholder =
@@ -779,3 +805,15 @@ rules
 
   is-SDF-placeholder =
     ?Type-Plhdr()
+
+  is-SDF-placeholder =
+    ?Primitive-Plhdr()
+
+  is-SDF-placeholder =
+    ?BasicFunction-Plhdr()
+
+  is-SDF-placeholder =
+    ?INPUT-Plhdr()
+
+  is-SDF-placeholder =
+    ?ID-Plhdr()

@@ -44,6 +44,9 @@ strategies
     prettyprint-CLikeLanguage-STRING
 
   prettyprint-CLikeLanguage =
+    prettyprint-CLikeLanguage-INPUT
+
+  prettyprint-CLikeLanguage =
     prettyprint-CLikeLanguage-StringChar
 
   prettyprint-CLikeLanguage =
@@ -80,6 +83,10 @@ strategies
   prettyprint-CLikeLanguage(|sort):
     t -> <prettyprint-CLikeLanguage-STRING>
     where <?"STRING"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-INPUT>
+    where <?"INPUT"> sort
 
   prettyprint-CLikeLanguage(|sort):
     t -> <prettyprint-CLikeLanguage-StringChar>
@@ -120,6 +127,9 @@ strategies
   prettyprint-CLikeLanguage-STRING =
     ![S(<is-string>)]
 
+  prettyprint-CLikeLanguage-INPUT =
+    ![S(<is-string>)]
+
   prettyprint-CLikeLanguage-StringChar =
     ![S(<is-string>)]
 
@@ -152,6 +162,9 @@ strategies
 
   prettyprint-CLikeLanguage-STRING :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-STRING> h
+
+  prettyprint-CLikeLanguage-INPUT :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-INPUT> h
 
   prettyprint-CLikeLanguage-StringChar :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-StringChar> h

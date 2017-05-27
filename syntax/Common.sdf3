@@ -8,6 +8,7 @@ lexical syntax
   CHAR			 = "'"[a-zA-Z]"'"
   BOOLEAN		 = "true"|"false"
   STRING         = "\"" StringChar* "\"" 
+  INPUT			 = "%c" | "%i" | "%s"
   StringChar     = ~[\"\n] 
   StringChar     = "\\\"" 
   StringChar     = BackSlashChar 

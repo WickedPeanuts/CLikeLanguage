@@ -7,6 +7,7 @@ signature
      : String -> CHAR
      : String -> BOOLEAN
      : String -> STRING
+     : String -> INPUT
      : String -> StringChar
      : String -> BackSlashChar
      : String -> CommentChar

@@ -20,10 +20,12 @@ colorer
   _.INT-Plhdr                : gray   
   _.CHAR-Plhdr               : gray   
   _.BOOLEAN-Plhdr            : gray   
-  _.Primitive-Plhdr          : gray   
-  _.ID-Plhdr                 : gray   
   _.Argument-Plhdr           : gray   
   _.OperatorTerm-Plhdr       : gray   
   _.OperatorFactor-Plhdr     : gray   
   _.OperatorComparator-Plhdr : gray   
   _.Type-Plhdr               : gray   
+  _.Primitive-Plhdr          : gray   
+  _.BasicFunction-Plhdr      : gray   
+  _.INPUT-Plhdr              : gray   
+  _.ID-Plhdr                 : gray   

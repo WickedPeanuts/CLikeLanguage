@@ -27,6 +27,9 @@ rules
     "STRING" -> <id>
 
   is-lexical-completion-sort :
+    "INPUT" -> <id>
+
+  is-lexical-completion-sort :
     "StringChar" -> <id>
 
   is-lexical-completion-sort :
