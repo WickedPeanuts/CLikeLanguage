@@ -12,9 +12,9 @@ exports
     GlobalVariable                           -> Program            {cons("GlobalVariable")}
     Structure                                -> Program            {cons("Structure")}
     Function                                 -> Program            {cons("Function")}
-    Type ID ";"                              -> GlobalVariable     {cons("Declaration")}
-    Type ID "[];"                            -> GlobalVariable     {cons("DeclarationArray")}
-    Type ID "=" Expression ";"               -> GlobalVariable     {cons("DeclarationInst")}
+    Type ID ";"                              -> GlobalVariable     {cons("GlobalDeclaration")}
+    Type ID "[];"                            -> GlobalVariable     {cons("GlobalDeclarationArray")}
+    Type ID "=" Expression ";"               -> GlobalVariable     {cons("GlobalDeclarationInst")}
     "struct" ID "{" Variable* "}" ";"        -> Structure          {cons("Declaration")}
     Type ID "(" Parameter* ")" CodeBlock     -> Function           {cons("Declaration")}
     "{" Statement* "}"                       -> CodeBlock          {cons("Block")}

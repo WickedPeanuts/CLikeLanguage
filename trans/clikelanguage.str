@@ -26,20 +26,16 @@ rules // Debugging
        .section	.mdebug.abi32
        .previous
        
-       [<gera-variaveisGlobais> (ld)]
+       [<gera-program> ld]
        
        .ident "GCC: (GNU) 4.9.0"
      ]
+     
   gera-program:
-    [] -> $[]
+    [] -> $[""]
+    
   gera-program:
-    (a) -> $[asdf [a]]   
-  gera-program:
-    [(head,tail)] -> $[[head] [<gera-variaveisGlobais> tail]]
-   
-  gera-variaveisGlobais:
-  	[] -> $[]
-  gera-variaveisGlobais:
-    (a) -> $[asdf [a]] 
-  gera-variaveisGlobais:
-    [(head,tail)] -> $[[head] [<gera-variaveisGlobais> tail]]
+    ld -> $[[<gera-GlobalDeclaration> ld]]
+    
+  gera-GlobalDeclaration:
+    GlobalDeclaration(b, c) -> $[[b], [c]]

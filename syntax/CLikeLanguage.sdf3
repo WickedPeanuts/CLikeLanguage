@@ -18,9 +18,9 @@ context-free syntax
   Program.Structure = Structure
   Program.Function = Function  
   
-  GlobalVariable.Declaration = Type ID ";"
-  GlobalVariable.DeclarationArray = Type ID "[];"
-  GlobalVariable.DeclarationInst = Type ID "=" Expression ";"
+  GlobalVariable.GlobalDeclaration = Type ID ";"
+  GlobalVariable.GlobalDeclarationArray = Type ID "[];"
+  GlobalVariable.GlobalDeclarationInst = Type ID "=" Expression ";"
   
   Structure.Declaration = "struct" ID "{" Variable* "}" ";"
   Function.Declaration = Type ID "(" Parameter* ")" CodeBlock

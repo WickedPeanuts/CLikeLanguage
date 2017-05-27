@@ -40,11 +40,13 @@ exports
     INSERTSTART InsideComment* WATEREOF  -> LAYOUT          {cons("INSERTEND")}
                                          -> "program"       {recover, cons("INSERTION")}
                                          -> "{"             {recover, cons("INSERTION")}
-                                         -> ";"             {recover, cons("INSERTION")}
                                          -> "struct"        {recover, cons("INSERTION")}
                                          -> "}"             {recover, cons("INSERTION")}
+                                         -> ";"             {recover, cons("INSERTION")}
                                          -> "if"            {recover, cons("INSERTION")}
+                                         -> "print"         {recover, cons("INSERTION")}
                                          -> ")"             {recover, cons("INSERTION")}
+                                         -> "scan"          {recover, cons("INSERTION")}
                                          -> "$Start"        {recover, cons("INSERTION")}
 
   syntax
@@ -61,6 +63,7 @@ exports
     "'" [a-zA-Z] "'"         -> CHAR          
     "true" | "false"         -> BOOLEAN       
     "\"" StringChar* "\""    -> STRING        
+    "%c" | "%i" | "%s"       -> INPUT         
     ~[\"\n]                  -> StringChar    
     "\\\""                   -> StringChar    
     BackSlashChar            -> StringChar    
@@ -103,9 +106,9 @@ exports
     GlobalVariable                           -> Program            {cons("GlobalVariable")}
     Structure                                -> Program            {cons("Structure")}
     Function                                 -> Program            {cons("Function")}
-    Type ID ";"                              -> GlobalVariable     {cons("Declaration")}
-    Type ID "[];"                            -> GlobalVariable     {cons("DeclarationArray")}
-    Type ID "=" Expression ";"               -> GlobalVariable     {cons("DeclarationInst")}
+    Type ID ";"                              -> GlobalVariable     {cons("GlobalDeclaration")}
+    Type ID "[];"                            -> GlobalVariable     {cons("GlobalDeclarationArray")}
+    Type ID "=" Expression ";"               -> GlobalVariable     {cons("GlobalDeclarationInst")}
     "struct" ID "{" Variable* "}" ";"        -> Structure          {cons("Declaration")}
     Type ID "(" Parameter* ")" CodeBlock     -> Function           {cons("Declaration")}
     "{" Statement* "}"                       -> CodeBlock          {cons("Block")}
@@ -113,6 +116,8 @@ exports
     "while" "(" Expression ")" CodeBlock     -> Statement          {cons("While")}
     Variable                                 -> Statement          {cons("VariableDeclaration")}
     ID "=" Expression ";"                    -> Statement          {cons("Attribution")}
+    "break;"                                 -> Statement          {cons("Break")}
+    "return" Expression ";"                  -> Statement          {cons("Return")}
     IfHeader CodeBlock IfElse?               -> If                 {cons("Block")}
     IfHeader Statement IfElse?               -> If                 {cons("Single")}
     "else" CodeBlock                         -> IfElse             {cons("Block")}
@@ -151,6 +156,8 @@ exports
     "int"                                    -> Type               {cons("Integer")}
     "char"                                   -> Type               {cons("Char")}
     "bool"                                   -> Type               {cons("Boolean")}
+    "print" "(" Primitive ")"                -> BasicFunction      {cons("printPrimitive")}
+    "scan" "(" INPUT* "," ID* ")"            -> BasicFunction      {cons("scan")}
 
   lexical syntax
     
@@ -172,13 +179,15 @@ exports
     "$INT"                -> INT                {cons("INT-Plhdr"), placeholder}
     "$CHAR"               -> CHAR               {cons("CHAR-Plhdr"), placeholder}
     "$BOOLEAN"            -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder}
-    "$Primitive"          -> Primitive          {cons("Primitive-Plhdr"), placeholder}
-    "$ID"                 -> ID                 {cons("ID-Plhdr"), placeholder}
     "$Argument"           -> Argument           {cons("Argument-Plhdr"), placeholder}
     "$OperatorTerm"       -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder}
     "$OperatorFactor"     -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder}
     "$OperatorComparator" -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder}
     "$Type"               -> Type               {cons("Type-Plhdr"), placeholder}
+    "$Primitive"          -> Primitive          {cons("Primitive-Plhdr"), placeholder}
+    "$BasicFunction"      -> BasicFunction      {cons("BasicFunction-Plhdr"), placeholder}
+    "$INPUT"              -> INPUT              {cons("INPUT-Plhdr"), placeholder}
+    "$ID"                 -> ID                 {cons("ID-Plhdr"), placeholder}
 
   context-free priorities
     Expression OperatorFactor Expression -> Expression >

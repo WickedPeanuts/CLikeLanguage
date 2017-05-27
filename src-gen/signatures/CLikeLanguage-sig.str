@@ -13,9 +13,9 @@ signature
     GlobalVariable           : GlobalVariable -> Program
     Structure                : Structure -> Program
     Function                 : Function -> Program
-    Declaration              : Type * ID -> GlobalVariable
-    DeclarationArray         : Type * ID -> GlobalVariable
-    DeclarationInst          : Type * ID * Expression -> GlobalVariable
+    GlobalDeclaration        : Type * ID -> GlobalVariable
+    GlobalDeclarationArray   : Type * ID -> GlobalVariable
+    GlobalDeclarationInst    : Type * ID * Expression -> GlobalVariable
     Declaration              : ID * List(Variable) -> Structure
     Declaration              : Type * ID * List(Parameter) * CodeBlock -> Function
     Block                    : List(Statement) -> CodeBlock

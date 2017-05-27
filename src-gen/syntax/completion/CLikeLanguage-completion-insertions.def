@@ -15,6 +15,7 @@ exports
     "'" [a-zA-Z] "'"         -> CHAR          
     "true" | "false"         -> BOOLEAN       
     "\"" StringChar* "\""    -> STRING        
+    "%c" | "%i" | "%s"       -> INPUT         
     ~[\"\n]                  -> StringChar    
     "\\\""                   -> StringChar    
     BackSlashChar            -> StringChar    
@@ -55,9 +56,9 @@ exports
     GlobalVariable                           -> Program            {cons("GlobalVariable")}
     Structure                                -> Program            {cons("Structure")}
     Function                                 -> Program            {cons("Function")}
-    Type ID ";"                              -> GlobalVariable     {cons("Declaration")}
-    Type ID "[];"                            -> GlobalVariable     {cons("DeclarationArray")}
-    Type ID "=" Expression ";"               -> GlobalVariable     {cons("DeclarationInst")}
+    Type ID ";"                              -> GlobalVariable     {cons("GlobalDeclaration")}
+    Type ID "[];"                            -> GlobalVariable     {cons("GlobalDeclarationArray")}
+    Type ID "=" Expression ";"               -> GlobalVariable     {cons("GlobalDeclarationInst")}
     "struct" ID "{" Variable* "}" ";"        -> Structure          {cons("Declaration")}
     Type ID "(" Parameter* ")" CodeBlock     -> Function           {cons("Declaration")}
     "{" Statement* "}"                       -> CodeBlock          {cons("Block")}
@@ -65,6 +66,8 @@ exports
     "while" "(" Expression ")" CodeBlock     -> Statement          {cons("While")}
     Variable                                 -> Statement          {cons("VariableDeclaration")}
     ID "=" Expression ";"                    -> Statement          {cons("Attribution")}
+    "break;"                                 -> Statement          {cons("Break")}
+    "return" Expression ";"                  -> Statement          {cons("Return")}
     IfHeader CodeBlock IfElse?               -> If                 {cons("Block")}
     IfHeader Statement IfElse?               -> If                 {cons("Single")}
     "else" CodeBlock                         -> IfElse             {cons("Block")}
@@ -103,6 +106,8 @@ exports
     "int"                                    -> Type               {cons("Integer")}
     "char"                                   -> Type               {cons("Char")}
     "bool"                                   -> Type               {cons("Boolean")}
+    "print" "(" Primitive ")"                -> BasicFunction      {cons("printPrimitive")}
+    "scan" "(" INPUT* "," ID* ")"            -> BasicFunction      {cons("scan")}
 
   lexical syntax
     
@@ -124,13 +129,15 @@ exports
     "$INT"                -> INT                {cons("INT-Plhdr"), placeholder}
     "$CHAR"               -> CHAR               {cons("CHAR-Plhdr"), placeholder}
     "$BOOLEAN"            -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder}
-    "$Primitive"          -> Primitive          {cons("Primitive-Plhdr"), placeholder}
-    "$ID"                 -> ID                 {cons("ID-Plhdr"), placeholder}
     "$Argument"           -> Argument           {cons("Argument-Plhdr"), placeholder}
     "$OperatorTerm"       -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder}
     "$OperatorFactor"     -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder}
     "$OperatorComparator" -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder}
     "$Type"               -> Type               {cons("Type-Plhdr"), placeholder}
+    "$Primitive"          -> Primitive          {cons("Primitive-Plhdr"), placeholder}
+    "$BasicFunction"      -> BasicFunction      {cons("BasicFunction-Plhdr"), placeholder}
+    "$INPUT"              -> INPUT              {cons("INPUT-Plhdr"), placeholder}
+    "$ID"                 -> ID                 {cons("ID-Plhdr"), placeholder}
 
   context-free priorities
     Expression OperatorFactor Expression -> Expression >
@@ -147,8 +154,9 @@ imports completion/Common-completion-insertions
 exports
   context-free start-symbols
     Start Program GlobalVariable Structure Function If CodeBlock IfElse
-    Statement IfHeader Variable Parameter Expression INT CHAR BOOLEAN Primitive
-    ID Argument OperatorTerm OperatorFactor OperatorComparator Type
+    Statement IfHeader Variable Parameter Expression INT CHAR BOOLEAN Argument
+    OperatorTerm OperatorFactor OperatorComparator Type Primitive BasicFunction
+    INPUT ID
 
   context-free syntax
     COMPLETION-INSERTION -> Start              {cons("Start-Plhdr"), placeholder-insertion}
@@ -167,13 +175,15 @@ exports
     COMPLETION-INSERTION -> INT                {cons("INT-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> CHAR               {cons("CHAR-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> Primitive          {cons("Primitive-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> ID                 {cons("ID-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Argument           {cons("Argument-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Type               {cons("Type-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Primitive          {cons("Primitive-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> BasicFunction      {cons("BasicFunction-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> INPUT              {cons("INPUT-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> ID                 {cons("ID-Plhdr"), placeholder-insertion}
 
   lexical syntax
     COMPLETION-INSERTION -> "program" {literal-completion}
@@ -181,14 +191,13 @@ exports
     COMPLETION-INSERTION -> "{"       {literal-completion}
     COMPLETION-INSERTION -> "}"       {literal-completion}
     COMPLETION-INSERTION -> "while"   {literal-completion}
+    COMPLETION-INSERTION -> "break;"  {literal-completion}
+    COMPLETION-INSERTION -> "return"  {literal-completion}
     COMPLETION-INSERTION -> "else"    {literal-completion}
     COMPLETION-INSERTION -> "if"      {literal-completion}
     COMPLETION-INSERTION -> "[];"     {literal-completion}
     COMPLETION-INSERTION -> "="       {literal-completion}
     COMPLETION-INSERTION -> ";"       {literal-completion}
-    COMPLETION-INSERTION -> ","       {literal-completion}
-    COMPLETION-INSERTION -> "("       {literal-completion}
-    COMPLETION-INSERTION -> ")"       {literal-completion}
     COMPLETION-INSERTION -> "+"       {literal-completion}
     COMPLETION-INSERTION -> "-"       {literal-completion}
     COMPLETION-INSERTION -> "*"       {literal-completion}
@@ -205,6 +214,11 @@ exports
     COMPLETION-INSERTION -> "int"     {literal-completion}
     COMPLETION-INSERTION -> "char"    {literal-completion}
     COMPLETION-INSERTION -> "bool"    {literal-completion}
+    COMPLETION-INSERTION -> "print"   {literal-completion}
+    COMPLETION-INSERTION -> "scan"    {literal-completion}
+    COMPLETION-INSERTION -> "("       {literal-completion}
+    COMPLETION-INSERTION -> ","       {literal-completion}
+    COMPLETION-INSERTION -> ")"       {literal-completion}
 
 exports
   lexical syntax

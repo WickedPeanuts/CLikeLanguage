@@ -370,136 +370,136 @@ strategies
          end
 
   prettyprint-CLikeLanguage-GlobalVariable :
-    Declaration(t1__, t2__) -> [ H(
-                                   [SOpt(HS(), "0")]
-                                 , [ t1__'
-                                   , S(" ")
-                                   , t2__'
-                                   , S(" ;")
-                                   ]
-                                 )
-                               ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
-
-  is-CLikeLanguage-GlobalVariable =
-    ?Declaration(_, _)
-
-  CLikeLanguage-get-indent :
-    (t@Declaration(t1__, t2__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           case ?2 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@Declaration(t1__, t2__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           case ?2 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@Declaration(t1__, t2__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           case ?2 :
-             ws := " "
-           otherwise :
-             ws := ""
-         end
-
-  prettyprint-CLikeLanguage-GlobalVariable :
-    DeclarationArray(t1__, t2__) -> [ H(
-                                        [SOpt(HS(), "0")]
-                                      , [ t1__'
-                                        , S(" ")
-                                        , t2__'
-                                        , S(" [];")
-                                        ]
-                                      )
-                                    ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
-
-  is-CLikeLanguage-GlobalVariable =
-    ?DeclarationArray(_, _)
-
-  CLikeLanguage-get-indent :
-    (t@DeclarationArray(t1__, t2__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           case ?2 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@DeclarationArray(t1__, t2__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           case ?2 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@DeclarationArray(t1__, t2__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"GlobalVariable"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           case ?2 :
-             ws := " "
-           otherwise :
-             ws := ""
-         end
-
-  prettyprint-CLikeLanguage-GlobalVariable :
-    DeclarationInst(t1__, t2__, t3__) -> [ H(
-                                             [SOpt(HS(), "0")]
-                                           , [ t1__'
-                                             , S(" ")
-                                             , t2__'
-                                             , S(" = ")
-                                             , t3__'
-                                             , S(" ;")
-                                             ]
-                                           )
+    GlobalDeclaration(t1__, t2__) -> [ H(
+                                         [SOpt(HS(), "0")]
+                                       , [ t1__'
+                                         , S(" ")
+                                         , t2__'
+                                         , S(" ;")
                                          ]
+                                       )
+                                     ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
+
+  is-CLikeLanguage-GlobalVariable =
+    ?GlobalDeclaration(_, _)
+
+  CLikeLanguage-get-indent :
+    (t@GlobalDeclaration(t1__, t2__), index) -> indent
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             indent := ""
+           case ?2 :
+             indent := ""
+           otherwise :
+             indent := ""
+         end
+
+  CLikeLanguage-get-separator :
+    (t@GlobalDeclaration(t1__, t2__), index) -> separator
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             separator := ""
+           case ?2 :
+             separator := ""
+           otherwise :
+             separator := ""
+         end
+
+  CLikeLanguage-get-leading-ws :
+    (t@GlobalDeclaration(t1__, t2__), index) -> ws
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             ws := ""
+           case ?2 :
+             ws := " "
+           otherwise :
+             ws := ""
+         end
+
+  prettyprint-CLikeLanguage-GlobalVariable :
+    GlobalDeclarationArray(t1__, t2__) -> [ H(
+                                              [SOpt(HS(), "0")]
+                                            , [ t1__'
+                                              , S(" ")
+                                              , t2__'
+                                              , S(" [];")
+                                              ]
+                                            )
+                                          ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
+
+  is-CLikeLanguage-GlobalVariable =
+    ?GlobalDeclarationArray(_, _)
+
+  CLikeLanguage-get-indent :
+    (t@GlobalDeclarationArray(t1__, t2__), index) -> indent
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             indent := ""
+           case ?2 :
+             indent := ""
+           otherwise :
+             indent := ""
+         end
+
+  CLikeLanguage-get-separator :
+    (t@GlobalDeclarationArray(t1__, t2__), index) -> separator
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             separator := ""
+           case ?2 :
+             separator := ""
+           otherwise :
+             separator := ""
+         end
+
+  CLikeLanguage-get-leading-ws :
+    (t@GlobalDeclarationArray(t1__, t2__), index) -> ws
+    where sort := <ia-get-sort> t
+          ; <?"GlobalVariable"> sort
+    with switch !index
+           case ?1 :
+             ws := ""
+           case ?2 :
+             ws := " "
+           otherwise :
+             ws := ""
+         end
+
+  prettyprint-CLikeLanguage-GlobalVariable :
+    GlobalDeclarationInst(t1__, t2__, t3__) -> [ H(
+                                                   [SOpt(HS(), "0")]
+                                                 , [ t1__'
+                                                   , S(" ")
+                                                   , t2__'
+                                                   , S(" = ")
+                                                   , t3__'
+                                                   , S(" ;")
+                                                   ]
+                                                 )
+                                               ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
     with t3__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t3__
 
   is-CLikeLanguage-GlobalVariable =
-    ?DeclarationInst(_, _, _)
+    ?GlobalDeclarationInst(_, _, _)
 
   CLikeLanguage-get-indent :
-    ( t@DeclarationInst(t1__, t2__, t3__)
+    ( t@GlobalDeclarationInst(t1__, t2__, t3__)
     , index
     ) -> indent
     where sort := <ia-get-sort> t
@@ -516,7 +516,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    ( t@DeclarationInst(t1__, t2__, t3__)
+    ( t@GlobalDeclarationInst(t1__, t2__, t3__)
     , index
     ) -> separator
     where sort := <ia-get-sort> t
@@ -533,7 +533,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    ( t@DeclarationInst(t1__, t2__, t3__)
+    ( t@GlobalDeclarationInst(t1__, t2__, t3__)
     , index
     ) -> ws
     where sort := <ia-get-sort> t

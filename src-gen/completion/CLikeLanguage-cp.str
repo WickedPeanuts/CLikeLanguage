@@ -58,8 +58,8 @@ rules
 
   suggest-completions(|completions):
     GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "Declaration"
-                                 , Declaration(
+                               | ( "GlobalDeclaration"
+                                 , GlobalDeclaration(
                                      <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
                                    , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
                                    )
@@ -69,8 +69,8 @@ rules
 
   suggest-completions(|completions):
     GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "DeclarationArray"
-                                 , DeclarationArray(
+                               | ( "GlobalDeclarationArray"
+                                 , GlobalDeclarationArray(
                                      <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
                                    , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
                                    )
@@ -80,8 +80,8 @@ rules
 
   suggest-completions(|completions):
     GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "DeclarationInst"
-                                 , DeclarationInst(
+                               | ( "GlobalDeclarationInst"
+                                 , GlobalDeclarationInst(
                                      <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
                                    , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
                                    , <try(inline-completions(|GlobalVariable-Plhdr()))> Expression-Plhdr()
