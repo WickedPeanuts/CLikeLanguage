@@ -6,14 +6,9 @@ signature
     sorts
       Start
       Program
-      GlobalVariable
-      Structure
-      Function
       CodeBlock
       Statement
-      If
       IfElse
-      IfHeader
       Variable
       Parameter
       Argument
@@ -26,28 +21,20 @@ signature
       BasicFunction
     constructors
       Program : ID * List(Program) -> Start 
-      GlobalVariable : GlobalVariable -> Program 
-      Structure : Structure -> Program 
-      Function : Function -> Program 
-      GlobalDeclaration : Type * ID -> GlobalVariable 
-      GlobalDeclarationArray : Type * ID -> GlobalVariable 
-      GlobalDeclarationInst : Type * ID * Expression -> GlobalVariable 
-      Declaration : ID * List(Variable) -> Structure 
-      Declaration : Type * ID * List(Parameter) * CodeBlock -> Function 
+      __Variable2Program__ : Variable -> Program {implicit}
+      Structure : List(Variable) * ID -> Program 
+      Function : Type * ID * List(Parameter) * CodeBlock -> Program 
+      Statement : Statement -> Program 
       Block : List(Statement) -> CodeBlock 
-      If : If -> Statement 
-      While : Expression * CodeBlock -> Statement 
-      VariableDeclaration : Variable -> Statement 
+      If : Expression * Statement * IfElse -> Statement 
+      While : Expression * Statement -> Statement 
       Attribution : ID * Expression -> Statement 
       Break : Statement 
       Return : Expression -> Statement 
-      Block : IfHeader * CodeBlock * IfElse -> If 
-      Single : IfHeader * Statement * IfElse -> If 
-      Block : CodeBlock -> IfElse 
+      __CodeBlock2Statement__ : CodeBlock -> Statement {implicit}
       Single : Statement -> IfElse 
-      Declaration : Expression -> IfHeader 
       Declaration : Type * ID -> Variable 
-      DeclarationArray : Type * ID -> Variable 
+      DeclarationArray : Type * ID * INT -> Variable 
       DeclarationInst : Type * ID * Expression -> Variable 
       Parameter : Type * ID -> Parameter 
       Separator : Parameter * Parameter -> Parameter 
@@ -58,10 +45,10 @@ signature
       Logic : Expression * OperatorComparator * Expression -> Expression 
       Primitive : Primitive -> Expression 
       Expression : Expression -> Expression 
-      Num : INT -> Primitive 
-      Char : CHAR -> Primitive 
-      Boolean : BOOLEAN -> Primitive 
-      Variable : ID -> Primitive 
+      __INT2Primitive__ : INT -> Primitive {implicit}
+      __CHAR2Primitive__ : CHAR -> Primitive {implicit}
+      __BOOLEAN2Primitive__ : BOOLEAN -> Primitive {implicit}
+      __ID2Primitive__ : ID -> Primitive {implicit}
       Function : ID * List(Argument) -> Primitive 
       Add : OperatorTerm 
       Sub : OperatorTerm 

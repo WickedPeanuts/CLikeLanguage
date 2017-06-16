@@ -27,20 +27,19 @@ rules
                       ; fail> completions
 
   suggest-completions(|completions):
-    Program-Plhdr() -> <add-completions(
-                        | ( "GlobalVariable"
-                          , GlobalVariable(
-                              <try(inline-completions(|Program-Plhdr()))> GlobalVariable-Plhdr()
-                            )
-                          )
-                        )
-                        ; fail> completions
+    Program-Plhdr() -> <suggest-completions(|completions)> Variable-Plhdr()
+    where <not(is-expanded)> (Program-Plhdr(), Variable-Plhdr())
+          ; rules (
+              is-expanded :
+                (Program-Plhdr(), Variable-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
     Program-Plhdr() -> <add-completions(
                         | ( "Structure"
                           , Structure(
-                              <try(inline-completions(|Program-Plhdr()))> Structure-Plhdr()
+                              CURSOR_ELEMENT()
+                            , <try(inline-completions(|Program-Plhdr()))> ID-Plhdr()
                             )
                           )
                         )
@@ -50,69 +49,24 @@ rules
     Program-Plhdr() -> <add-completions(
                         | ( "Function"
                           , Function(
-                              <try(inline-completions(|Program-Plhdr()))> Function-Plhdr()
+                              <try(inline-completions(|Program-Plhdr()))> Type-Plhdr()
+                            , <try(inline-completions(|Program-Plhdr()))> ID-Plhdr()
+                            , CURSOR_ELEMENT()
+                            , <try(inline-completions(|Program-Plhdr()))> CodeBlock-Plhdr()
                             )
                           )
                         )
                         ; fail> completions
 
   suggest-completions(|completions):
-    GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "GlobalDeclaration"
-                                 , GlobalDeclaration(
-                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
-                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
-                                   )
-                                 )
-                               )
-                               ; fail> completions
-
-  suggest-completions(|completions):
-    GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "GlobalDeclarationArray"
-                                 , GlobalDeclarationArray(
-                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
-                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
-                                   )
-                                 )
-                               )
-                               ; fail> completions
-
-  suggest-completions(|completions):
-    GlobalVariable-Plhdr() -> <add-completions(
-                               | ( "GlobalDeclarationInst"
-                                 , GlobalDeclarationInst(
-                                     <try(inline-completions(|GlobalVariable-Plhdr()))> Type-Plhdr()
-                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> ID-Plhdr()
-                                   , <try(inline-completions(|GlobalVariable-Plhdr()))> Expression-Plhdr()
-                                   )
-                                 )
-                               )
-                               ; fail> completions
-
-  suggest-completions(|completions):
-    Structure-Plhdr() -> <add-completions(
-                          | ( "Declaration"
-                            , Declaration(
-                                <try(inline-completions(|Structure-Plhdr()))> ID-Plhdr()
-                              , CURSOR_ELEMENT()
-                              )
+    Program-Plhdr() -> <add-completions(
+                        | ( "Statement"
+                          , Statement(
+                              <try(inline-completions(|Program-Plhdr()))> Statement-Plhdr()
                             )
                           )
-                          ; fail> completions
-
-  suggest-completions(|completions):
-    Function-Plhdr() -> <add-completions(
-                         | ( "Declaration"
-                           , Declaration(
-                               <try(inline-completions(|Function-Plhdr()))> Type-Plhdr()
-                             , <try(inline-completions(|Function-Plhdr()))> ID-Plhdr()
-                             , CURSOR_ELEMENT()
-                             , <try(inline-completions(|Function-Plhdr()))> CodeBlock-Plhdr()
-                             )
-                           )
-                         )
-                         ; fail> completions
+                        )
+                        ; fail> completions
 
   suggest-completions(|completions):
     CodeBlock-Plhdr() -> <add-completions(
@@ -124,7 +78,9 @@ rules
     Statement-Plhdr() -> <add-completions(
                           | ( "If"
                             , If(
-                                <try(inline-completions(|Statement-Plhdr()))> If-Plhdr()
+                                <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
+                              , <try(inline-completions(|Statement-Plhdr()))> Statement-Plhdr()
+                              , Some(CURSOR_ELEMENT())
                               )
                             )
                           )
@@ -135,17 +91,7 @@ rules
                           | ( "While"
                             , While(
                                 <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
-                              , <try(inline-completions(|Statement-Plhdr()))> CodeBlock-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
-
-  suggest-completions(|completions):
-    Statement-Plhdr() -> <add-completions(
-                          | ( "VariableDeclaration"
-                            , VariableDeclaration(
-                                <try(inline-completions(|Statement-Plhdr()))> Variable-Plhdr()
+                              , <try(inline-completions(|Statement-Plhdr()))> Statement-Plhdr()
                               )
                             )
                           )
@@ -177,38 +123,12 @@ rules
                           ; fail> completions
 
   suggest-completions(|completions):
-    If-Plhdr() -> <add-completions(
-                   | ( "Block"
-                     , Block(
-                         <try(inline-completions(|If-Plhdr()))> IfHeader-Plhdr()
-                       , <try(inline-completions(|If-Plhdr()))> CodeBlock-Plhdr()
-                       , Some(CURSOR_ELEMENT())
-                       )
-                     )
-                   )
-                   ; fail> completions
-
-  suggest-completions(|completions):
-    If-Plhdr() -> <add-completions(
-                   | ( "Single"
-                     , Single(
-                         <try(inline-completions(|If-Plhdr()))> IfHeader-Plhdr()
-                       , <try(inline-completions(|If-Plhdr()))> Statement-Plhdr()
-                       , Some(CURSOR_ELEMENT())
-                       )
-                     )
-                   )
-                   ; fail> completions
-
-  suggest-completions(|completions):
-    IfElse-Plhdr() -> <add-completions(
-                       | ( "Block"
-                         , Block(
-                             <try(inline-completions(|IfElse-Plhdr()))> CodeBlock-Plhdr()
-                           )
-                         )
-                       )
-                       ; fail> completions
+    Statement-Plhdr() -> <suggest-completions(|completions)> CodeBlock-Plhdr()
+    where <not(is-expanded)> (Statement-Plhdr(), CodeBlock-Plhdr())
+          ; rules (
+              is-expanded :
+                (Statement-Plhdr(), CodeBlock-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
     IfElse-Plhdr() -> <add-completions(
@@ -219,16 +139,6 @@ rules
                          )
                        )
                        ; fail> completions
-
-  suggest-completions(|completions):
-    IfHeader-Plhdr() -> <add-completions(
-                         | ( "Declaration"
-                           , Declaration(
-                               <try(inline-completions(|IfHeader-Plhdr()))> Expression-Plhdr()
-                             )
-                           )
-                         )
-                         ; fail> completions
 
   suggest-completions(|completions):
     Variable-Plhdr() -> <add-completions(
@@ -247,6 +157,7 @@ rules
                            , DeclarationArray(
                                <try(inline-completions(|Variable-Plhdr()))> Type-Plhdr()
                              , <try(inline-completions(|Variable-Plhdr()))> ID-Plhdr()
+                             , <try(inline-completions(|Variable-Plhdr()))> INT-Plhdr()
                              )
                            )
                          )
@@ -364,44 +275,36 @@ rules
                            ; fail> completions
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
-                          | ( "Num"
-                            , Num(
-                                <try(inline-completions(|Primitive-Plhdr()))> INT-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
+    Primitive-Plhdr() -> <suggest-completions(|completions)> INT-Plhdr()
+    where <not(is-expanded)> (Primitive-Plhdr(), INT-Plhdr())
+          ; rules (
+              is-expanded :
+                (Primitive-Plhdr(), INT-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
-                          | ( "Char"
-                            , Char(
-                                <try(inline-completions(|Primitive-Plhdr()))> CHAR-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
+    Primitive-Plhdr() -> <suggest-completions(|completions)> CHAR-Plhdr()
+    where <not(is-expanded)> (Primitive-Plhdr(), CHAR-Plhdr())
+          ; rules (
+              is-expanded :
+                (Primitive-Plhdr(), CHAR-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
-                          | ( "Boolean"
-                            , Boolean(
-                                <try(inline-completions(|Primitive-Plhdr()))> BOOLEAN-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
+    Primitive-Plhdr() -> <suggest-completions(|completions)> BOOLEAN-Plhdr()
+    where <not(is-expanded)> (Primitive-Plhdr(), BOOLEAN-Plhdr())
+          ; rules (
+              is-expanded :
+                (Primitive-Plhdr(), BOOLEAN-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
-                          | ( "Variable"
-                            , Variable(
-                                <try(inline-completions(|Primitive-Plhdr()))> ID-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
+    Primitive-Plhdr() -> <suggest-completions(|completions)> ID-Plhdr()
+    where <not(is-expanded)> (Primitive-Plhdr(), ID-Plhdr())
+          ; rules (
+              is-expanded :
+                (Primitive-Plhdr(), ID-Plhdr()) -> <id>
+            )
 
   suggest-completions(|completions):
     Primitive-Plhdr() -> <add-completions(
@@ -557,6 +460,24 @@ rules
     where <is-Expression-completion-sort> sort
 
   is-right-recursive :
+    "Statement" -> <id>
+
+  suggest-completions-right-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "While"
+                            , While(
+                                <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
+                              , orig-term
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-Statement-completion-sort> sort
+
+  is-Statement-completion-sort :
+    "Statement" -> <id>
+
+  is-right-recursive :
     "Parameter" -> <id>
 
   suggest-completions-right-rec(|completions):
@@ -620,59 +541,37 @@ rules
     "Expression" -> <id>
 
   is-left-recursive :
-    "GlobalVariable" -> <is-left-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "GlobalVariable"
-
-  is-right-recursive :
-    "GlobalVariable" -> <is-right-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "GlobalVariable"
-
-  is-Program-completion-sort :
-    "GlobalVariable" -> <id>
-
-  is-left-recursive :
-    "Structure" -> <is-left-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Structure"
-
-  is-right-recursive :
-    "Structure" -> <is-right-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Structure"
-
-  is-Program-completion-sort :
-    "Structure" -> <id>
-
-  is-left-recursive :
-    "Function" -> <is-left-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Function"
-
-  is-right-recursive :
-    "Function" -> <is-right-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Function"
-
-  is-Program-completion-sort :
-    "Function" -> <id>
-
-  is-left-recursive :
-    "If" -> <is-left-recursive> "Statement"
-    where <not(is-lexical-completion-sort)> "If"
-
-  is-right-recursive :
-    "If" -> <is-right-recursive> "Statement"
-    where <not(is-lexical-completion-sort)> "If"
-
-  is-Statement-completion-sort :
-    "If" -> <id>
-
-  is-left-recursive :
-    "Variable" -> <is-left-recursive> "Statement"
+    "Variable" -> <is-left-recursive> "Program"
     where <not(is-lexical-completion-sort)> "Variable"
 
   is-right-recursive :
-    "Variable" -> <is-right-recursive> "Statement"
+    "Variable" -> <is-right-recursive> "Program"
     where <not(is-lexical-completion-sort)> "Variable"
 
-  is-Statement-completion-sort :
+  is-Program-completion-sort :
     "Variable" -> <id>
+
+  is-left-recursive :
+    "Statement" -> <is-left-recursive> "Program"
+    where <not(is-lexical-completion-sort)> "Statement"
+
+  is-right-recursive :
+    "Statement" -> <is-right-recursive> "Program"
+    where <not(is-lexical-completion-sort)> "Statement"
+
+  is-Program-completion-sort :
+    "Statement" -> <id>
+
+  is-left-recursive :
+    "CodeBlock" -> <is-left-recursive> "Statement"
+    where <not(is-lexical-completion-sort)> "CodeBlock"
+
+  is-right-recursive :
+    "CodeBlock" -> <is-right-recursive> "Statement"
+    where <not(is-lexical-completion-sort)> "CodeBlock"
+
+  is-Statement-completion-sort :
+    "CodeBlock" -> <id>
 
   is-left-recursive :
     "Expression" -> <is-left-recursive> "Argument"
@@ -750,18 +649,6 @@ rules
     ?Program-Plhdr()
 
   is-SDF-placeholder =
-    ?GlobalVariable-Plhdr()
-
-  is-SDF-placeholder =
-    ?Structure-Plhdr()
-
-  is-SDF-placeholder =
-    ?Function-Plhdr()
-
-  is-SDF-placeholder =
-    ?If-Plhdr()
-
-  is-SDF-placeholder =
     ?CodeBlock-Plhdr()
 
   is-SDF-placeholder =
@@ -769,9 +656,6 @@ rules
 
   is-SDF-placeholder =
     ?Statement-Plhdr()
-
-  is-SDF-placeholder =
-    ?IfHeader-Plhdr()
 
   is-SDF-placeholder =
     ?Variable-Plhdr()

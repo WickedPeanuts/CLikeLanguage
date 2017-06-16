@@ -1,0 +1,177 @@
+Module(
+  "clikelanguage"
+, [ Imports(
+      [ Import("signatures/CLikeLanguage-sig")
+      , Import("completion/completion")
+      , Import("pp")
+      , Import("outline")
+      , Import("analysis")
+      ]
+    )
+  , Rules(
+      [ SDefT(
+          "debug-show-aterm"{398183}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(
+                Tuple(
+                  [Var("node"{398188}), Wld(), Wld(), Var("path"{398189}), Var("project-path"{398190})]
+                )
+              )
+            , NoAnnoList(Tuple([Var("filename"{398191}), Var("result"{398192})]))
+            , [ WithClause(
+                  Seq(
+                    Assign(
+                      Var("filename"{398191})
+                    , App(
+                        CallT(SVar("guarantee-extension"{396971}), [], [NoAnnoList(Str("\"aterm\""))])
+                      , Var("path"{398189})
+                      )
+                    )
+                  , Assign(Var("result"{398192}), Var("node"{398188}))
+                  )
+                )
+              ]
+            )
+          )
+        )
+      , SDefT(
+          "gera-xgcc"{398184}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(
+                Tuple(
+                  [ Var("node"{398193})
+                  , Var("position"{398194})
+                  , Var("ast"{398195})
+                  , Var("path"{398196})
+                  , Var("project-path"{398197})
+                  ]
+                )
+              )
+            , NoAnnoList(
+                Tuple(
+                  [ NoAnnoList(Str("\"assembly.txt\""))
+                  , App(CallT(SVar("gera-prog"{398185}), [], []), Var("ast"{398195}))
+                  ]
+                )
+              )
+            , []
+            )
+          )
+        )
+      , SDefT(
+          "gera-prog"{398185}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(Op("Program"{398045}, [Var("i"{398198}), Var("ld"{398199})]))
+            , NoAnnoList(
+                StringQuotation1(
+                  "       "
+                , [ QStr("\n       .file\t1\t\"assembly.c\"\n       .section\t.mdebug.abi32\n       .previous\n       \n       ")
+                  , StringEscape1(
+                      "       "
+                    , App(CallT(SVar("gera-program"{398186}), [], []), Var("ld"{398199}))
+                    )
+                  , QStr("\n       \n       .ident \"GCC: (GNU) 4.9.0\"\n     ")
+                  ]
+                )
+              )
+            , []
+            )
+          )
+        )
+      , SDefT(
+          "gera-program"{398186}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(List([]))
+            , NoAnnoList(StringQuotation1("            ", [QStr("\"\"")]))
+            , []
+            )
+          )
+        )
+      , SDefT(
+          "gera-program"{398186}
+        , []
+        , []
+        , SRule(
+            Rule(
+              Var("ld"{398200})
+            , NoAnnoList(
+                StringQuotation1(
+                  "            "
+                , [ StringEscape1(
+                      "            "
+                    , App(CallT(SVar("gera-GlobalDeclaration"{398187}), [], []), Var("ld"{398200}))
+                    )
+                  ]
+                )
+              )
+            , []
+            )
+          )
+        )
+      , SDefT(
+          "gera-GlobalDeclaration"{398187}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(Op("GlobalDeclaration"{398049}, [Var("a"{398201}), Var("b"{398202})]))
+            , NoAnnoList(StringQuotation1("                                 ", [QStr("asdf")]))
+            , []
+            )
+          )
+        )
+      , SDefT(
+          "gera-program"{398186}
+        , []
+        , []
+        , SRule(
+            Rule(
+              NoAnnoList(
+                Tuple(
+                  [ Var("n"{398203})
+                  , NoAnnoList(
+                      ListTail(
+                        [NoAnnoList(Tuple([Var("a"{398204}), Var("b"{398205})]))]
+                      , Var("t"{398206})
+                      )
+                    )
+                  ]
+                )
+              )
+            , NoAnnoList(
+                StringQuotation1(
+                  "                        "
+                , [ StringEscape1(
+                      "                        "
+                    , App(CallT(SVar("gera-program"{398186}), [], []), Var("b"{398205}))
+                    )
+                  , StringEscape1(
+                      "                                          "
+                    , App(
+                        CallT(SVar("gera-program"{398186}), [], [])
+                      , NoAnnoList(Tuple([Var("n"{398203}), Var("t"{398206})]))
+                      )
+                    )
+                  ]
+                )
+              )
+            , []
+            )
+          )
+        )
+      ]
+    )
+  ]
+)

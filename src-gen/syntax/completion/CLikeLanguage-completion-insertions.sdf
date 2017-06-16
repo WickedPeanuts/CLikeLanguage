@@ -5,22 +5,16 @@ imports completion/Common-completion-insertions
 
 exports
   context-free start-symbols
-    Start Program GlobalVariable Structure Function If CodeBlock IfElse
-    Statement IfHeader Variable Parameter Expression INT CHAR BOOLEAN Argument
-    OperatorTerm OperatorFactor OperatorComparator Type Primitive BasicFunction
-    INPUT ID
+    Start Program CodeBlock IfElse Statement Variable Parameter Expression INT
+    CHAR BOOLEAN Argument OperatorTerm OperatorFactor OperatorComparator Type
+    Primitive BasicFunction INPUT ID
 
   context-free syntax
     COMPLETION-INSERTION -> Start              {cons("Start-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Program            {cons("Program-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> GlobalVariable     {cons("GlobalVariable-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> Structure          {cons("Structure-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> Function           {cons("Function-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> If                 {cons("If-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> CodeBlock          {cons("CodeBlock-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> IfElse             {cons("IfElse-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Statement          {cons("Statement-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> IfHeader           {cons("IfHeader-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Variable           {cons("Variable-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Parameter          {cons("Parameter-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Expression         {cons("Expression-Plhdr"), placeholder-insertion}
@@ -42,12 +36,13 @@ exports
     COMPLETION-INSERTION -> "struct"  {literal-completion}
     COMPLETION-INSERTION -> "{"       {literal-completion}
     COMPLETION-INSERTION -> "}"       {literal-completion}
+    COMPLETION-INSERTION -> "if"      {literal-completion}
     COMPLETION-INSERTION -> "while"   {literal-completion}
     COMPLETION-INSERTION -> "break;"  {literal-completion}
     COMPLETION-INSERTION -> "return"  {literal-completion}
     COMPLETION-INSERTION -> "else"    {literal-completion}
-    COMPLETION-INSERTION -> "if"      {literal-completion}
-    COMPLETION-INSERTION -> "[];"     {literal-completion}
+    COMPLETION-INSERTION -> "["       {literal-completion}
+    COMPLETION-INSERTION -> "];"      {literal-completion}
     COMPLETION-INSERTION -> "="       {literal-completion}
     COMPLETION-INSERTION -> ";"       {literal-completion}
     COMPLETION-INSERTION -> "+"       {literal-completion}

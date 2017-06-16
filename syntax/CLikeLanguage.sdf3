@@ -14,36 +14,27 @@ context-free syntax
   
   Start.Program = "program" ID "{" Program* "}"
   
-  Program.GlobalVariable = GlobalVariable
-  Program.Structure = Structure
-  Program.Function = Function  
-  
-  GlobalVariable.GlobalDeclaration = Type ID ";"
-  GlobalVariable.GlobalDeclarationArray = Type ID "[];"
-  GlobalVariable.GlobalDeclarationInst = Type ID "=" Expression ";"
-  
-  Structure.Declaration = "struct" ID "{" Variable* "}" ";"
-  Function.Declaration = Type ID "(" Parameter* ")" CodeBlock
-  
+  Program = Variable
+  Program.Structure = "struct" "{" Variable* "}" ID ";"
+  Program.Function = Type ID "(" Parameter* ")" CodeBlock 
+  Program.Statement = Statement 
+    
   CodeBlock.Block = "{" Statement* "}"
   
-  Statement.If = If
-  Statement.While = "while" "(" Expression ")" CodeBlock
-  Statement.VariableDeclaration = Variable
+  Statement.If = "if" "(" Expression ")" Statement IfElse?
+  Statement.While = "while" "(" Expression ")" Statement
   Statement.Attribution = ID "=" Expression ";"
   Statement.Break = "break;"
   Statement.Return = "return" Expression ";"
+  Statement = CodeBlock
   
-  If.Block = IfHeader CodeBlock IfElse?
-  If.Single = IfHeader Statement IfElse?
-  IfElse.Block = "else" CodeBlock
   IfElse.Single = "else" Statement
-  IfHeader.Declaration = "if" "(" Expression ")"  
    
+  //Done
   Variable.Declaration = Type ID ";"
-  Variable.DeclarationArray = Type ID "[];"
+  Variable.DeclarationArray = Type ID "[" INT "];"
   Variable.DeclarationInst =  Type ID "=" Expression ";"
-      
+           
   Parameter.Parameter = Type ID
   Parameter.Separator = Parameter "," Parameter {left}
   
@@ -56,10 +47,10 @@ context-free syntax
   Expression.Primitive = Primitive
   Expression.Expression ="(" Expression ")"
   
-  Primitive.Num = INT
-  Primitive.Char = CHAR
-  Primitive.Boolean = BOOLEAN
-  Primitive.Variable = ID
+  Primitive = INT
+  Primitive = CHAR
+  Primitive = BOOLEAN
+  Primitive = ID
   Primitive.Function = ID "(" Argument* ")"
   
   OperatorTerm.Add = "+"

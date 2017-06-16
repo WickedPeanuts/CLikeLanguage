@@ -26,16 +26,47 @@ rules // Debugging
        .section	.mdebug.abi32
        .previous
        
-       [<gera-program> ld]
+       [<gera-program>ld]
        
        .ident "GCC: (GNU) 4.9.0"
      ]
      
   gera-program:
-    [] -> $[""]
-    
+    [] -> $[]
+  
+  //VARIABLE
+  //Variable.Declaration OK!
   gera-program:
-    ld -> $[[<gera-GlobalDeclaration> ld]]
+   [Declaration(Type, ID)|tail] ->
+    $[
+    .comm	[ID],4,4
+    [<gera-program>tail]
+    ]
     
-  gera-GlobalDeclaration:
-    GlobalDeclaration(b, c) -> $[[b], [c]]
+  //TODO aprender a distrinchar variáveis
+  gera-program:
+   [Structure(VarList, ID)|tail] ->
+    $[
+    .comm	[ID], [memSize], 0
+    [<gera-program>tail]
+    ]
+    with
+      memSize := <mul> (Integer(), 4)
+  
+  //TODO Gerar Expressão
+  gera-program:
+   [DeclarationInst(Type, ID, Expression)|tail] ->
+    $[
+    .comm	[ID],4,4
+    [<gera-program>tail]
+    ]
+  
+  //Bug (Integer())
+  gera-program:
+   [DeclarationArray(Type, ID, Integer())|tail] ->
+    $[
+    .comm	[ID],[memSize],0
+    [<gera-program>tail]
+    ]
+    with
+      memSize := <mul> (Integer(), 4)

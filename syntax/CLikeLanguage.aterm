@@ -1,0 +1,334 @@
+Module(
+  Unparameterized("CLikeLanguage")
+, [Imports([Module(Unparameterized("Common"))])]
+, [ SDFSection(ContextFreeStartSymbols([Sort("Start")]))
+  , SDFSection(
+      Sorts(
+        [DeclSort("Variable"), DeclSort("Expression"), DeclSort("Code"), DeclSort("Parameter")]
+      )
+    )
+  , SDFSection(
+      ContextFreeSyntax(
+        [ SdfProductionWithCons(
+            SortCons(SortDef("Start"), Constructor("Program"))
+          , Rhs(
+              [ Lit("\"program\"")
+              , Sort("ID")
+              , Lit("\"{\"")
+              , IterStar(Sort("Program"))
+              , Lit("\"}\"")
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProduction(SortDef("Program"), Rhs([Sort("Variable")]), NoAttrs())
+        , SdfProductionWithCons(
+            SortCons(SortDef("Program"), Constructor("Structure"))
+          , Rhs(
+              [ Lit("\"struct\"")
+              , Sort("ID")
+              , Lit("\"{\"")
+              , IterStar(Sort("Variable"))
+              , Lit("\"}\"")
+              , Lit("\";\"")
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Program"), Constructor("Function"))
+          , Rhs(
+              [ Sort("Type")
+              , Sort("ID")
+              , Lit("\"(\"")
+              , IterStar(Sort("Parameter"))
+              , Lit("\")\"")
+              , Sort("CodeBlock")
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Program"), Constructor("Statement"))
+          , Rhs([Sort("Statement")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("CodeBlock"), Constructor("Block"))
+          , Rhs(
+              [Lit("\"{\""), IterStar(Sort("Statement")), Lit("\"}\"")]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Statement"), Constructor("If"))
+          , Rhs(
+              [ Lit("\"if\"")
+              , Lit("\"(\"")
+              , Sort("Expression")
+              , Lit("\")\"")
+              , Sort("Statement")
+              , Opt(Sort("IfElse"))
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Statement"), Constructor("While"))
+          , Rhs(
+              [ Lit("\"while\"")
+              , Lit("\"(\"")
+              , Sort("Expression")
+              , Lit("\")\"")
+              , Sort("Statement")
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Statement"), Constructor("Attribution"))
+          , Rhs(
+              [Sort("ID"), Lit("\"=\""), Sort("Expression"), Lit("\";\"")]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Statement"), Constructor("Break"))
+          , Rhs([Lit("\"break;\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Statement"), Constructor("Return"))
+          , Rhs([Lit("\"return\""), Sort("Expression"), Lit("\";\"")])
+          , NoAttrs()
+          )
+        , SdfProduction(SortDef("Statement"), Rhs([Sort("CodeBlock")]), NoAttrs())
+        , SdfProductionWithCons(
+            SortCons(SortDef("IfElse"), Constructor("Single"))
+          , Rhs([Lit("\"else\""), Sort("Statement")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Variable"), Constructor("Declaration"))
+          , Rhs([Sort("Type"), Sort("ID"), Lit("\";\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Variable"), Constructor("DeclarationArray"))
+          , Rhs([Sort("Type"), Sort("ID"), Lit("\"[];\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Variable"), Constructor("DeclarationInst"))
+          , Rhs(
+              [ Sort("Type")
+              , Sort("ID")
+              , Lit("\"=\"")
+              , Sort("Expression")
+              , Lit("\";\"")
+              ]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Parameter"), Constructor("Parameter"))
+          , Rhs([Sort("Type"), Sort("ID")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Parameter"), Constructor("Separator"))
+          , Rhs([Sort("Parameter"), Lit("\",\""), Sort("Parameter")])
+          , Attrs([Assoc(Left())])
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Argument"), Constructor("Parameter"))
+          , Rhs([Sort("Expression")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Argument"), Constructor("Separator"))
+          , Rhs([Sort("Expression"), Lit("\",\""), Sort("Expression")])
+          , Attrs([Assoc(Left())])
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Expression"), Constructor("Add"))
+          , TemplateSquare(
+              [ Line(
+                  [ Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("OperatorTerm"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  ]
+                )
+              ]
+            )
+          , Attrs([Assoc(Left())])
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Expression"), Constructor("Mul"))
+          , TemplateSquare(
+              [ Line(
+                  [ Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("OperatorFactor"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  ]
+                )
+              ]
+            )
+          , Attrs([Assoc(Left())])
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Expression"), Constructor("Logic"))
+          , TemplateSquare(
+              [ Line(
+                  [ Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("OperatorComparator"), NoOptions()))
+                  , Layout(" ")
+                  , Squared(Placeholder(Sort("Expression"), NoOptions()))
+                  ]
+                )
+              ]
+            )
+          , Attrs([Assoc(Left())])
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Expression"), Constructor("Primitive"))
+          , Rhs([Sort("Primitive")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("Expression"), Constructor("Expression"))
+          , Rhs([Lit("\"(\""), Sort("Expression"), Lit("\")\"")])
+          , NoAttrs()
+          )
+        , SdfProduction(SortDef("Primitive"), Rhs([Sort("INT")]), NoAttrs())
+        , SdfProduction(SortDef("Primitive"), Rhs([Sort("CHAR")]), NoAttrs())
+        , SdfProduction(SortDef("Primitive"), Rhs([Sort("BOOLEAN")]), NoAttrs())
+        , SdfProduction(SortDef("Primitive"), Rhs([Sort("ID")]), NoAttrs())
+        , SdfProductionWithCons(
+            SortCons(SortDef("Primitive"), Constructor("Function"))
+          , Rhs(
+              [Sort("ID"), Lit("\"(\""), IterStar(Sort("Argument")), Lit("\")\"")]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorTerm"), Constructor("Add"))
+          , Rhs([Lit("\"+\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorTerm"), Constructor("Sub"))
+          , Rhs([Lit("\"-\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorFactor"), Constructor("Mul"))
+          , Rhs([Lit("\"*\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorFactor"), Constructor("Div"))
+          , Rhs([Lit("\"/\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("Equal"))
+          , Rhs([Lit("\"==\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("Diff"))
+          , Rhs([Lit("\"!=\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("GT"))
+          , Rhs([Lit("\">\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("GTE"))
+          , Rhs([Lit("\">=\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("LT"))
+          , Rhs([Lit("\"<\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("LTE"))
+          , Rhs([Lit("\"<=\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("And"))
+          , Rhs([Lit("\"&&\"")])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("OperatorComparator"), Constructor("Or"))
+          , Rhs([Lit("\"||\"")])
+          , NoAttrs()
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Type"), Constructor("Void"))
+          , TemplateSquare([Line([String("void")])])
+          , NoAttrs()
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Type"), Constructor("Integer"))
+          , TemplateSquare([Line([String("int")])])
+          , NoAttrs()
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Type"), Constructor("Char"))
+          , TemplateSquare([Line([String("char")])])
+          , NoAttrs()
+          )
+        , TemplateProductionWithCons(
+            SortCons(SortDef("Type"), Constructor("Boolean"))
+          , TemplateSquare([Line([String("bool")])])
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("BasicFunction"), Constructor("printPrimitive"))
+          , Rhs(
+              [Lit("\"print\""), Lit("\"(\""), Sort("Primitive"), Lit("\")\"")]
+            )
+          , NoAttrs()
+          )
+        , SdfProductionWithCons(
+            SortCons(SortDef("BasicFunction"), Constructor("scan"))
+          , Rhs(
+              [ Lit("\"scan\"")
+              , Lit("\"(\"")
+              , IterStar(Sort("INPUT"))
+              , Lit("\",\"")
+              , IterStar(Sort("ID"))
+              , Lit("\")\"")
+              ]
+            )
+          , NoAttrs()
+          )
+        ]
+      )
+    )
+  , SDFSection(
+      ContextFreePriorities(
+        [ Chain(
+            [ SimpleRefGroup(SortConsRef(Sort("Expression"), Constructor("Mul")))
+            , AssocRefGroup(Left(), [SortConsRef(Sort("Expression"), Constructor("Add"))])
+            , SimpleRefGroup(SortConsRef(Sort("Expression"), Constructor("Logic")))
+            ]
+          )
+        ]
+      )
+    )
+  ]
+)

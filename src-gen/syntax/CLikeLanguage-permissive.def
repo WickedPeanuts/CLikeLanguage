@@ -43,7 +43,6 @@ exports
                                          -> "struct"        {recover, cons("INSERTION")}
                                          -> "}"             {recover, cons("INSERTION")}
                                          -> ";"             {recover, cons("INSERTION")}
-                                         -> "if"            {recover, cons("INSERTION")}
                                          -> "print"         {recover, cons("INSERTION")}
                                          -> ")"             {recover, cons("INSERTION")}
                                          -> "scan"          {recover, cons("INSERTION")}
@@ -102,62 +101,55 @@ exports
   sorts Variable Expression Code Parameter
 
   context-free syntax
-    "program" ID "{" Program* "}"            -> Start              {cons("Program")}
-    GlobalVariable                           -> Program            {cons("GlobalVariable")}
-    Structure                                -> Program            {cons("Structure")}
-    Function                                 -> Program            {cons("Function")}
-    Type ID ";"                              -> GlobalVariable     {cons("GlobalDeclaration")}
-    Type ID "[];"                            -> GlobalVariable     {cons("GlobalDeclarationArray")}
-    Type ID "=" Expression ";"               -> GlobalVariable     {cons("GlobalDeclarationInst")}
-    "struct" ID "{" Variable* "}" ";"        -> Structure          {cons("Declaration")}
-    Type ID "(" Parameter* ")" CodeBlock     -> Function           {cons("Declaration")}
-    "{" Statement* "}"                       -> CodeBlock          {cons("Block")}
-    If                                       -> Statement          {cons("If")}
-    "while" "(" Expression ")" CodeBlock     -> Statement          {cons("While")}
-    Variable                                 -> Statement          {cons("VariableDeclaration")}
-    ID "=" Expression ";"                    -> Statement          {cons("Attribution")}
-    "break;"                                 -> Statement          {cons("Break")}
-    "return" Expression ";"                  -> Statement          {cons("Return")}
-    IfHeader CodeBlock IfElse?               -> If                 {cons("Block")}
-    IfHeader Statement IfElse?               -> If                 {cons("Single")}
-    "else" CodeBlock                         -> IfElse             {cons("Block")}
-    "else" Statement                         -> IfElse             {cons("Single")}
-    "if" "(" Expression ")"                  -> IfHeader           {cons("Declaration")}
-    Type ID ";"                              -> Variable           {cons("Declaration")}
-    Type ID "[];"                            -> Variable           {cons("DeclarationArray")}
-    Type ID "=" Expression ";"               -> Variable           {cons("DeclarationInst")}
-    Type ID                                  -> Parameter          {cons("Parameter")}
-    Parameter "," Parameter                  -> Parameter          {cons("Separator"), left}
-    Expression                               -> Argument           {cons("Parameter")}
-    Expression "," Expression                -> Argument           {cons("Separator"), left}
-    Expression OperatorTerm Expression       -> Expression         {cons("Add"), left}
-    Expression OperatorFactor Expression     -> Expression         {cons("Mul"), left}
-    Expression OperatorComparator Expression -> Expression         {cons("Logic"), left}
-    Primitive                                -> Expression         {cons("Primitive")}
-    "(" Expression ")"                       -> Expression         {cons("Expression")}
-    INT                                      -> Primitive          {cons("Num")}
-    CHAR                                     -> Primitive          {cons("Char")}
-    BOOLEAN                                  -> Primitive          {cons("Boolean")}
-    ID                                       -> Primitive          {cons("Variable")}
-    ID "(" Argument* ")"                     -> Primitive          {cons("Function")}
-    "+"                                      -> OperatorTerm       {cons("Add")}
-    "-"                                      -> OperatorTerm       {cons("Sub")}
-    "*"                                      -> OperatorFactor     {cons("Mul")}
-    "/"                                      -> OperatorFactor     {cons("Div")}
-    "=="                                     -> OperatorComparator {cons("Equal")}
-    "!="                                     -> OperatorComparator {cons("Diff")}
-    ">"                                      -> OperatorComparator {cons("GT")}
-    ">="                                     -> OperatorComparator {cons("GTE")}
-    "<"                                      -> OperatorComparator {cons("LT")}
-    "<="                                     -> OperatorComparator {cons("LTE")}
-    "&&"                                     -> OperatorComparator {cons("And")}
-    "||"                                     -> OperatorComparator {cons("Or")}
-    "void"                                   -> Type               {cons("Void")}
-    "int"                                    -> Type               {cons("Integer")}
-    "char"                                   -> Type               {cons("Char")}
-    "bool"                                   -> Type               {cons("Boolean")}
-    "print" "(" Primitive ")"                -> BasicFunction      {cons("printPrimitive")}
-    "scan" "(" INPUT* "," ID* ")"            -> BasicFunction      {cons("scan")}
+    "program" ID "{" Program* "}"             -> Start              {cons("Program")}
+    Variable                                  -> Program            
+    "struct" "{" Variable* "}" ID ";"         -> Program            {cons("Structure")}
+    Type ID "(" Parameter* ")" CodeBlock      -> Program            {cons("Function")}
+    Statement                                 -> Program            {cons("Statement")}
+    "{" Statement* "}"                        -> CodeBlock          {cons("Block")}
+    "if" "(" Expression ")" Statement IfElse? -> Statement          {cons("If")}
+    "while" "(" Expression ")" Statement      -> Statement          {cons("While")}
+    ID "=" Expression ";"                     -> Statement          {cons("Attribution")}
+    "break;"                                  -> Statement          {cons("Break")}
+    "return" Expression ";"                   -> Statement          {cons("Return")}
+    CodeBlock                                 -> Statement          
+    "else" Statement                          -> IfElse             {cons("Single")}
+    Type ID ";"                               -> Variable           {cons("Declaration")}
+    Type ID "," Variable                      -> Variable           {cons("MultipleDeclaration")}
+    Type ID "[" INT "];"                      -> Variable           {cons("DeclarationArray")}
+    Type ID "=" Expression ";"                -> Variable           {cons("DeclarationInst")}
+    Type ID                                   -> Parameter          {cons("Parameter")}
+    Parameter "," Parameter                   -> Parameter          {cons("Separator"), left}
+    Expression                                -> Argument           {cons("Parameter")}
+    Expression "," Expression                 -> Argument           {cons("Separator"), left}
+    Expression OperatorTerm Expression        -> Expression         {cons("Add"), left}
+    Expression OperatorFactor Expression      -> Expression         {cons("Mul"), left}
+    Expression OperatorComparator Expression  -> Expression         {cons("Logic"), left}
+    Primitive                                 -> Expression         {cons("Primitive")}
+    "(" Expression ")"                        -> Expression         {cons("Expression")}
+    INT                                       -> Primitive          
+    CHAR                                      -> Primitive          
+    BOOLEAN                                   -> Primitive          
+    ID                                        -> Primitive          
+    ID "(" Argument* ")"                      -> Primitive          {cons("Function")}
+    "+"                                       -> OperatorTerm       {cons("Add")}
+    "-"                                       -> OperatorTerm       {cons("Sub")}
+    "*"                                       -> OperatorFactor     {cons("Mul")}
+    "/"                                       -> OperatorFactor     {cons("Div")}
+    "=="                                      -> OperatorComparator {cons("Equal")}
+    "!="                                      -> OperatorComparator {cons("Diff")}
+    ">"                                       -> OperatorComparator {cons("GT")}
+    ">="                                      -> OperatorComparator {cons("GTE")}
+    "<"                                       -> OperatorComparator {cons("LT")}
+    "<="                                      -> OperatorComparator {cons("LTE")}
+    "&&"                                      -> OperatorComparator {cons("And")}
+    "||"                                      -> OperatorComparator {cons("Or")}
+    "void"                                    -> Type               {cons("Void")}
+    "int"                                     -> Type               {cons("Integer")}
+    "char"                                    -> Type               {cons("Char")}
+    "bool"                                    -> Type               {cons("Boolean")}
+    "print" "(" Primitive ")"                 -> BasicFunction      {cons("printPrimitive")}
+    "scan" "(" INPUT* "," ID* ")"             -> BasicFunction      {cons("scan")}
 
   lexical syntax
     
@@ -165,14 +157,9 @@ exports
   context-free syntax
     "$Start"              -> Start              {cons("Start-Plhdr"), placeholder}
     "$Program"            -> Program            {cons("Program-Plhdr"), placeholder}
-    "$GlobalVariable"     -> GlobalVariable     {cons("GlobalVariable-Plhdr"), placeholder}
-    "$Structure"          -> Structure          {cons("Structure-Plhdr"), placeholder}
-    "$Function"           -> Function           {cons("Function-Plhdr"), placeholder}
-    "$If"                 -> If                 {cons("If-Plhdr"), placeholder}
     "$CodeBlock"          -> CodeBlock          {cons("CodeBlock-Plhdr"), placeholder}
     "$IfElse"             -> IfElse             {cons("IfElse-Plhdr"), placeholder}
     "$Statement"          -> Statement          {cons("Statement-Plhdr"), placeholder}
-    "$IfHeader"           -> IfHeader           {cons("IfHeader-Plhdr"), placeholder}
     "$Variable"           -> Variable           {cons("Variable-Plhdr"), placeholder}
     "$Parameter"          -> Parameter          {cons("Parameter-Plhdr"), placeholder}
     "$Expression"         -> Expression         {cons("Expression-Plhdr"), placeholder}

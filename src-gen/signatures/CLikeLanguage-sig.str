@@ -10,28 +10,20 @@ signature
 
   constructors
     Program                  : ID * List(Program) -> Start
-    GlobalVariable           : GlobalVariable -> Program
-    Structure                : Structure -> Program
-    Function                 : Function -> Program
-    GlobalDeclaration        : Type * ID -> GlobalVariable
-    GlobalDeclarationArray   : Type * ID -> GlobalVariable
-    GlobalDeclarationInst    : Type * ID * Expression -> GlobalVariable
-    Declaration              : ID * List(Variable) -> Structure
-    Declaration              : Type * ID * List(Parameter) * CodeBlock -> Function
+                             : Variable -> Program
+    Structure                : List(Variable) * ID -> Program
+    Function                 : Type * ID * List(Parameter) * CodeBlock -> Program
+    Statement                : Statement -> Program
     Block                    : List(Statement) -> CodeBlock
-    If                       : If -> Statement
-    While                    : Expression * CodeBlock -> Statement
-    VariableDeclaration      : Variable -> Statement
+    If                       : Expression * Statement * Option(IfElse) -> Statement
+    While                    : Expression * Statement -> Statement
     Attribution              : ID * Expression -> Statement
     Break                    : Statement
     Return                   : Expression -> Statement
-    Block                    : IfHeader * CodeBlock * Option(IfElse) -> If
-    Single                   : IfHeader * Statement * Option(IfElse) -> If
-    Block                    : CodeBlock -> IfElse
+                             : CodeBlock -> Statement
     Single                   : Statement -> IfElse
-    Declaration              : Expression -> IfHeader
     Declaration              : Type * ID -> Variable
-    DeclarationArray         : Type * ID -> Variable
+    DeclarationArray         : Type * ID * INT -> Variable
     DeclarationInst          : Type * ID * Expression -> Variable
     Parameter                : Type * ID -> Parameter
     Separator                : Parameter * Parameter -> Parameter
@@ -42,10 +34,10 @@ signature
     Logic                    : Expression * OperatorComparator * Expression -> Expression
     Primitive                : Primitive -> Expression
     Expression               : Expression -> Expression
-    Num                      : INT -> Primitive
-    Char                     : CHAR -> Primitive
-    Boolean                  : BOOLEAN -> Primitive
-    Variable                 : ID -> Primitive
+                             : INT -> Primitive
+                             : CHAR -> Primitive
+                             : BOOLEAN -> Primitive
+                             : ID -> Primitive
     Function                 : ID * List(Argument) -> Primitive
     Add                      : OperatorTerm
     Sub                      : OperatorTerm
@@ -67,14 +59,9 @@ signature
     scan                     : List(INPUT) * List(ID) -> BasicFunction
     Start-Plhdr              : Start
     Program-Plhdr            : Program
-    GlobalVariable-Plhdr     : GlobalVariable
-    Structure-Plhdr          : Structure
-    Function-Plhdr           : Function
-    If-Plhdr                 : If
     CodeBlock-Plhdr          : CodeBlock
     IfElse-Plhdr             : IfElse
     Statement-Plhdr          : Statement
-    IfHeader-Plhdr           : IfHeader
     Variable-Plhdr           : Variable
     Parameter-Plhdr          : Parameter
     Expression-Plhdr         : Expression
@@ -92,14 +79,9 @@ signature
     ID-Plhdr                 : ID
     Start-Plhdr              : COMPLETION-INSERTION -> Start
     Program-Plhdr            : COMPLETION-INSERTION -> Program
-    GlobalVariable-Plhdr     : COMPLETION-INSERTION -> GlobalVariable
-    Structure-Plhdr          : COMPLETION-INSERTION -> Structure
-    Function-Plhdr           : COMPLETION-INSERTION -> Function
-    If-Plhdr                 : COMPLETION-INSERTION -> If
     CodeBlock-Plhdr          : COMPLETION-INSERTION -> CodeBlock
     IfElse-Plhdr             : COMPLETION-INSERTION -> IfElse
     Statement-Plhdr          : COMPLETION-INSERTION -> Statement
-    IfHeader-Plhdr           : COMPLETION-INSERTION -> IfHeader
     Variable-Plhdr           : COMPLETION-INSERTION -> Variable
     Parameter-Plhdr          : COMPLETION-INSERTION -> Parameter
     Expression-Plhdr         : COMPLETION-INSERTION -> Expression

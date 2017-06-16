@@ -6,14 +6,9 @@ imports
 colorer
   _.Start-Plhdr              : gray   
   _.Program-Plhdr            : gray   
-  _.GlobalVariable-Plhdr     : gray   
-  _.Structure-Plhdr          : gray   
-  _.Function-Plhdr           : gray   
-  _.If-Plhdr                 : gray   
   _.CodeBlock-Plhdr          : gray   
   _.IfElse-Plhdr             : gray   
   _.Statement-Plhdr          : gray   
-  _.IfHeader-Plhdr           : gray   
   _.Variable-Plhdr           : gray   
   _.Parameter-Plhdr          : gray   
   _.Expression-Plhdr         : gray   
