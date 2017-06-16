@@ -345,50 +345,6 @@ strategies
              ws := ""
          end
 
-  prettyprint-CLikeLanguage-Program :
-    Statement(t1__) -> [ H(
-                           [SOpt(HS(), "0")]
-                         , [t1__']
-                         )
-                       ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Statement) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-
-  is-CLikeLanguage-Program =
-    ?Statement(_)
-
-  CLikeLanguage-get-indent :
-    (t@Statement(t1__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"Program"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@Statement(t1__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"Program"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@Statement(t1__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"Program"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           otherwise :
-             ws := ""
-         end
-
   prettyprint-CLikeLanguage-CodeBlock :
     Block(t1__) -> [ H(
                        [SOpt(HS(), "0")]
@@ -564,23 +520,23 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Statement :
-    Attribution(t1__, t2__) -> [ H(
-                                   [SOpt(HS(), "0")]
-                                 , [ t1__'
-                                   , S(" = ")
-                                   , t2__'
-                                   , S(" ;")
-                                   ]
-                                 )
-                               ]
+    Assignment(t1__, t2__) -> [ H(
+                                  [SOpt(HS(), "0")]
+                                , [ t1__'
+                                  , S(" = ")
+                                  , t2__'
+                                  , S(" ;")
+                                  ]
+                                )
+                              ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Statement =
-    ?Attribution(_, _)
+    ?Assignment(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Attribution(t1__, t2__), index) -> indent
+    (t@Assignment(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Statement"> sort
     with switch !index
@@ -593,7 +549,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Attribution(t1__, t2__), index) -> separator
+    (t@Assignment(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Statement"> sort
     with switch !index
@@ -606,7 +562,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Attribution(t1__, t2__), index) -> ws
+    (t@Assignment(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Statement"> sort
     with switch !index
@@ -664,7 +620,9 @@ strategies
                         ]
                       )
                     ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t1__' := <pp-option(
+                     pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)
+                   )> t1__
 
   is-CLikeLanguage-Statement =
     ?Return(_)
@@ -2770,6 +2728,16 @@ strategies
 
   is-CLikeLanguage-IfElse =
     ?IfElse-Opt-Plhdr()
+
+  prettyprint-CLikeLanguage-Expression :
+    Expression-Opt-Plhdr() -> [ H(
+                                  []
+                                , [S("")]
+                                )
+                              ]
+
+  is-CLikeLanguage-Expression =
+    ?Expression-Opt-Plhdr()
 
   prettyprint-CLikeLanguage-Argument :
     Argument-Opt-Plhdr() -> [ H(

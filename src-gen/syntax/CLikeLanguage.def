@@ -49,17 +49,15 @@ exports
     Variable                                  -> Program            
     "struct" "{" Variable* "}" ID ";"         -> Program            {cons("Structure")}
     Type ID "(" Parameter* ")" CodeBlock      -> Program            {cons("Function")}
-    Statement                                 -> Program            {cons("Statement")}
     "{" Statement* "}"                        -> CodeBlock          {cons("Block")}
     "if" "(" Expression ")" Statement IfElse? -> Statement          {cons("If")}
     "while" "(" Expression ")" Statement      -> Statement          {cons("While")}
-    ID "=" Expression ";"                     -> Statement          {cons("Attribution")}
+    ID "=" Expression ";"                     -> Statement          {cons("Assignment")}
     "break;"                                  -> Statement          {cons("Break")}
     "return" Expression ";"                   -> Statement          {cons("Return")}
     CodeBlock                                 -> Statement          
     "else" Statement                          -> IfElse             {cons("Single")}
     Type ID ";"                               -> Variable           {cons("Declaration")}
-    Type ID "," Variable                      -> Variable           {cons("MultipleDeclaration")}
     Type ID "[" INT "];"                      -> Variable           {cons("DeclarationArray")}
     Type ID "=" Expression ";"                -> Variable           {cons("DeclarationInst")}
     Type ID                                   -> Parameter          {cons("Parameter")}

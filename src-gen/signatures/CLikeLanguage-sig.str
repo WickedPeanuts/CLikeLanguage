@@ -13,13 +13,12 @@ signature
                              : Variable -> Program
     Structure                : List(Variable) * ID -> Program
     Function                 : Type * ID * List(Parameter) * CodeBlock -> Program
-    Statement                : Statement -> Program
     Block                    : List(Statement) -> CodeBlock
     If                       : Expression * Statement * Option(IfElse) -> Statement
     While                    : Expression * Statement -> Statement
-    Attribution              : ID * Expression -> Statement
+    Assignment               : ID * Expression -> Statement
     Break                    : Statement
-    Return                   : Expression -> Statement
+    Return                   : Option(Expression) -> Statement
                              : CodeBlock -> Statement
     Single                   : Statement -> IfElse
     Declaration              : Type * ID -> Variable
@@ -102,6 +101,7 @@ signature
     Parameter-Opt-Plhdr      : Parameter
     Statement-Opt-Plhdr      : Statement
     IfElse-Opt-Plhdr         : IfElse
+    Expression-Opt-Plhdr     : Expression
     Argument-Opt-Plhdr       : Argument
     INPUT-Opt-Plhdr          : INPUT
     ID-Opt-Plhdr             : ID

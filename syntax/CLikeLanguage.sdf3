@@ -14,20 +14,21 @@ context-free syntax
   
   Start.Program = "program" ID "{" Program* "}"
   
+  //Done!
   Program = Variable
   Program.Structure = "struct" "{" Variable* "}" ID ";"
-  Program.Function = Type ID "(" Parameter* ")" CodeBlock 
-  Program.Statement = Statement 
+  Program.Function = Type ID "(" Parameter* ")" CodeBlock
     
   CodeBlock.Block = "{" Statement* "}"
   
   Statement.If = "if" "(" Expression ")" Statement IfElse?
   Statement.While = "while" "(" Expression ")" Statement
-  Statement.Attribution = ID "=" Expression ";"
+  Statement.Assignment = ID "=" Expression ";"
   Statement.Break = "break;"
-  Statement.Return = "return" Expression ";"
+  Statement.Return = "return" Expression? ";"
+  //Done!
   Statement = CodeBlock
-  
+  //Done!
   IfElse.Single = "else" Statement
    
   //Done

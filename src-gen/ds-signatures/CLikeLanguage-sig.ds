@@ -24,11 +24,10 @@ signature
       __Variable2Program__ : Variable -> Program {implicit}
       Structure : List(Variable) * ID -> Program 
       Function : Type * ID * List(Parameter) * CodeBlock -> Program 
-      Statement : Statement -> Program 
       Block : List(Statement) -> CodeBlock 
       If : Expression * Statement * IfElse -> Statement 
       While : Expression * Statement -> Statement 
-      Attribution : ID * Expression -> Statement 
+      Assignment : ID * Expression -> Statement 
       Break : Statement 
       Return : Expression -> Statement 
       __CodeBlock2Statement__ : CodeBlock -> Statement {implicit}

@@ -59,16 +59,6 @@ rules
                         ; fail> completions
 
   suggest-completions(|completions):
-    Program-Plhdr() -> <add-completions(
-                        | ( "Statement"
-                          , Statement(
-                              <try(inline-completions(|Program-Plhdr()))> Statement-Plhdr()
-                            )
-                          )
-                        )
-                        ; fail> completions
-
-  suggest-completions(|completions):
     CodeBlock-Plhdr() -> <add-completions(
                           | ("Block", Block(CURSOR_ELEMENT()))
                           )
@@ -99,8 +89,8 @@ rules
 
   suggest-completions(|completions):
     Statement-Plhdr() -> <add-completions(
-                          | ( "Attribution"
-                            , Attribution(
+                          | ( "Assignment"
+                            , Assignment(
                                 <try(inline-completions(|Statement-Plhdr()))> ID-Plhdr()
                               , <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
                               )
@@ -115,9 +105,7 @@ rules
   suggest-completions(|completions):
     Statement-Plhdr() -> <add-completions(
                           | ( "Return"
-                            , Return(
-                                <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
-                              )
+                            , Return(Some(CURSOR_ELEMENT()))
                             )
                           )
                           ; fail> completions
@@ -550,17 +538,6 @@ rules
 
   is-Program-completion-sort :
     "Variable" -> <id>
-
-  is-left-recursive :
-    "Statement" -> <is-left-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Statement"
-
-  is-right-recursive :
-    "Statement" -> <is-right-recursive> "Program"
-    where <not(is-lexical-completion-sort)> "Statement"
-
-  is-Program-completion-sort :
-    "Statement" -> <id>
 
   is-left-recursive :
     "CodeBlock" -> <is-left-recursive> "Statement"

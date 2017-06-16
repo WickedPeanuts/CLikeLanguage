@@ -34,15 +34,65 @@ rules // Debugging
   gera-program:
     [] -> $[]
   
-  //VARIABLE
-  //Variable.Declaration OK!
+  //STATEMENT
+  
+  //Blank (não sei se é necessário)
+  gera-statement:
+   [] -> $[]
+   
+  //Break;
+  gera-statement:
+   [Break()|tail] ->
+   $[
+   Break;
+   [<gera-statement>tail]
+   ]
+  
+  //Codeblock
+  gera-statement:
+   Block(Statement) -> 
+   $[
+   [<gera-statement>Statement]
+   ]
+   
+  //If
+  gera-statement:
+   [If(Expression, Statement, IfElse)|tail] ->
+   $[
+   IF_[ifCount]_BEGIN:
+   [<gera-statement>Statement]
+   IF_[ifCount]_NOTEQUAL:
+   [<gera-statement>Statement]
+   IF_[ifCount]_END:
+   ]
+   with
+     ifCount := 1
+  
+  //IFElse
+  gera-ifelse:
+   Some(Single(Statement)) ->
+   $[
+   [<gera-statement>Statement]
+   ]
+   
+  
+  
+  //PROGRAM
+  
+  //Function
+  //TODO GERAR PARAMETROS
   gera-program:
-   [Declaration(Type, ID)|tail] ->
+   [Function(Type, ID, ParameterList, Block(StatementList))|tail] ->
     $[
-    .comm	[ID],4,4
-    [<gera-program>tail]
+	[ID]:
+    [<gera-statement>StatementList]
+    .end	[ID]
+	.size	[ID], .-[ID]
+	.ident	"GCC: (GNU) 4.9.0"
+	[<gera-program>tail]
     ]
-    
+  
+  //Program.Structure
   //TODO aprender a distrinchar variáveis
   gera-program:
    [Structure(VarList, ID)|tail] ->
@@ -53,6 +103,16 @@ rules // Debugging
     with
       memSize := <mul> (Integer(), 4)
   
+  //Variable
+  //Program.Variable.Declaration OK!
+  gera-program:
+   [Declaration(Type, ID)|tail] ->
+    $[
+    .comm	[ID],4,4
+    [<gera-program>tail]
+    ]
+  
+  //Program.Variable.DeclarationInst
   //TODO Gerar Expressão
   gera-program:
    [DeclarationInst(Type, ID, Expression)|tail] ->
@@ -61,6 +121,7 @@ rules // Debugging
     [<gera-program>tail]
     ]
   
+  //Program.Variable.DeclarationArray
   //Bug (Integer())
   gera-program:
    [DeclarationArray(Type, ID, Integer())|tail] ->
