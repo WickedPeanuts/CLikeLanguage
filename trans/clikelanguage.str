@@ -21,113 +21,276 @@ rules // Debugging
     
   gera-prog:
      Program(i, ld)  -> 
-     $[
-       .file	1	"assembly.c"
+     $[.file	1	"assembly.c"
        .section	.mdebug.abi32
        .previous
        
        [<gera-program>ld]
        
-       .ident "GCC: (GNU) 4.9.0"
-     ]
-     
-  gera-program:
-    [] -> $[]
+       .ident "GCC: (GNU) 4.9.0"]
+       
+  
+  
+  //Expression
+  
+  
+  
+  //AddExpr OK!
+  gera-expression:
+   (AddExpr(expr1, oprTerm, expr2), register) ->
+   $[[<gera-expression> (expr1, 2)]
+   [<gera-expression> (expr2, 3)]
+   [<gera-operatorTerm> oprTerm]]
+  
+  //MulExpr OK!
+  gera-expression:
+   (MulExpr(expr1, oprFact, expr2), register) ->
+   $[[<gera-expression> (expr1, 2)]
+   [<gera-expression> (expr2, 3)]
+   [<gera-operatorFact> oprFact]] 
+   
+  //LogicExpr
+  gera-expression:
+   (LogicExpr(expr1, oprCmp, expr2), register) ->
+   $[[<gera-expression> (expr1, 2)]
+   [<gera-expression> (expr2, 3)]
+   [<gera-operatorCmp> oprCmp]]
+   
+  //ParenthesisExpression OK!
+  gera-expression:
+   (ParenthesisExpression(expr), register) ->
+   $[[<gera-expression>(expr, 0)]]
+  
+  //Primitive OK!
+  gera-expression:
+   (Primitive, register) ->
+   $[lw	$[register], [<gera-primitive> Primitive]]
+         
+  
+  
+  //Primitives
+  
+  
+  
+  //Primitive
+  gera-primitive:
+   Primitive ->
+   $[[Primitive]]
+   
+  //Primitive.PrimitiveFunction
+  gera-primitive:
+   PrimitiveFunction(varName, args) ->
+   $[[<gera-argument> args]]
+  
+  
+  
+  //Operators
+  
+  
+  
+  //OperatorTerm.Add OK!
+  gera-operatorTerm:
+   Add() -> $[#nop
+   addu	$2,$3,$2]
+   
+  //OperatorTerm.Add OK!
+  gera-operatorTerm:
+   Sub() -> $[#nop
+   subu	$2,$3,$2]
+   
+  //OperatorFactor OK!
+  gera-operatorFact:
+   Mul() -> $[#nop
+   mult	$3,$2
+   mflo $3]
+   
+  //OperatorFactor OK!
+  gera-operatorFact:
+   Div() -> $[.set	noreorder
+   bne	$2,$0,$1f
+   div	$0,$3,$2
+   break	7
+   .set	reorder
+   1:
+   mfhi	$3
+   mflo $2]
+  
+  //OperationComparator.Equal
+  gera-operatorCmp:
+   Equal() -> $[==]
+   
+  //OperationComparator.Diff
+  gera-operatorCmp:
+   Diff() -> $[!=]
+   
+  //OperationComparator.GT
+  gera-operatorCmp:
+   GT() -> $[>]
+   
+  //OperationComparator.GTE
+  gera-operatorCmp:
+   GTE() -> $[>=]
+   
+  //OperationComparator.LT
+  gera-operatorCmp:
+   LT() -> $[<]
+   
+  //OperationComparator.LTE
+  gera-operatorCmp:
+   LTE() -> $[<=]
+   
+  //OperationComparator.And
+  gera-operatorCmp:
+   And() -> $[&&]
+  
+  //OperationComparator
+  gera-operatorCmp:
+   Or() -> $[||]
+  
+    
   
   //STATEMENT
   
-  //Blank (não sei se é necessário)
+  
+  
+  //Blank
   gera-statement:
-   [] -> $[]
+   ([], loopCount) -> $[]
    
   //Break;
   gera-statement:
-   [Break()|tail] ->
-   $[
-   Break;
-   [<gera-statement>tail]
-   ]
+   ([Break()|tail], loopCount) ->
+   $[Break_[loopCount];]
   
   //Codeblock
   gera-statement:
-   Block(Statement) -> 
-   $[
-   [<gera-statement>Statement]
-   ]
+   (Block(stmt), loopCount) -> 
+   $[[<gera-statement>(stmt, loopCount)]]
    
   //If
   gera-statement:
-   [If(Expression, Statement, IfElse)|tail] ->
-   $[
-   IF_[ifCount]_BEGIN:
-   [<gera-statement>Statement]
-   IF_[ifCount]_NOTEQUAL:
-   [<gera-statement>Statement]
-   IF_[ifCount]_END:
-   ]
+   ([If(expr, stmt, ifElseCond)|tail], loopCount) ->
+   $[$IF_[ifCount]_BEGIN:
+   [<gera-statement>(stmt, loopCount)]
+   $IF_[ifCount]_NOTEQUAL:
+   [<gera-ifelse>(ifElseCond, loopCount)]
+   $IF_[ifCount]_END:
+   [<gera-statement>(tail, loopCount)]]
    with
-     ifCount := 1
-  
+     new-counter => ifCount
   //IFElse
   gera-ifelse:
-   Some(Single(Statement)) ->
-   $[
-   [<gera-statement>Statement]
-   ]
+   (None(), loopCount) -> $[]
+  gera-ifelse:
+   (Some(Single(stmt)), loopCount) ->
+   $[[<gera-statement>(stmt, loopCount)]]
+  
+  //While
+  gera-statement:
+   ([While(expr, stmt)|tail], loopCount) ->
+   $[$While_[newLoopCount]_BEGIN:
+   [<gera-statement>(stmt, newLoopCount)]
+   $While_[newLoopCount]_END:
+   [<gera-statement>(tail, loopCount)]]
+   with
+     new-counter => newLoopCount
+  
+  //Return
+  gera-statement:
+   ([Return(expr)|tail], loopCount) ->
+   $[Return;]
+  
+  //Assignment OK!
+  gera-statement:
+   ([Assignment(varName, expr) | tail], loopCount) ->
+   $[[<gera-expression> (expr, 0)]
+   sw	$2,[varName]
+   [<gera-statement> (tail, loopCount)]]
+  
+  
+  //Parameter (não sei se está no escopo do pj)
+  
+  
+    
+  //Parameter.Empty
+  gera-parameter:
+   [] -> $[]
+  
+  //Parameter.Parameter
+  gera-parameter:
+   [SimpleParameter(varType, ident)|tail] ->
+   $[[<gera-parameter> tail]]
+  
+  //Parameter.Separator
+  gera-parameter:
+   [ParamSeparator(leftParam, rightParam)|tail] ->
+   $[[<gera-parameter> [leftParam]]
+   [<gera-parameter> [rightParam]]
+   [<gera-parameter> tail]]
+  
+  
+  
+  //Argument (não sei se está no escopo do pj)
+  
+  
+  
+  gera-argument:
+   [SingleArgument(expr)|tail] ->
+   $[[<gera-argument> tail]]
    
+  gera-argument:
+   [ArguSeparator(leftExpr, rightExpr)|tail] ->
+   $[[<gera-argument> [leftExpr]]
+   [<gera-argument> [rightExpr]]
+   [<gera-argument> tail]]
   
   
   //PROGRAM
   
+  //Caso base OK!
+  gera-program:
+    [] -> $[]
+    
   //Function
   //TODO GERAR PARAMETROS
   gera-program:
-   [Function(Type, ID, ParameterList, Block(StatementList))|tail] ->
-    $[
-	[ID]:
-    [<gera-statement>StatementList]
-    .end	[ID]
-	.size	[ID], .-[ID]
+   [Function(varType, ident, paramList, Block(stmtList))|tail] ->
+    $[[ident]:
+    [<gera-parameter> paramList]
+    [<gera-statement> (stmtList, 0)]
+    .end	[ident]
+	.size	[ident], .-[ident]
 	.ident	"GCC: (GNU) 4.9.0"
-	[<gera-program>tail]
-    ]
+	[<gera-program>tail]]
   
-  //Program.Structure
-  //TODO aprender a distrinchar variáveis
+  //Structure
+  
+  //Program.Structure OK
   gera-program:
-   [Structure(VarList, ID)|tail] ->
-    $[
-    .comm	[ID], [memSize], 0
-    [<gera-program>tail]
-    ]
+   [Structure(varList, ident)|tail] ->
+    $[.comm	[ident], [memSize], 0
+    [<gera-program>tail]]
     with
-      memSize := <mul> (Integer(), 4)
+      memSize := <mul> (<length> varList, 4)
   
-  //Variable
-  //Program.Variable.Declaration OK!
+  //Variables
+    
+  //Program.Variable.DeclarationInst TODO EXPR
   gera-program:
-   [Declaration(Type, ID)|tail] ->
-    $[
-    .comm	[ID],4,4
-    [<gera-program>tail]
-    ]
+   [DeclarationInst(varType, ident, expr)|tail] ->
+    $[.comm	[ident],4,4
+    [<gera-program>tail]]
   
-  //Program.Variable.DeclarationInst
-  //TODO Gerar Expressão
+  //Variable.Declaration OK
   gera-program:
-   [DeclarationInst(Type, ID, Expression)|tail] ->
-    $[
-    .comm	[ID],4,4
-    [<gera-program>tail]
-    ]
+   [Declaration(varType, ident)|tail] ->
+    $[.comm	[ident],4,4
+    [<gera-program>tail]]
   
-  //Program.Variable.DeclarationArray
-  //Bug (Integer())
+  //Program.Variable.DeclarationArray OK
   gera-program:
-   [DeclarationArray(Type, ID, Integer())|tail] ->
-    $[
-    .comm	[ID],[memSize],0
-    [<gera-program>tail]
-    ]
+   [DeclarationArray(varType, ident, varSize)|tail] ->
+    $[.comm	[ident],[memSize],0
+    [<gera-program>tail]]
     with
-      memSize := <mul> (Integer(), 4)
+      memSize := <mulS> (varSize, "4")

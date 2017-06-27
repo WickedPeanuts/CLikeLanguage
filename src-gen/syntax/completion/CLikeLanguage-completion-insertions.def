@@ -61,26 +61,26 @@ exports
     "while" "(" Expression ")" Statement      -> Statement          {cons("While")}
     ID "=" Expression ";"                     -> Statement          {cons("Assignment")}
     "break;"                                  -> Statement          {cons("Break")}
-    "return" Expression ";"                   -> Statement          {cons("Return")}
+    "return" Expression? ";"                  -> Statement          {cons("Return")}
     CodeBlock                                 -> Statement          
     "else" Statement                          -> IfElse             {cons("Single")}
     Type ID ";"                               -> Variable           {cons("Declaration")}
     Type ID "[" INT "];"                      -> Variable           {cons("DeclarationArray")}
     Type ID "=" Expression ";"                -> Variable           {cons("DeclarationInst")}
-    Type ID                                   -> Parameter          {cons("Parameter")}
-    Parameter "," Parameter                   -> Parameter          {cons("Separator"), left}
-    Expression                                -> Argument           {cons("Parameter")}
-    Expression "," Expression                 -> Argument           {cons("Separator"), left}
-    Expression OperatorTerm Expression        -> Expression         {cons("Add"), left}
-    Expression OperatorFactor Expression      -> Expression         {cons("Mul"), left}
-    Expression OperatorComparator Expression  -> Expression         {cons("Logic"), left}
-    Primitive                                 -> Expression         {cons("Primitive")}
-    "(" Expression ")"                        -> Expression         {cons("Expression")}
+    Type ID                                   -> Parameter          {cons("SimpleParameter")}
+    Parameter "," Parameter                   -> Parameter          {cons("ParamSeparator"), left}
+    Expression                                -> Argument           {cons("SingleArgument")}
+    Expression "," Expression                 -> Argument           {cons("ArguSeparator"), left}
+    Expression OperatorTerm Expression        -> Expression         {cons("AddExpr"), left}
+    Expression OperatorFactor Expression      -> Expression         {cons("MulExpr"), left}
+    Expression OperatorComparator Expression  -> Expression         {cons("LogicExpr"), left}
+    Primitive                                 -> Expression         
+    "(" Expression ")"                        -> Expression         {cons("ParenthesisExpression")}
     INT                                       -> Primitive          
     CHAR                                      -> Primitive          
     BOOLEAN                                   -> Primitive          
     ID                                        -> Primitive          
-    ID "(" Argument* ")"                      -> Primitive          {cons("Function")}
+    ID "(" Argument* ")"                      -> Primitive          {cons("PrimitiveFunction")}
     "+"                                       -> OperatorTerm       {cons("Add")}
     "-"                                       -> OperatorTerm       {cons("Sub")}
     "*"                                       -> OperatorFactor     {cons("Mul")}

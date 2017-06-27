@@ -16,45 +16,49 @@ strategies
 rules
 
   CLikeLanguageParenthesize :
-    Mul(t_0, t_1, t_2) -> Mul(Parenthetical(t_0), t_1, t_2)
-    where <(?Logic(_, _, _)
-            + ?Add(_, _, _)
+    MulExpr(t_0, t_1, t_2) -> MulExpr(Parenthetical(t_0), t_1, t_2)
+    where <(?LogicExpr(_, _, _)
+            + ?AddExpr(_, _, _)
             + fail)> t_0
 
   CLikeLanguageParenthesize :
-    Mul(t_0, t_1, t_2) -> Mul(t_0, Parenthetical(t_1), t_2)
-    where <(?Logic(_, _, _)
-            + ?Add(_, _, _)
+    MulExpr(t_0, t_1, t_2) -> MulExpr(t_0, Parenthetical(t_1), t_2)
+    where <(?LogicExpr(_, _, _)
+            + ?AddExpr(_, _, _)
             + fail)> t_1
 
   CLikeLanguageParenthesize :
-    Mul(t_0, t_1, t_2) -> Mul(t_0, t_1, Parenthetical(t_2))
-    where <(?Logic(_, _, _)
-            + ?Add(_, _, _)
-            + ?Mul(_, _, _)
+    MulExpr(t_0, t_1, t_2) -> MulExpr(t_0, t_1, Parenthetical(t_2))
+    where <(?LogicExpr(_, _, _)
+            + ?AddExpr(_, _, _)
+            + ?MulExpr(_, _, _)
             + fail)> t_2
 
   CLikeLanguageParenthesize :
-    Add(t_0, t_1, t_2) -> Add(Parenthetical(t_0), t_1, t_2)
-    where <(?Logic(_, _, _) + fail)> t_0
+    AddExpr(t_0, t_1, t_2) -> AddExpr(Parenthetical(t_0), t_1, t_2)
+    where <(?LogicExpr(_, _, _) + fail)> t_0
 
   CLikeLanguageParenthesize :
-    Add(t_0, t_1, t_2) -> Add(t_0, Parenthetical(t_1), t_2)
-    where <(?Logic(_, _, _) + fail)> t_1
+    AddExpr(t_0, t_1, t_2) -> AddExpr(t_0, Parenthetical(t_1), t_2)
+    where <(?LogicExpr(_, _, _) + fail)> t_1
 
   CLikeLanguageParenthesize :
-    Add(t_0, t_1, t_2) -> Add(t_0, t_1, Parenthetical(t_2))
-    where <(?Logic(_, _, _)
-            + ?Add(_, _, _)
+    AddExpr(t_0, t_1, t_2) -> AddExpr(t_0, t_1, Parenthetical(t_2))
+    where <(?LogicExpr(_, _, _)
+            + ?AddExpr(_, _, _)
             + fail)> t_2
 
   CLikeLanguageParenthesize :
-    Logic(t_0, t_1, t_2) -> Logic(t_0, t_1, Parenthetical(t_2))
-    where <(?Logic(_, _, _) + fail)> t_2
+    LogicExpr(t_0, t_1, t_2) -> LogicExpr(t_0, t_1, Parenthetical(t_2))
+    where <(?LogicExpr(_, _, _) + fail)> t_2
 
   CLikeLanguageParenthesize :
-    Separator(t_0, t_1) -> Separator(t_0, Parenthetical(t_1))
-    where <(?Separator(_, _) + fail)> t_1
+    ArguSeparator(t_0, t_1) -> ArguSeparator(t_0, Parenthetical(t_1))
+    where <(?ArguSeparator(_, _) + fail)> t_1
+
+  CLikeLanguageParenthesize :
+    ParamSeparator(t_0, t_1) -> ParamSeparator(t_0, Parenthetical(t_1))
+    where <(?ParamSeparator(_, _) + fail)> t_1
 
 
 signature

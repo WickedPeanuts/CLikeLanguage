@@ -909,19 +909,19 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Parameter :
-    Parameter(t1__, t2__) -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [t1__', S(" "), t2__']
-                               )
-                             ]
+    SimpleParameter(t1__, t2__) -> [ H(
+                                       [SOpt(HS(), "0")]
+                                     , [t1__', S(" "), t2__']
+                                     )
+                                   ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Type) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Parameter =
-    ?Parameter(_, _)
+    ?SimpleParameter(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Parameter(t1__, t2__), index) -> indent
+    (t@SimpleParameter(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -934,7 +934,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Parameter(t1__, t2__), index) -> separator
+    (t@SimpleParameter(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -947,7 +947,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Parameter(t1__, t2__), index) -> ws
+    (t@SimpleParameter(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -960,19 +960,19 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Parameter :
-    Separator(t1__, t2__) -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [t1__', S(" , "), t2__']
-                               )
-                             ]
+    ParamSeparator(t1__, t2__) -> [ H(
+                                      [SOpt(HS(), "0")]
+                                    , [t1__', S(" , "), t2__']
+                                    )
+                                  ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Parameter) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-Parameter) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Parameter =
-    ?Separator(_, _)
+    ?ParamSeparator(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Separator(t1__, t2__), index) -> indent
+    (t@ParamSeparator(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -985,7 +985,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Separator(t1__, t2__), index) -> separator
+    (t@ParamSeparator(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -998,7 +998,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Separator(t1__, t2__), index) -> ws
+    (t@ParamSeparator(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Parameter"> sort
     with switch !index
@@ -1011,18 +1011,18 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Argument :
-    Parameter(t1__) -> [ H(
-                           [SOpt(HS(), "0")]
-                         , [t1__']
-                         )
-                       ]
+    SingleArgument(t1__) -> [ H(
+                                [SOpt(HS(), "0")]
+                              , [t1__']
+                              )
+                            ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
   is-CLikeLanguage-Argument =
-    ?Parameter(_)
+    ?SingleArgument(_)
 
   CLikeLanguage-get-indent :
-    (t@Parameter(t1__), index) -> indent
+    (t@SingleArgument(t1__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1033,7 +1033,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Parameter(t1__), index) -> separator
+    (t@SingleArgument(t1__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1044,7 +1044,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Parameter(t1__), index) -> ws
+    (t@SingleArgument(t1__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1055,19 +1055,19 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Argument :
-    Separator(t1__, t2__) -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [t1__', S(" , "), t2__']
-                               )
-                             ]
+    ArguSeparator(t1__, t2__) -> [ H(
+                                     [SOpt(HS(), "0")]
+                                   , [t1__', S(" , "), t2__']
+                                   )
+                                 ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Argument =
-    ?Separator(_, _)
+    ?ArguSeparator(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Separator(t1__, t2__), index) -> indent
+    (t@ArguSeparator(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1080,7 +1080,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Separator(t1__, t2__), index) -> separator
+    (t@ArguSeparator(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1093,7 +1093,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Separator(t1__, t2__), index) -> ws
+    (t@ArguSeparator(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Argument"> sort
     with switch !index
@@ -1106,25 +1106,25 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Expression :
-    Add(t1__, t2__, t3__) -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [ t1__'
-                                 , S(" ")
-                                 , t2__'
-                                 , S(" ")
-                                 , t3__'
+    AddExpr(t1__, t2__, t3__) -> [ H(
+                                     [SOpt(HS(), "0")]
+                                   , [ t1__'
+                                     , S(" ")
+                                     , t2__'
+                                     , S(" ")
+                                     , t3__'
+                                     ]
+                                   )
                                  ]
-                               )
-                             ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-OperatorTerm) <+ pp-one-Z(prettyprint-completion-aux)> t2__
     with t3__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t3__
 
   is-CLikeLanguage-Expression =
-    ?Add(_, _, _)
+    ?AddExpr(_, _, _)
 
   CLikeLanguage-get-indent :
-    ( t@Add(t1__, t2__, t3__)
+    ( t@AddExpr(t1__, t2__, t3__)
     , index
     ) -> indent
     where sort := <ia-get-sort> t
@@ -1141,7 +1141,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    ( t@Add(t1__, t2__, t3__)
+    ( t@AddExpr(t1__, t2__, t3__)
     , index
     ) -> separator
     where sort := <ia-get-sort> t
@@ -1158,7 +1158,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    ( t@Add(t1__, t2__, t3__)
+    ( t@AddExpr(t1__, t2__, t3__)
     , index
     ) -> ws
     where sort := <ia-get-sort> t
@@ -1175,25 +1175,25 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Expression :
-    Mul(t1__, t2__, t3__) -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [ t1__'
-                                 , S(" ")
-                                 , t2__'
-                                 , S(" ")
-                                 , t3__'
+    MulExpr(t1__, t2__, t3__) -> [ H(
+                                     [SOpt(HS(), "0")]
+                                   , [ t1__'
+                                     , S(" ")
+                                     , t2__'
+                                     , S(" ")
+                                     , t3__'
+                                     ]
+                                   )
                                  ]
-                               )
-                             ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-OperatorFactor) <+ pp-one-Z(prettyprint-completion-aux)> t2__
     with t3__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t3__
 
   is-CLikeLanguage-Expression =
-    ?Mul(_, _, _)
+    ?MulExpr(_, _, _)
 
   CLikeLanguage-get-indent :
-    ( t@Mul(t1__, t2__, t3__)
+    ( t@MulExpr(t1__, t2__, t3__)
     , index
     ) -> indent
     where sort := <ia-get-sort> t
@@ -1210,7 +1210,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    ( t@Mul(t1__, t2__, t3__)
+    ( t@MulExpr(t1__, t2__, t3__)
     , index
     ) -> separator
     where sort := <ia-get-sort> t
@@ -1227,7 +1227,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    ( t@Mul(t1__, t2__, t3__)
+    ( t@MulExpr(t1__, t2__, t3__)
     , index
     ) -> ws
     where sort := <ia-get-sort> t
@@ -1244,25 +1244,25 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Expression :
-    Logic(t1__, t2__, t3__) -> [ H(
-                                   [SOpt(HS(), "0")]
-                                 , [ t1__'
-                                   , S(" ")
-                                   , t2__'
-                                   , S(" ")
-                                   , t3__'
+    LogicExpr(t1__, t2__, t3__) -> [ H(
+                                       [SOpt(HS(), "0")]
+                                     , [ t1__'
+                                       , S(" ")
+                                       , t2__'
+                                       , S(" ")
+                                       , t3__'
+                                       ]
+                                     )
                                    ]
-                                 )
-                               ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-OperatorComparator) <+ pp-one-Z(prettyprint-completion-aux)> t2__
     with t3__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t3__
 
   is-CLikeLanguage-Expression =
-    ?Logic(_, _, _)
+    ?LogicExpr(_, _, _)
 
   CLikeLanguage-get-indent :
-    ( t@Logic(t1__, t2__, t3__)
+    ( t@LogicExpr(t1__, t2__, t3__)
     , index
     ) -> indent
     where sort := <ia-get-sort> t
@@ -1279,7 +1279,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    ( t@Logic(t1__, t2__, t3__)
+    ( t@LogicExpr(t1__, t2__, t3__)
     , index
     ) -> separator
     where sort := <ia-get-sort> t
@@ -1296,7 +1296,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    ( t@Logic(t1__, t2__, t3__)
+    ( t@LogicExpr(t1__, t2__, t3__)
     , index
     ) -> ws
     where sort := <ia-get-sort> t
@@ -1313,65 +1313,30 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Expression :
-    Primitive(t1__) -> [ H(
-                           [SOpt(HS(), "0")]
-                         , [t1__']
-                         )
-                       ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Primitive) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-
-  is-CLikeLanguage-Expression =
-    ?Primitive(_)
-
-  CLikeLanguage-get-indent :
-    (t@Primitive(t1__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"Expression"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@Primitive(t1__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"Expression"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@Primitive(t1__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"Expression"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           otherwise :
-             ws := ""
-         end
+    t1__ -> [ H(
+                [SOpt(HS(), "0")]
+              , [t1__']
+              )
+            ]
+    where not(is-CLikeLanguage-Expression)
+    where t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Primitive) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
   prettyprint-CLikeLanguage-Expression :
-    Expression(t1__) -> [ H(
-                            [SOpt(HS(), "0")]
-                          , [ S("( ")
-                            , t1__'
-                            , S(" )")
-                            ]
-                          )
-                        ]
+    ParenthesisExpression(t1__) -> [ H(
+                                       [SOpt(HS(), "0")]
+                                     , [ S("( ")
+                                       , t1__'
+                                       , S(" )")
+                                       ]
+                                     )
+                                   ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
   is-CLikeLanguage-Expression =
-    ?Expression(_)
+    ?ParenthesisExpression(_)
 
   CLikeLanguage-get-indent :
-    (t@Expression(t1__), index) -> indent
+    (t@ParenthesisExpression(t1__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Expression"> sort
     with switch !index
@@ -1382,7 +1347,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Expression(t1__), index) -> separator
+    (t@ParenthesisExpression(t1__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Expression"> sort
     with switch !index
@@ -1393,7 +1358,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Expression(t1__), index) -> ws
+    (t@ParenthesisExpression(t1__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Expression"> sort
     with switch !index
@@ -1440,23 +1405,23 @@ strategies
     where t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
   prettyprint-CLikeLanguage-Primitive :
-    Function(t1__, t2__) -> [ H(
-                                [SOpt(HS(), "0")]
-                              , [ t1__'
-                                , S(" ( ")
-                                , t2__'
-                                , S(" )")
-                                ]
-                              )
-                            ]
+    PrimitiveFunction(t1__, t2__) -> [ H(
+                                         [SOpt(HS(), "0")]
+                                       , [ t1__'
+                                         , S(" ( ")
+                                         , t2__'
+                                         , S(" )")
+                                         ]
+                                       )
+                                     ]
     with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
     with t2__' := <pp-H-list(prettyprint-CLikeLanguage-Argument) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Primitive =
-    ?Function(_, _)
+    ?PrimitiveFunction(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Function(t1__, t2__), index) -> indent
+    (t@PrimitiveFunction(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
           ; <?"Primitive"> sort
     with switch !index
@@ -1469,7 +1434,7 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Function(t1__, t2__), index) -> separator
+    (t@PrimitiveFunction(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
           ; <?"Primitive"> sort
     with switch !index
@@ -1482,7 +1447,7 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Function(t1__, t2__), index) -> ws
+    (t@PrimitiveFunction(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Primitive"> sort
     with switch !index

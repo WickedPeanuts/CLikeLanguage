@@ -35,20 +35,20 @@ signature
       Declaration : Type * ID -> Variable 
       DeclarationArray : Type * ID * INT -> Variable 
       DeclarationInst : Type * ID * Expression -> Variable 
-      Parameter : Type * ID -> Parameter 
-      Separator : Parameter * Parameter -> Parameter 
-      Parameter : Expression -> Argument 
-      Separator : Expression * Expression -> Argument 
-      Add : Expression * OperatorTerm * Expression -> Expression 
-      Mul : Expression * OperatorFactor * Expression -> Expression 
-      Logic : Expression * OperatorComparator * Expression -> Expression 
-      Primitive : Primitive -> Expression 
-      Expression : Expression -> Expression 
+      SimpleParameter : Type * ID -> Parameter 
+      ParamSeparator : Parameter * Parameter -> Parameter 
+      SingleArgument : Expression -> Argument 
+      ArguSeparator : Expression * Expression -> Argument 
+      AddExpr : Expression * OperatorTerm * Expression -> Expression 
+      MulExpr : Expression * OperatorFactor * Expression -> Expression 
+      LogicExpr : Expression * OperatorComparator * Expression -> Expression 
+      __Primitive2Expression__ : Primitive -> Expression {implicit}
+      ParenthesisExpression : Expression -> Expression 
       __INT2Primitive__ : INT -> Primitive {implicit}
       __CHAR2Primitive__ : CHAR -> Primitive {implicit}
       __BOOLEAN2Primitive__ : BOOLEAN -> Primitive {implicit}
       __ID2Primitive__ : ID -> Primitive {implicit}
-      Function : ID * List(Argument) -> Primitive 
+      PrimitiveFunction : ID * List(Argument) -> Primitive 
       Add : OperatorTerm 
       Sub : OperatorTerm 
       Mul : OperatorFactor 
