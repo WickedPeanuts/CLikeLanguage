@@ -48,7 +48,7 @@ rules // Debugging
    $[[<gera-expression> (expr1, 2)]
    [<gera-expression> (expr2, 3)]
    [<gera-operatorFact> oprFact]] 
-   
+  
   //LogicExpr
   gera-expression:
    (LogicExpr(expr1, oprCmp, expr2), register) ->
@@ -66,17 +66,27 @@ rules // Debugging
    (Primitive, register) ->
    $[lw	$[register], [<gera-primitive> Primitive]]
          
-  
-  
+         
+         
   //Primitives
   
   
+  
+  //True
+  gera-primitive:
+   "true" ->
+   $[1]
+  
+  //False
+  gera-primitive:
+   "false" ->
+   $[0]
   
   //Primitive
   gera-primitive:
    Primitive ->
    $[[Primitive]]
-   
+      
   //Primitive.PrimitiveFunction
   gera-primitive:
    PrimitiveFunction(varName, args) ->
@@ -117,33 +127,49 @@ rules // Debugging
   
   //OperationComparator.Equal
   gera-operatorCmp:
-   Equal() -> $[==]
+   Equal() -> $[#nop
+   xor	$2, $3, $2
+   sltu	$2,$2,1
+   andi	$2,$2,0x00ff]
    
   //OperationComparator.Diff
   gera-operatorCmp:
-   Diff() -> $[!=]
+   Diff() -> $[#nop
+   xor	$2, $3, $2
+   sltu	$2,$0,$2
+   andi	$2,$2,0x00ff]
    
   //OperationComparator.GT
   gera-operatorCmp:
-   GT() -> $[>]
+   GT() -> $[#nop
+   slt	$2,$2,$3
+   andi	$2,$2,0x00ff]
    
   //OperationComparator.GTE
   gera-operatorCmp:
-   GTE() -> $[>=]
+   GTE() -> $[#nop
+   slt	$2,$3,$2
+   xori	$2,$2,0x1
+   andi	$2,$2,0x00ff]
    
   //OperationComparator.LT
   gera-operatorCmp:
-   LT() -> $[<]
+   LT() -> $[#nop
+   slt	$2,$0,$2
+   andi	$2,$2,0x00ff]
    
   //OperationComparator.LTE
   gera-operatorCmp:
-   LTE() -> $[<=]
+   LTE() -> $[#nop
+   slt	$2,$2,$3
+   xori	$2,$2,0x1
+   andi	$2,$2,0x00ff]
    
-  //OperationComparator.And
+  //OperationComparator.And (Muito complicado!)
   gera-operatorCmp:
    And() -> $[&&]
   
-  //OperationComparator
+  //OperationComparator (Muito complicado!)
   gera-operatorCmp:
    Or() -> $[||]
   
@@ -162,16 +188,19 @@ rules // Debugging
    ([Break()|tail], loopCount) ->
    $[Break_[loopCount];]
   
-  //Codeblock
+  //Codeblock OK!
   gera-statement:
    (Block(stmt), loopCount) -> 
    $[[<gera-statement>(stmt, loopCount)]]
    
-  //If
+  //If OK!
   gera-statement:
    ([If(expr, stmt, ifElseCond)|tail], loopCount) ->
-   $[$IF_[ifCount]_BEGIN:
+   $[#nop
+   bne	$3,$2,$IF_[ifCount]_NOTEQUAL
+   $IF_[ifCount]_BEGIN:			# Apenas para auxiliar no pensamento
    [<gera-statement>(stmt, loopCount)]
+   j	$IF_[ifCount]_END   
    $IF_[ifCount]_NOTEQUAL:
    [<gera-ifelse>(ifElseCond, loopCount)]
    $IF_[ifCount]_END:
