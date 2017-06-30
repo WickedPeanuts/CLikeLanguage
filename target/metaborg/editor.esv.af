@@ -142,6 +142,8 @@ Module(
       , ColorRule(ConstructorOnly(Constructor("CHAR-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("BOOLEAN-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("Argument-Plhdr")), AttributeRef("gray"))
+      , ColorRule(ConstructorOnly(Constructor("StructVar-Plhdr")), AttributeRef("gray"))
+      , ColorRule(ConstructorOnly(Constructor("StructVarCall-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("OperatorTerm-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("OperatorFactor-Plhdr")), AttributeRef("gray"))
       , ColorRule(ConstructorOnly(Constructor("OperatorComparator-Plhdr")), AttributeRef("gray"))

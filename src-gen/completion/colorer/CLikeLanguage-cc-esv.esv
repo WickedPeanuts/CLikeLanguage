@@ -16,6 +16,8 @@ colorer
   _.CHAR-Plhdr               : gray   
   _.BOOLEAN-Plhdr            : gray   
   _.Argument-Plhdr           : gray   
+  _.StructVar-Plhdr          : gray   
+  _.StructVarCall-Plhdr      : gray   
   _.OperatorTerm-Plhdr       : gray   
   _.OperatorFactor-Plhdr     : gray   
   _.OperatorComparator-Plhdr : gray   

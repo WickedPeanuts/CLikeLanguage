@@ -12,10 +12,10 @@ imports
 rules
 
   is-lexical-completion-sort :
-    "ID" -> <id>
+    "INT" -> <id>
 
   is-lexical-completion-sort :
-    "INT" -> <id>
+    "ID" -> <id>
 
   is-lexical-completion-sort :
     "CHAR" -> <id>

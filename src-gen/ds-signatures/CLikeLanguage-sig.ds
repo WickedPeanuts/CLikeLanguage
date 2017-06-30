@@ -14,6 +14,8 @@ signature
       Argument
       Expression
       Primitive
+      StructVar
+      StructVarCall
       OperatorTerm
       OperatorFactor
       OperatorComparator
@@ -28,13 +30,14 @@ signature
       If : Expression * Statement * IfElse -> Statement 
       While : Expression * Statement -> Statement 
       Assignment : ID * Expression -> Statement 
+      StructAssignment : StructVar * Expression -> Statement 
       Break : Statement 
       Return : Expression -> Statement 
       __CodeBlock2Statement__ : CodeBlock -> Statement {implicit}
       Single : Statement -> IfElse 
       Declaration : Type * ID -> Variable 
       DeclarationArray : Type * ID * INT -> Variable 
-      DeclarationInst : Type * ID * Expression -> Variable 
+      DeclarationInst : Type * ID * Primitive -> Variable 
       SimpleParameter : Type * ID -> Parameter 
       ParamSeparator : Parameter * Parameter -> Parameter 
       SingleArgument : Expression -> Argument 
@@ -42,13 +45,16 @@ signature
       AddExpr : Expression * OperatorTerm * Expression -> Expression 
       MulExpr : Expression * OperatorFactor * Expression -> Expression 
       LogicExpr : Expression * OperatorComparator * Expression -> Expression 
-      __Primitive2Expression__ : Primitive -> Expression {implicit}
       ParenthesisExpression : Expression -> Expression 
-      __INT2Primitive__ : INT -> Primitive {implicit}
-      __CHAR2Primitive__ : CHAR -> Primitive {implicit}
-      __BOOLEAN2Primitive__ : BOOLEAN -> Primitive {implicit}
-      __ID2Primitive__ : ID -> Primitive {implicit}
+      __Primitive2Expression__ : Primitive -> Expression {implicit}
+      IntegerPrim : INT -> Primitive 
+      CharPrim : CHAR -> Primitive 
+      BoolPrim : BOOLEAN -> Primitive 
+      IdentifierPrim : ID -> Primitive 
       PrimitiveFunction : ID * List(Argument) -> Primitive 
+      StructPrim : StructVar -> Primitive 
+      Call : List(StructVarCall) * ID -> StructVar 
+      Depth : ID -> StructVarCall 
       Add : OperatorTerm 
       Sub : OperatorTerm 
       Mul : OperatorFactor 

@@ -99,6 +99,17 @@ rules
                           ; fail> completions
 
   suggest-completions(|completions):
+    Statement-Plhdr() -> <add-completions(
+                          | ( "StructAssignment"
+                            , StructAssignment(
+                                <try(inline-completions(|Statement-Plhdr()))> StructVar-Plhdr()
+                              , <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+
+  suggest-completions(|completions):
     Statement-Plhdr() -> <add-completions(|("Break", Break()))
                           ; fail> completions
 
@@ -157,7 +168,7 @@ rules
                            , DeclarationInst(
                                <try(inline-completions(|Variable-Plhdr()))> Type-Plhdr()
                              , <try(inline-completions(|Variable-Plhdr()))> ID-Plhdr()
-                             , <try(inline-completions(|Variable-Plhdr()))> Expression-Plhdr()
+                             , <try(inline-completions(|Variable-Plhdr()))> Primitive-Plhdr()
                              )
                            )
                          )
@@ -243,14 +254,6 @@ rules
                            ; fail> completions
 
   suggest-completions(|completions):
-    Expression-Plhdr() -> <suggest-completions(|completions)> Primitive-Plhdr()
-    where <not(is-expanded)> (Expression-Plhdr(), Primitive-Plhdr())
-          ; rules (
-              is-expanded :
-                (Expression-Plhdr(), Primitive-Plhdr()) -> <id>
-            )
-
-  suggest-completions(|completions):
     Expression-Plhdr() -> <add-completions(
                            | ( "ParenthesisExpression"
                              , ParenthesisExpression(
@@ -261,36 +264,52 @@ rules
                            ; fail> completions
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <suggest-completions(|completions)> INT-Plhdr()
-    where <not(is-expanded)> (Primitive-Plhdr(), INT-Plhdr())
+    Expression-Plhdr() -> <suggest-completions(|completions)> Primitive-Plhdr()
+    where <not(is-expanded)> (Expression-Plhdr(), Primitive-Plhdr())
           ; rules (
               is-expanded :
-                (Primitive-Plhdr(), INT-Plhdr()) -> <id>
+                (Expression-Plhdr(), Primitive-Plhdr()) -> <id>
             )
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <suggest-completions(|completions)> CHAR-Plhdr()
-    where <not(is-expanded)> (Primitive-Plhdr(), CHAR-Plhdr())
-          ; rules (
-              is-expanded :
-                (Primitive-Plhdr(), CHAR-Plhdr()) -> <id>
-            )
+    Primitive-Plhdr() -> <add-completions(
+                          | ( "IntegerPrim"
+                            , IntegerPrim(
+                                <try(inline-completions(|Primitive-Plhdr()))> INT-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <suggest-completions(|completions)> BOOLEAN-Plhdr()
-    where <not(is-expanded)> (Primitive-Plhdr(), BOOLEAN-Plhdr())
-          ; rules (
-              is-expanded :
-                (Primitive-Plhdr(), BOOLEAN-Plhdr()) -> <id>
-            )
+    Primitive-Plhdr() -> <add-completions(
+                          | ( "CharPrim"
+                            , CharPrim(
+                                <try(inline-completions(|Primitive-Plhdr()))> CHAR-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <suggest-completions(|completions)> ID-Plhdr()
-    where <not(is-expanded)> (Primitive-Plhdr(), ID-Plhdr())
-          ; rules (
-              is-expanded :
-                (Primitive-Plhdr(), ID-Plhdr()) -> <id>
-            )
+    Primitive-Plhdr() -> <add-completions(
+                          | ( "BoolPrim"
+                            , BoolPrim(
+                                <try(inline-completions(|Primitive-Plhdr()))> BOOLEAN-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+
+  suggest-completions(|completions):
+    Primitive-Plhdr() -> <add-completions(
+                          | ( "IdentifierPrim"
+                            , IdentifierPrim(
+                                <try(inline-completions(|Primitive-Plhdr()))> ID-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
 
   suggest-completions(|completions):
     Primitive-Plhdr() -> <add-completions(
@@ -302,6 +321,38 @@ rules
                             )
                           )
                           ; fail> completions
+
+  suggest-completions(|completions):
+    Primitive-Plhdr() -> <add-completions(
+                          | ( "StructPrim"
+                            , StructPrim(
+                                <try(inline-completions(|Primitive-Plhdr()))> StructVar-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+
+  suggest-completions(|completions):
+    StructVar-Plhdr() -> <add-completions(
+                          | ( "Call"
+                            , Call(
+                                [ <try(inline-completions(|StructVar-Plhdr()))> StructVarCall-Plhdr()
+                                ]
+                              , <try(inline-completions(|StructVar-Plhdr()))> ID-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+
+  suggest-completions(|completions):
+    StructVarCall-Plhdr() -> <add-completions(
+                              | ( "Depth"
+                                , Depth(
+                                    <try(inline-completions(|StructVarCall-Plhdr()))> ID-Plhdr()
+                                  )
+                                )
+                              )
+                              ; fail> completions
 
   suggest-completions(|completions):
     OperatorTerm-Plhdr() -> <add-completions(|("Add", Add()))
@@ -614,6 +665,17 @@ rules
   is-Primitive-completion-sort :
     "ID" -> <id>
 
+  is-left-recursive :
+    "StructVar" -> <is-left-recursive> "Primitive"
+    where <not(is-lexical-completion-sort)> "StructVar"
+
+  is-right-recursive :
+    "StructVar" -> <is-right-recursive> "Primitive"
+    where <not(is-lexical-completion-sort)> "StructVar"
+
+  is-Primitive-completion-sort :
+    "StructVar" -> <id>
+
 
 rules
 
@@ -652,6 +714,12 @@ rules
 
   is-SDF-placeholder =
     ?Argument-Plhdr()
+
+  is-SDF-placeholder =
+    ?StructVar-Plhdr()
+
+  is-SDF-placeholder =
+    ?StructVarCall-Plhdr()
 
   is-SDF-placeholder =
     ?OperatorTerm-Plhdr()

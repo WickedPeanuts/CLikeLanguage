@@ -24,18 +24,15 @@ context-free syntax
   Statement.If = "if" "(" Expression ")" Statement IfElse?
   Statement.While = "while" "(" Expression ")" Statement
   Statement.Assignment = ID "=" Expression ";"
+  Statement.StructAssignment = StructVar "=" Expression ";"
   Statement.Break = "break;"
   Statement.Return = "return" Expression? ";"
-  //Done!
   Statement = CodeBlock
-  //Done!
   IfElse.Single = "else" Statement
    
-  //Done!
   Variable.Declaration = Type ID ";"
-  //Done!
   Variable.DeclarationArray = Type ID "[" INT "];"
-  Variable.DeclarationInst =  Type ID "=" Expression ";"
+  Variable.DeclarationInst =  Type ID "=" Primitive ";"
            
   Parameter.SimpleParameter = Type ID
   Parameter.ParamSeparator = Parameter "," Parameter {left}
@@ -46,14 +43,18 @@ context-free syntax
   Expression.AddExpr = [[Expression] [OperatorTerm] [Expression]] {left}
   Expression.MulExpr = [[Expression] [OperatorFactor] [Expression]] {left}
   Expression.LogicExpr = [[Expression] [OperatorComparator] [Expression]] {left}
-  Expression = Primitive
   Expression.ParenthesisExpression = "(" Expression ")"
-  
-  Primitive = INT
-  Primitive = CHAR
-  Primitive = BOOLEAN
-  Primitive = ID
+  Expression = Primitive
+    
+  Primitive.IntegerPrim = INT
+  Primitive.CharPrim = CHAR
+  Primitive.BoolPrim = BOOLEAN
+  Primitive.IdentifierPrim = ID
   Primitive.PrimitiveFunction = ID "(" Argument* ")"
+  Primitive.StructPrim = StructVar
+    
+  StructVar.Call =  StructVarCall+ ID
+  StructVarCall.Depth = ID "."
   
   OperatorTerm.Add = "+"
   OperatorTerm.Sub = "-"

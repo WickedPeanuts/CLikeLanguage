@@ -3,8 +3,8 @@ module ds-signatures/Common-sig
 signature
     sorts
     sort aliases
-      ID = String
       INT = String
+      ID = String
       CHAR = String
       BOOLEAN = String
       STRING = String

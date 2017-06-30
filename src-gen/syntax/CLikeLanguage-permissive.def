@@ -56,9 +56,9 @@ exports
   (
 
   lexical syntax
+    "-"? [0-9]+              -> INT           
     [a-zA-Z] [a-zA-Z0-9]*    -> ID            
     BOOLEAN                  -> ID            {reject}
-    "-"? [0-9]+              -> INT           
     "'" [a-zA-Z] "'"         -> CHAR          
     "true" | "false"         -> BOOLEAN       
     "\"" StringChar* "\""    -> STRING        
@@ -109,13 +109,14 @@ exports
     "if" "(" Expression ")" Statement IfElse? -> Statement          {cons("If")}
     "while" "(" Expression ")" Statement      -> Statement          {cons("While")}
     ID "=" Expression ";"                     -> Statement          {cons("Assignment")}
+    StructVar "=" Expression ";"              -> Statement          {cons("StructAssignment")}
     "break;"                                  -> Statement          {cons("Break")}
     "return" Expression? ";"                  -> Statement          {cons("Return")}
     CodeBlock                                 -> Statement          
     "else" Statement                          -> IfElse             {cons("Single")}
     Type ID ";"                               -> Variable           {cons("Declaration")}
     Type ID "[" INT "];"                      -> Variable           {cons("DeclarationArray")}
-    Type ID "=" Expression ";"                -> Variable           {cons("DeclarationInst")}
+    Type ID "=" Primitive ";"                 -> Variable           {cons("DeclarationInst")}
     Type ID                                   -> Parameter          {cons("SimpleParameter")}
     Parameter "," Parameter                   -> Parameter          {cons("ParamSeparator"), left}
     Expression                                -> Argument           {cons("SingleArgument")}
@@ -123,13 +124,16 @@ exports
     Expression OperatorTerm Expression        -> Expression         {cons("AddExpr"), left}
     Expression OperatorFactor Expression      -> Expression         {cons("MulExpr"), left}
     Expression OperatorComparator Expression  -> Expression         {cons("LogicExpr"), left}
-    Primitive                                 -> Expression         
     "(" Expression ")"                        -> Expression         {cons("ParenthesisExpression")}
-    INT                                       -> Primitive          
-    CHAR                                      -> Primitive          
-    BOOLEAN                                   -> Primitive          
-    ID                                        -> Primitive          
+    Primitive                                 -> Expression         
+    INT                                       -> Primitive          {cons("IntegerPrim")}
+    CHAR                                      -> Primitive          {cons("CharPrim")}
+    BOOLEAN                                   -> Primitive          {cons("BoolPrim")}
+    ID                                        -> Primitive          {cons("IdentifierPrim")}
     ID "(" Argument* ")"                      -> Primitive          {cons("PrimitiveFunction")}
+    StructVar                                 -> Primitive          {cons("StructPrim")}
+    StructVarCall+ ID                         -> StructVar          {cons("Call")}
+    ID "."                                    -> StructVarCall      {cons("Depth")}
     "+"                                       -> OperatorTerm       {cons("Add")}
     "-"                                       -> OperatorTerm       {cons("Sub")}
     "*"                                       -> OperatorFactor     {cons("Mul")}
@@ -165,6 +169,8 @@ exports
     "$CHAR"               -> CHAR               {cons("CHAR-Plhdr"), placeholder}
     "$BOOLEAN"            -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder}
     "$Argument"           -> Argument           {cons("Argument-Plhdr"), placeholder}
+    "$StructVar"          -> StructVar          {cons("StructVar-Plhdr"), placeholder}
+    "$StructVarCall"      -> StructVarCall      {cons("StructVarCall-Plhdr"), placeholder}
     "$OperatorTerm"       -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder}
     "$OperatorFactor"     -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder}
     "$OperatorComparator" -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder}

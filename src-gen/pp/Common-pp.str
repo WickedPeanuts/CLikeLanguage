@@ -29,10 +29,10 @@ strategies
 
 strategies
   prettyprint-CLikeLanguage =
-    prettyprint-CLikeLanguage-ID
+    prettyprint-CLikeLanguage-INT
 
   prettyprint-CLikeLanguage =
-    prettyprint-CLikeLanguage-INT
+    prettyprint-CLikeLanguage-ID
 
   prettyprint-CLikeLanguage =
     prettyprint-CLikeLanguage-CHAR
@@ -65,12 +65,12 @@ strategies
     prettyprint-CLikeLanguage-EOF
 
   prettyprint-CLikeLanguage(|sort):
-    t -> <prettyprint-CLikeLanguage-ID>
-    where <?"ID"> sort
-
-  prettyprint-CLikeLanguage(|sort):
     t -> <prettyprint-CLikeLanguage-INT>
     where <?"INT"> sort
+
+  prettyprint-CLikeLanguage(|sort):
+    t -> <prettyprint-CLikeLanguage-ID>
+    where <?"ID"> sort
 
   prettyprint-CLikeLanguage(|sort):
     t -> <prettyprint-CLikeLanguage-CHAR>
@@ -112,10 +112,10 @@ strategies
     t -> <prettyprint-CLikeLanguage-EOF>
     where <?"EOF"> sort
 
-  prettyprint-CLikeLanguage-ID =
+  prettyprint-CLikeLanguage-INT =
     ![S(<is-string>)]
 
-  prettyprint-CLikeLanguage-INT =
+  prettyprint-CLikeLanguage-ID =
     ![S(<is-string>)]
 
   prettyprint-CLikeLanguage-CHAR =
@@ -148,11 +148,11 @@ strategies
   prettyprint-CLikeLanguage-EOF =
     ![S(<is-string>)]
 
-  prettyprint-CLikeLanguage-ID :
-    amb([h|hs]) -> <prettyprint-CLikeLanguage-ID> h
-
   prettyprint-CLikeLanguage-INT :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-INT> h
+
+  prettyprint-CLikeLanguage-ID :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-ID> h
 
   prettyprint-CLikeLanguage-CHAR :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-CHAR> h

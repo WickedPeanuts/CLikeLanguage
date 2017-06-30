@@ -2,8 +2,8 @@ module signatures/Common-sig
 
 signature
   constructors
-     : String -> ID
      : String -> INT
+     : String -> ID
      : String -> CHAR
      : String -> BOOLEAN
      : String -> STRING
