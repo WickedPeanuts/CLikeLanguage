@@ -23,7 +23,7 @@ rules // Debugging
   gera-prog:
      Program(i, ld)  -> 
      $[.file	1	"assembly.c"
-       .section	.mdebug.abi32
+       .section	.mdebug.abi32 
        .previous
        [<gera-program>(ld, ".text", globalVariables)]
        .text       
