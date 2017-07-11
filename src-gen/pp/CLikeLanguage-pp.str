@@ -72,10 +72,10 @@ strategies
     prettyprint-CLikeLanguage-Primitive
 
   prettyprint-CLikeLanguage =
-    prettyprint-CLikeLanguage-StructVar
+    prettyprint-CLikeLanguage-LeftExpr
 
   prettyprint-CLikeLanguage =
-    prettyprint-CLikeLanguage-StructVarCall
+    prettyprint-CLikeLanguage-RightExpr
 
   prettyprint-CLikeLanguage =
     prettyprint-CLikeLanguage-OperatorTerm
@@ -133,12 +133,12 @@ strategies
     where <?"Primitive"> sort
 
   prettyprint-CLikeLanguage(|sort):
-    t -> <prettyprint-CLikeLanguage-StructVar>
-    where <?"StructVar"> sort
+    t -> <prettyprint-CLikeLanguage-LeftExpr>
+    where <?"LeftExpr"> sort
 
   prettyprint-CLikeLanguage(|sort):
-    t -> <prettyprint-CLikeLanguage-StructVarCall>
-    where <?"StructVarCall"> sort
+    t -> <prettyprint-CLikeLanguage-RightExpr>
+    where <?"RightExpr"> sort
 
   prettyprint-CLikeLanguage(|sort):
     t -> <prettyprint-CLikeLanguage-OperatorTerm>
@@ -276,6 +276,77 @@ strategies
            case ?1 :
              ws := " "
            case ?2 :
+             ws := " "
+           otherwise :
+             ws := ""
+         end
+
+  prettyprint-CLikeLanguage-Program :
+    StructureArray(t1__, t2__, t3__) -> [ H(
+                                            [SOpt(HS(), "0")]
+                                          , [ S("struct { ")
+                                            , t1__'
+                                            , S(" } ")
+                                            , t2__'
+                                            , S(" [ ")
+                                            , t3__'
+                                            , S(" ] ;")
+                                            ]
+                                          )
+                                        ]
+    with t1__' := <pp-H-list(prettyprint-CLikeLanguage-Variable) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
+    with t3__' := <pp-one-Z(prettyprint-CLikeLanguage-INT) <+ pp-one-Z(prettyprint-completion-aux)> t3__
+
+  is-CLikeLanguage-Program =
+    ?StructureArray(_, _, _)
+
+  CLikeLanguage-get-indent :
+    ( t@StructureArray(t1__, t2__, t3__)
+    , index
+    ) -> indent
+    where sort := <ia-get-sort> t
+          ; <?"Program"> sort
+    with switch !index
+           case ?1 :
+             indent := ""
+           case ?2 :
+             indent := ""
+           case ?3 :
+             indent := ""
+           otherwise :
+             indent := ""
+         end
+
+  CLikeLanguage-get-separator :
+    ( t@StructureArray(t1__, t2__, t3__)
+    , index
+    ) -> separator
+    where sort := <ia-get-sort> t
+          ; <?"Program"> sort
+    with switch !index
+           case ?1 :
+             separator := ""
+           case ?2 :
+             separator := ""
+           case ?3 :
+             separator := ""
+           otherwise :
+             separator := ""
+         end
+
+  CLikeLanguage-get-leading-ws :
+    ( t@StructureArray(t1__, t2__, t3__)
+    , index
+    ) -> ws
+    where sort := <ia-get-sort> t
+          ; <?"Program"> sort
+    with switch !index
+           case ?1 :
+             ws := " "
+           case ?2 :
+             ws := " "
+           case ?3 :
              ws := " "
            otherwise :
              ws := ""
@@ -543,8 +614,8 @@ strategies
                                   ]
                                 )
                               ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t2__
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-RightExpr) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
   is-CLikeLanguage-Statement =
     ?Assignment(_, _)
@@ -577,61 +648,6 @@ strategies
 
   CLikeLanguage-get-leading-ws :
     (t@Assignment(t1__, t2__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"Statement"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           case ?2 :
-             ws := " "
-           otherwise :
-             ws := ""
-         end
-
-  prettyprint-CLikeLanguage-Statement :
-    StructAssignment(t1__, t2__) -> [ H(
-                                        [SOpt(HS(), "0")]
-                                      , [ t1__'
-                                        , S(" = ")
-                                        , t2__'
-                                        , S(" ;")
-                                        ]
-                                      )
-                                    ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-StructVar) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t2__
-
-  is-CLikeLanguage-Statement =
-    ?StructAssignment(_, _)
-
-  CLikeLanguage-get-indent :
-    (t@StructAssignment(t1__, t2__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"Statement"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           case ?2 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@StructAssignment(t1__, t2__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"Statement"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           case ?2 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@StructAssignment(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
           ; <?"Statement"> sort
     with switch !index
@@ -1570,50 +1586,6 @@ strategies
          end
 
   prettyprint-CLikeLanguage-Primitive :
-    IdentifierPrim(t1__) -> [ H(
-                                [SOpt(HS(), "0")]
-                              , [t1__']
-                              )
-                            ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-
-  is-CLikeLanguage-Primitive =
-    ?IdentifierPrim(_)
-
-  CLikeLanguage-get-indent :
-    (t@IdentifierPrim(t1__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@IdentifierPrim(t1__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@IdentifierPrim(t1__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
-           otherwise :
-             ws := ""
-         end
-
-  prettyprint-CLikeLanguage-Primitive :
     PrimitiveFunction(t1__, t2__) -> [ H(
                                          [SOpt(HS(), "0")]
                                        , [ t1__'
@@ -1668,21 +1640,21 @@ strategies
              ws := ""
          end
 
-  prettyprint-CLikeLanguage-Primitive :
-    StructPrim(t1__) -> [ H(
-                            [SOpt(HS(), "0")]
-                          , [t1__']
-                          )
-                        ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-StructVar) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+  prettyprint-CLikeLanguage-LeftExpr :
+    VariableCall(t1__) -> [ H(
+                              [SOpt(HS(), "0")]
+                            , [t1__']
+                            )
+                          ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
-  is-CLikeLanguage-Primitive =
-    ?StructPrim(_)
+  is-CLikeLanguage-LeftExpr =
+    ?VariableCall(_)
 
   CLikeLanguage-get-indent :
-    (t@StructPrim(t1__), index) -> indent
+    (t@VariableCall(t1__), index) -> indent
     where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              indent := ""
@@ -1691,9 +1663,9 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@StructPrim(t1__), index) -> separator
+    (t@VariableCall(t1__), index) -> separator
     where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              separator := ""
@@ -1702,9 +1674,9 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@StructPrim(t1__), index) -> ws
+    (t@VariableCall(t1__), index) -> ws
     where sort := <ia-get-sort> t
-          ; <?"Primitive"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              ws := ""
@@ -1712,22 +1684,26 @@ strategies
              ws := ""
          end
 
-  prettyprint-CLikeLanguage-StructVar :
-    Call(t1__, t2__) -> [ H(
-                            [SOpt(HS(), "0")]
-                          , [t1__', S(" "), t2__']
-                          )
-                        ]
-    with t1__' := <pp-H-list(prettyprint-CLikeLanguage-StructVarCall) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
+  prettyprint-CLikeLanguage-LeftExpr :
+    ArrayCall(t1__, t2__) -> [ H(
+                                 [SOpt(HS(), "0")]
+                               , [ t1__'
+                                 , S(" [ ")
+                                 , t2__'
+                                 , S(" ]")
+                                 ]
+                               )
+                             ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-RightExpr) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
-  is-CLikeLanguage-StructVar =
-    ?Call(_, _)
+  is-CLikeLanguage-LeftExpr =
+    ?ArrayCall(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Call(t1__, t2__), index) -> indent
+    (t@ArrayCall(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
-          ; <?"StructVar"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              indent := ""
@@ -1738,9 +1714,9 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Call(t1__, t2__), index) -> separator
+    (t@ArrayCall(t1__, t2__), index) -> separator
     where sort := <ia-get-sort> t
-          ; <?"StructVar"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              separator := ""
@@ -1751,9 +1727,9 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Call(t1__, t2__), index) -> ws
+    (t@ArrayCall(t1__, t2__), index) -> ws
     where sort := <ia-get-sort> t
-          ; <?"StructVar"> sort
+          ; <?"LeftExpr"> sort
     with switch !index
            case ?1 :
              ws := ""
@@ -1763,21 +1739,72 @@ strategies
              ws := ""
          end
 
-  prettyprint-CLikeLanguage-StructVarCall :
-    Depth(t1__) -> [ H(
-                       [SOpt(HS(), "0")]
-                     , [t1__', S(" .")]
-                     )
-                   ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+  prettyprint-CLikeLanguage-LeftExpr :
+    FieldCall(t1__, t2__) -> [ H(
+                                 [SOpt(HS(), "0")]
+                               , [t1__', S(" . "), t2__']
+                               )
+                             ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+    with t2__' := <pp-one-Z(prettyprint-CLikeLanguage-ID) <+ pp-one-Z(prettyprint-completion-aux)> t2__
 
-  is-CLikeLanguage-StructVarCall =
-    ?Depth(_)
+  is-CLikeLanguage-LeftExpr =
+    ?FieldCall(_, _)
 
   CLikeLanguage-get-indent :
-    (t@Depth(t1__), index) -> indent
+    (t@FieldCall(t1__, t2__), index) -> indent
     where sort := <ia-get-sort> t
-          ; <?"StructVarCall"> sort
+          ; <?"LeftExpr"> sort
+    with switch !index
+           case ?1 :
+             indent := ""
+           case ?2 :
+             indent := ""
+           otherwise :
+             indent := ""
+         end
+
+  CLikeLanguage-get-separator :
+    (t@FieldCall(t1__, t2__), index) -> separator
+    where sort := <ia-get-sort> t
+          ; <?"LeftExpr"> sort
+    with switch !index
+           case ?1 :
+             separator := ""
+           case ?2 :
+             separator := ""
+           otherwise :
+             separator := ""
+         end
+
+  CLikeLanguage-get-leading-ws :
+    (t@FieldCall(t1__, t2__), index) -> ws
+    where sort := <ia-get-sort> t
+          ; <?"LeftExpr"> sort
+    with switch !index
+           case ?1 :
+             ws := ""
+           case ?2 :
+             ws := " "
+           otherwise :
+             ws := ""
+         end
+
+  prettyprint-CLikeLanguage-RightExpr :
+    LeftExpressionTerm(t1__) -> [ H(
+                                    [SOpt(HS(), "0")]
+                                  , [t1__']
+                                  )
+                                ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+
+  is-CLikeLanguage-RightExpr =
+    ?LeftExpressionTerm(_)
+
+  CLikeLanguage-get-indent :
+    (t@LeftExpressionTerm(t1__), index) -> indent
+    where sort := <ia-get-sort> t
+          ; <?"RightExpr"> sort
     with switch !index
            case ?1 :
              indent := ""
@@ -1786,9 +1813,9 @@ strategies
          end
 
   CLikeLanguage-get-separator :
-    (t@Depth(t1__), index) -> separator
+    (t@LeftExpressionTerm(t1__), index) -> separator
     where sort := <ia-get-sort> t
-          ; <?"StructVarCall"> sort
+          ; <?"RightExpr"> sort
     with switch !index
            case ?1 :
              separator := ""
@@ -1797,9 +1824,53 @@ strategies
          end
 
   CLikeLanguage-get-leading-ws :
-    (t@Depth(t1__), index) -> ws
+    (t@LeftExpressionTerm(t1__), index) -> ws
     where sort := <ia-get-sort> t
-          ; <?"StructVarCall"> sort
+          ; <?"RightExpr"> sort
+    with switch !index
+           case ?1 :
+             ws := ""
+           otherwise :
+             ws := ""
+         end
+
+  prettyprint-CLikeLanguage-RightExpr :
+    ExpressionTerm(t1__) -> [ H(
+                                [SOpt(HS(), "0")]
+                              , [t1__']
+                              )
+                            ]
+    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Expression) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+
+  is-CLikeLanguage-RightExpr =
+    ?ExpressionTerm(_)
+
+  CLikeLanguage-get-indent :
+    (t@ExpressionTerm(t1__), index) -> indent
+    where sort := <ia-get-sort> t
+          ; <?"RightExpr"> sort
+    with switch !index
+           case ?1 :
+             indent := ""
+           otherwise :
+             indent := ""
+         end
+
+  CLikeLanguage-get-separator :
+    (t@ExpressionTerm(t1__), index) -> separator
+    where sort := <ia-get-sort> t
+          ; <?"RightExpr"> sort
+    with switch !index
+           case ?1 :
+             separator := ""
+           otherwise :
+             separator := ""
+         end
+
+  CLikeLanguage-get-leading-ws :
+    (t@ExpressionTerm(t1__), index) -> ws
+    where sort := <ia-get-sort> t
+          ; <?"RightExpr"> sort
     with switch !index
            case ?1 :
              ws := ""
@@ -2532,10 +2603,10 @@ strategies
   is-CLikeLanguage-Primitive =
     fail
 
-  is-CLikeLanguage-StructVar =
+  is-CLikeLanguage-LeftExpr =
     fail
 
-  is-CLikeLanguage-StructVarCall =
+  is-CLikeLanguage-RightExpr =
     fail
 
   is-CLikeLanguage-OperatorTerm =
@@ -2583,11 +2654,11 @@ strategies
   prettyprint-CLikeLanguage-Primitive :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-Primitive> h
 
-  prettyprint-CLikeLanguage-StructVar :
-    amb([h|hs]) -> <prettyprint-CLikeLanguage-StructVar> h
+  prettyprint-CLikeLanguage-LeftExpr :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-LeftExpr> h
 
-  prettyprint-CLikeLanguage-StructVarCall :
-    amb([h|hs]) -> <prettyprint-CLikeLanguage-StructVarCall> h
+  prettyprint-CLikeLanguage-RightExpr :
+    amb([h|hs]) -> <prettyprint-CLikeLanguage-RightExpr> h
 
   prettyprint-CLikeLanguage-OperatorTerm :
     amb([h|hs]) -> <prettyprint-CLikeLanguage-OperatorTerm> h
@@ -2674,16 +2745,6 @@ strategies
   is-CLikeLanguage-Parameter =
     ?Parameter-Plhdr()
 
-  prettyprint-CLikeLanguage-Expression :
-    Expression-Plhdr() -> [ H(
-                              [SOpt(HS(), "0")]
-                            , [S("$Expression")]
-                            )
-                          ]
-
-  is-CLikeLanguage-Expression =
-    ?Expression-Plhdr()
-
   prettyprint-CLikeLanguage-INT :
     INT-Plhdr() -> [ H(
                        [SOpt(HS(), "0")]
@@ -2724,25 +2785,35 @@ strategies
   is-CLikeLanguage-Argument =
     ?Argument-Plhdr()
 
-  prettyprint-CLikeLanguage-StructVar :
-    StructVar-Plhdr() -> [ H(
+  prettyprint-CLikeLanguage-LeftExpr :
+    LeftExpr-Plhdr() -> [ H(
+                            [SOpt(HS(), "0")]
+                          , [S("$LeftExpr")]
+                          )
+                        ]
+
+  is-CLikeLanguage-LeftExpr =
+    ?LeftExpr-Plhdr()
+
+  prettyprint-CLikeLanguage-RightExpr :
+    RightExpr-Plhdr() -> [ H(
                              [SOpt(HS(), "0")]
-                           , [S("$StructVar")]
+                           , [S("$RightExpr")]
                            )
                          ]
 
-  is-CLikeLanguage-StructVar =
-    ?StructVar-Plhdr()
+  is-CLikeLanguage-RightExpr =
+    ?RightExpr-Plhdr()
 
-  prettyprint-CLikeLanguage-StructVarCall :
-    StructVarCall-Plhdr() -> [ H(
-                                 [SOpt(HS(), "0")]
-                               , [S("$StructVarCall")]
-                               )
-                             ]
+  prettyprint-CLikeLanguage-Expression :
+    Expression-Plhdr() -> [ H(
+                              [SOpt(HS(), "0")]
+                            , [S("$Expression")]
+                            )
+                          ]
 
-  is-CLikeLanguage-StructVarCall =
-    ?StructVarCall-Plhdr()
+  is-CLikeLanguage-Expression =
+    ?Expression-Plhdr()
 
   prettyprint-CLikeLanguage-OperatorTerm :
     OperatorTerm-Plhdr() -> [ H(
@@ -2894,16 +2965,6 @@ strategies
   is-CLikeLanguage-Parameter =
     ?Parameter-Plhdr(_)
 
-  prettyprint-CLikeLanguage-Expression :
-    Expression-Plhdr(_) -> [ H(
-                               [SOpt(HS(), "0")]
-                             , [S("$Expression")]
-                             )
-                           ]
-
-  is-CLikeLanguage-Expression =
-    ?Expression-Plhdr(_)
-
   prettyprint-CLikeLanguage-INT :
     INT-Plhdr(_) -> [ H(
                         [SOpt(HS(), "0")]
@@ -2944,25 +3005,35 @@ strategies
   is-CLikeLanguage-Argument =
     ?Argument-Plhdr(_)
 
-  prettyprint-CLikeLanguage-StructVar :
-    StructVar-Plhdr(_) -> [ H(
+  prettyprint-CLikeLanguage-LeftExpr :
+    LeftExpr-Plhdr(_) -> [ H(
+                             [SOpt(HS(), "0")]
+                           , [S("$LeftExpr")]
+                           )
+                         ]
+
+  is-CLikeLanguage-LeftExpr =
+    ?LeftExpr-Plhdr(_)
+
+  prettyprint-CLikeLanguage-RightExpr :
+    RightExpr-Plhdr(_) -> [ H(
                               [SOpt(HS(), "0")]
-                            , [S("$StructVar")]
+                            , [S("$RightExpr")]
                             )
                           ]
 
-  is-CLikeLanguage-StructVar =
-    ?StructVar-Plhdr(_)
+  is-CLikeLanguage-RightExpr =
+    ?RightExpr-Plhdr(_)
 
-  prettyprint-CLikeLanguage-StructVarCall :
-    StructVarCall-Plhdr(_) -> [ H(
-                                  [SOpt(HS(), "0")]
-                                , [S("$StructVarCall")]
-                                )
-                              ]
+  prettyprint-CLikeLanguage-Expression :
+    Expression-Plhdr(_) -> [ H(
+                               [SOpt(HS(), "0")]
+                             , [S("$Expression")]
+                             )
+                           ]
 
-  is-CLikeLanguage-StructVarCall =
-    ?StructVarCall-Plhdr(_)
+  is-CLikeLanguage-Expression =
+    ?Expression-Plhdr(_)
 
   prettyprint-CLikeLanguage-OperatorTerm :
     OperatorTerm-Plhdr(_) -> [ H(

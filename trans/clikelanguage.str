@@ -25,9 +25,11 @@ rules // Debugging
      $[.file	1	"assembly.c"
        .section	.mdebug.abi32
        .previous
-       [<gera-program>(ld, ".text")]
+       [<gera-program>(ld, ".text", globalVariables)]
        .text       
        .ident "GCC: (GNU) 4.9.0"]
+     with
+       new-hashtable => globalVariables
        
   
   
@@ -111,13 +113,7 @@ rules // Debugging
   gera-primitive:
    BoolPrim(arg1) ->
    $[[arg1]]
-  
-  //Primitive ID OK!
-  gera-primitive:
-   IdentifierPrim(arg1) ->
-   $[[arg1]]
-   
-      
+        
   //Primitive.PrimitiveFunction OK!
   gera-primitive:
    PrimitiveFunction(varName, args) ->
@@ -206,77 +202,116 @@ rules // Debugging
   
   //Blank OK!
   gera-statement:
-   ([], _,_) -> $[]
+   ([], _,_, _) -> $[]
 
   //Break; (Caso seja chamado sem whiles, não gera código!) OK!
   gera-statement:
-   ([Break()|tail], None(), functName) ->
-   $[[<gera-statement>(tail, None(), functName)]]
+   ([Break()|tail], None(), functName, globalVariables) ->
+   $[[<gera-statement>(tail, None(), functName, globalVariables)]]
    
   //Break; OK!
   gera-statement:
-   ([Break()|tail], loopCount, _) ->
+   ([Break()|tail], loopCount, _, globalVariables) ->
    $[j	$While_[loopCount]_END]
   
   //Codeblock OK!
   gera-statement:
-   (Block(stmt), loopCount, functName) -> 
-   $[[<gera-statement>(stmt, loopCount, functName)]]
+   (Block(stmt), loopCount, functName, globalVariables) -> 
+   $[[<gera-statement>(stmt, loopCount, functName, globalVariables)]]
    
   //If OK!
   gera-statement:
-   ([If(expr, stmt, ifElseCond)|tail], loopCount, functName) ->
+   ([If(expr, stmt, ifElseCond)|tail], loopCount, functName, globalVariables) ->
    $[#nop
    bne	$3,$2,$IF_[ifCount]_NOTEQUAL
    $IF_[ifCount]_BEGIN:			# Apenas para auxiliar no pensamento
-   [<gera-statement>(stmt, loopCount, functName)]
+   [<gera-statement>(stmt, loopCount, functName, globalVariables)]
    j	$IF_[ifCount]_END   
    $IF_[ifCount]_NOTEQUAL:
-   [<gera-ifelse>(ifElseCond, loopCount, functName)]
+   [<gera-ifelse>(ifElseCond, loopCount, functName, globalVariables)]
    $IF_[ifCount]_END:
-   [<gera-statement>(tail, loopCount, functName)]]
+   [<gera-statement>(tail, loopCount, functName, globalVariables)]]
    with
      new-counter => ifCount
   //IFElse OK!
   gera-ifelse:
    (None(), _, _) -> $[]
   gera-ifelse:
-   (Some(Single(stmt)), loopCount, functName) ->
-   $[[<gera-statement>(stmt, loopCount, functName)]]
+   (Some(Single(stmt)), loopCount, functName, globalVariables) ->
+   $[[<gera-statement>(stmt, loopCount, functName, globalVariables)]]
   
   //While OK!
   gera-statement:
-   ([While(expr, stmt)|tail], loopCount, functName) ->
+   ([While(expr, stmt)|tail], loopCount, functName, globalVariables) ->
    $[
    j	$While_[newLoopCount]_END
    $While_[newLoopCount]_BEGIN:
-   [<gera-statement>(stmt, newLoopCount, functName)]
+   [<gera-statement>(stmt, newLoopCount, functName, globalVariables)]
    $While_[newLoopCount]_END:
    [<gera-expression> (expr, 2, "loop")]
    bne $2,$0,$While_[newLoopCount]_BEGIN
-   [<gera-statement>(tail, loopCount, functName)]]
+   [<gera-statement>(tail, loopCount, functName, globalVariables)]]
    with
      new-counter => newLoopCount
   
   //Return OK!
   gera-statement:
-   ([Return(Some(expr))|tail], loopCount, functName) ->
+   ([Return(Some(expr))|tail], loopCount, functName, globalVariables) ->
    $[[<gera-expression> (expr, 2, "return")]
    j	$END_FUNCTION_[functName]]
   
   //Return (VOID) OK! 
   gera-statement:
-   ([Return(None())|tail], loopCount, functName) ->
+   ([Return(None())|tail], loopCount, functName, globalVariables) ->
    $[j	$END_FUNCTION_[functName]]
   
-  //Assignment OK!
+  //Assignment Work in progress...
   gera-statement:
-   ([Assignment(varName, expr) | tail], loopCount, functName) ->
-   $[[<gera-expression> (expr, 2, "assignment")]
-   sw	$2,[varName]
-   [<gera-statement> (tail, loopCount, functName)]]
+   ([Assignment(leftExpr, rightExpr) | tail], loopCount, functName, globalVariables) ->
+   $[[<gera-rightexpr> (rightExpr, startingValRegister, "assignment", globalVariables)]
+   [<gera-leftexpr> (leftExpr, startingVarRegister, "assignment", globalVariables)]
+   la $2,[<pegar-nome> leftExpr]
+   add $2,$[startingVarRegister],$2
+   sw $2,$[startingValRegister]
+   [<gera-statement> (tail, loopCount, functName, globalVariables)]]
+   with
+     startingValRegister := 4;
+     startingVarRegister := 16
   
+  gera-leftexpr:
+   (ArrayCall(leftExpr, rightExpr), register, opType, globalVariables) ->
+   $[[<gera-rightexpr> (rightExpr, register, opType, globalVariables)]
+   [<gera-leftexpr> (leftExpr, register, opType, globalVariables)]]
+   with
+     varSpace := "3"
   
+  gera-leftexpr:
+   (FieldCall(leftExpr, ident), register, opType, globalVariables) ->
+   $[[<gera-leftexpr> (leftExpr, register, opType, globalVariables)]]
+   with
+     varSpace := "0"
+     
+  gera-leftexpr:
+   (VariableCall(ident), register, opType, globalVariables) ->
+   $[sw $2, [ident]+[varSpace]]
+   with
+     varSpace := "0"
+   
+  gera-rightexpr:
+   (LeftExpressionTerm(leftExpr), register, opType, globalVariables) ->
+   $[[<gera-leftexpr> (leftExpr, newRegister, opType, globalVariables)]
+   move $[register],$[newRegister]
+   ]
+   with
+     newRegister := <add> (register, 1)
+  
+  gera-rightexpr:
+   (ExpressionTerm(expr), register, opType, globalVariables) ->
+   $[[<gera-expression> (expr, 2, opType)]
+   move $[register],$2
+   ]
+   
+   
   
   //Parameter (não sei se está no escopo do pj)
   
@@ -315,16 +350,19 @@ rules // Debugging
    [<gera-argument> tail]]
   
   
+  
   //PROGRAM
+  
+  
    
   //Caso base OK!
   gera-program:
-    ([],_) -> $[]
+    ([],_,_) -> $[]
     
   //Function OK!
   //TODO GERAR PARAMETROS
   gera-program:
-   ([Function(varType, ident, paramList, Block(stmtList))|tail], hasText) ->
+   ([Function(varType, ident, paramList, Block(stmtList))|tail], hasText, globalVariables) ->
     $[[ident]:
     [hasText]
     .align	2
@@ -333,48 +371,119 @@ rules // Debugging
 	.ent	[ident]
 	.type	[ident], @function
     [<gera-parameter> paramList]
-    [<gera-statement> (stmtList, None(), funcName)]
+    [<gera-statement> (stmtList, None(), funcName, globalVariables)]
     $END_FUNCTION_[funcName]:
     .end	[ident]
 	.size	[ident], .-[ident]
-	[<gera-program>(tail, "")]]
+	[<gera-program>(tail, "", globalVariables)]]
 	with
 		new-counter => funcName
   
-  //Structure
+  
+  
+  //Structure & Variables
+  
+  
+  
+  //Structure 
   
   //Program.Structure OK
   gera-program:
-   ([Structure(varList, ident)|tail], _) ->
-    $[.comm	[ident], [memSize], 0
-    [<gera-program>(tail, ".text")]]
+   ([Structure(varList, ident)|tail], _, globalVariables) ->
+    $[.comm	[ident], [memSize], 4
+    [<gera-program>(tail, ".text", globalVariables)]]
     with
-      memSize := <mul> (<length> varList, 4)
+      memSize := <calcular-tamanho> (varList, "0");
+      <hashtable-put(|ident, varList)> globalVariables
+      
+  //Program.StructureArray
+  gera-program:
+  ([StructureArray(varList, ident, arraySize)|tail], _, globalVariables) ->
+   $[.comm [ident], [memSize], 4
+   [<gera-program>(tail, ".text", globalVariables)]]
+   with
+     tamanhoAtributo := <calcular-tamanho> (varList, "0");
+     memSize := <mulS> (tamanhoAtributo, arraySize);
+     <hashtable-put(|ident, varList)> globalVariables
   
   //Variables
     
   //Variable.declarationInst
   gera-program:
-   ([DeclarationInst(varType, ident, staticValue)|tail],_) ->
+   ([DeclarationInst(varType, ident, staticValue)|tail],_, globalVariables) ->
     $[.globl	[ident]
 	.section	.sdata,"aw",@progbits
 	.align	2
 	.type	[ident], @object
-	.size	[ident], 4
+	.size	[ident], [varSize]
 	[ident]:
 	.word	 [<gera-primitive> staticValue]
-    [<gera-program>(tail, ".text")]]
+    [<gera-program>(tail, ".text", globalVariables)]]
+    with
+      varSize := <calcular-tamanho-primitivo> varType
   
   //Variable.Declaration OK
   gera-program:
-   ([Declaration(varType, ident)|tail], _) ->
-    $[.comm	[ident],4,4
-    [<gera-program>(tail, ".text")]]
+   ([Declaration(varType, ident)|tail], _, globalVariables) ->
+    $[.comm	[ident],[varSize],4
+    [<gera-program>(tail, ".text", globalVariables)]]
+    with
+      varSize := <calcular-tamanho-primitivo> varType
   
   //Program.Variable.DeclarationArray OK
   gera-program:
-   ([DeclarationArray(varType, ident, varSize)|tail], _) ->
-    $[.comm	[ident],[memSize],0
-    [<gera-program>(tail, ".text")]]
+   ([DeclarationArray(varType, ident, varSize)|tail], _, globalVariables) ->
+    $[.comm	[ident],[memSize],4
+    [<gera-program>(tail, ".text", globalVariables)]]
     with
-      memSize := <mulS> (varSize, "4")
+      memSize := <calcular-tamanho> [DeclarationArray(varType, ident, varSize)]
+      
+  
+  
+  //Métodos Auxiliares
+  
+  
+  
+  pegar-tipo:
+   VariableCall(varName) -> $[]
+  
+  pegar-tipo:
+   ArrayCall(leftExpr, rightExpr) -> $[]
+  
+  pegar-tipo:
+   FieldCall(leftExpr, rightExpr) -> $[]
+  
+  //Descobrir nome da variável
+  pegar-nome:
+   VariableCall(varName) -> $[varName]
+  
+  pegar-nome:
+   ArrayCall(leftExpr, rightExpr) -> $[[<pegar-nome> leftExpr]]
+  
+  pegar-nome:
+   FieldCall(leftExpr, varName) -> $[[<pegar-nome> leftExpr]]
+  
+  //Calcular Tamanho De uma Variável  
+  calcular-tamanho:
+   ([],size) -> $[[size]]
+     
+  calcular-tamanho:
+   ([head|tail], size) -> $[[<calcular-tamanho> (tail, memSize)]]
+   with
+     varSize := <calcular-tamanho-primitivo> head;
+     memSize := <addS> (varSize, size)
+       
+  calcular-tamanho-primitivo:
+   DeclarationArray(type, _, size) -> $[[memSize]]
+   with
+     varSize := <calcular-tamanho-primitivo> type;
+     memSize := <mulS> (size, varSize)
+    
+  calcular-tamanho-primitivo:
+   Integer() -> $[4] 
+   
+  calcular-tamanho-primitivo:
+   Char() -> $[1]
+      
+  calcular-tamanho-primitivo:
+   Boolean() -> $[4]

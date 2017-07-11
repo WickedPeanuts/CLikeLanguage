@@ -5,8 +5,8 @@ imports completion/Common-completion-insertions
 
 exports
   context-free start-symbols
-    Start Program CodeBlock IfElse Statement Variable Parameter Expression INT
-    CHAR BOOLEAN Argument StructVar StructVarCall OperatorTerm OperatorFactor
+    Start Program CodeBlock IfElse Statement Variable Parameter INT CHAR BOOLEAN
+    Argument LeftExpr RightExpr Expression OperatorTerm OperatorFactor
     OperatorComparator Type Primitive BasicFunction INPUT ID
 
   context-free syntax
@@ -17,13 +17,13 @@ exports
     COMPLETION-INSERTION -> Statement          {cons("Statement-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Variable           {cons("Variable-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Parameter          {cons("Parameter-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> Expression         {cons("Expression-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> INT                {cons("INT-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> CHAR               {cons("CHAR-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> BOOLEAN            {cons("BOOLEAN-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> Argument           {cons("Argument-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> StructVar          {cons("StructVar-Plhdr"), placeholder-insertion}
-    COMPLETION-INSERTION -> StructVarCall      {cons("StructVarCall-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> LeftExpr           {cons("LeftExpr-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> RightExpr          {cons("RightExpr-Plhdr"), placeholder-insertion}
+    COMPLETION-INSERTION -> Expression         {cons("Expression-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorTerm       {cons("OperatorTerm-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorFactor     {cons("OperatorFactor-Plhdr"), placeholder-insertion}
     COMPLETION-INSERTION -> OperatorComparator {cons("OperatorComparator-Plhdr"), placeholder-insertion}
@@ -43,10 +43,11 @@ exports
     COMPLETION-INSERTION -> "break;"  {literal-completion}
     COMPLETION-INSERTION -> "return"  {literal-completion}
     COMPLETION-INSERTION -> "else"    {literal-completion}
-    COMPLETION-INSERTION -> "["       {literal-completion}
     COMPLETION-INSERTION -> "];"      {literal-completion}
     COMPLETION-INSERTION -> "="       {literal-completion}
     COMPLETION-INSERTION -> ";"       {literal-completion}
+    COMPLETION-INSERTION -> "["       {literal-completion}
+    COMPLETION-INSERTION -> "]"       {literal-completion}
     COMPLETION-INSERTION -> "."       {literal-completion}
     COMPLETION-INSERTION -> "+"       {literal-completion}
     COMPLETION-INSERTION -> "-"       {literal-completion}

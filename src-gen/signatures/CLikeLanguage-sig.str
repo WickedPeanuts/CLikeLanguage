@@ -12,12 +12,12 @@ signature
     Program                  : ID * List(Program) -> Start
                              : Variable -> Program
     Structure                : List(Variable) * ID -> Program
+    StructureArray           : List(Variable) * ID * INT -> Program
     Function                 : Type * ID * List(Parameter) * CodeBlock -> Program
     Block                    : List(Statement) -> CodeBlock
     If                       : Expression * Statement * Option(IfElse) -> Statement
     While                    : Expression * Statement -> Statement
-    Assignment               : ID * Expression -> Statement
-    StructAssignment         : StructVar * Expression -> Statement
+    Assignment               : LeftExpr * RightExpr -> Statement
     Break                    : Statement
     Return                   : Option(Expression) -> Statement
                              : CodeBlock -> Statement
@@ -37,11 +37,12 @@ signature
     IntegerPrim              : INT -> Primitive
     CharPrim                 : CHAR -> Primitive
     BoolPrim                 : BOOLEAN -> Primitive
-    IdentifierPrim           : ID -> Primitive
     PrimitiveFunction        : ID * List(Argument) -> Primitive
-    StructPrim               : StructVar -> Primitive
-    Call                     : List(StructVarCall) * ID -> StructVar
-    Depth                    : ID -> StructVarCall
+    VariableCall             : ID -> LeftExpr
+    ArrayCall                : LeftExpr * RightExpr -> LeftExpr
+    FieldCall                : LeftExpr * ID -> LeftExpr
+    LeftExpressionTerm       : LeftExpr -> RightExpr
+    ExpressionTerm           : Expression -> RightExpr
     Add                      : OperatorTerm
     Sub                      : OperatorTerm
     Mul                      : OperatorFactor
@@ -67,13 +68,13 @@ signature
     Statement-Plhdr          : Statement
     Variable-Plhdr           : Variable
     Parameter-Plhdr          : Parameter
-    Expression-Plhdr         : Expression
     INT-Plhdr                : INT
     CHAR-Plhdr               : CHAR
     BOOLEAN-Plhdr            : BOOLEAN
     Argument-Plhdr           : Argument
-    StructVar-Plhdr          : StructVar
-    StructVarCall-Plhdr      : StructVarCall
+    LeftExpr-Plhdr           : LeftExpr
+    RightExpr-Plhdr          : RightExpr
+    Expression-Plhdr         : Expression
     OperatorTerm-Plhdr       : OperatorTerm
     OperatorFactor-Plhdr     : OperatorFactor
     OperatorComparator-Plhdr : OperatorComparator
@@ -89,13 +90,13 @@ signature
     Statement-Plhdr          : COMPLETION-INSERTION -> Statement
     Variable-Plhdr           : COMPLETION-INSERTION -> Variable
     Parameter-Plhdr          : COMPLETION-INSERTION -> Parameter
-    Expression-Plhdr         : COMPLETION-INSERTION -> Expression
     INT-Plhdr                : COMPLETION-INSERTION -> INT
     CHAR-Plhdr               : COMPLETION-INSERTION -> CHAR
     BOOLEAN-Plhdr            : COMPLETION-INSERTION -> BOOLEAN
     Argument-Plhdr           : COMPLETION-INSERTION -> Argument
-    StructVar-Plhdr          : COMPLETION-INSERTION -> StructVar
-    StructVarCall-Plhdr      : COMPLETION-INSERTION -> StructVarCall
+    LeftExpr-Plhdr           : COMPLETION-INSERTION -> LeftExpr
+    RightExpr-Plhdr          : COMPLETION-INSERTION -> RightExpr
+    Expression-Plhdr         : COMPLETION-INSERTION -> Expression
     OperatorTerm-Plhdr       : COMPLETION-INSERTION -> OperatorTerm
     OperatorFactor-Plhdr     : COMPLETION-INSERTION -> OperatorFactor
     OperatorComparator-Plhdr : COMPLETION-INSERTION -> OperatorComparator

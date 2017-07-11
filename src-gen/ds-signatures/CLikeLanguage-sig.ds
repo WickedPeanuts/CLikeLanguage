@@ -14,8 +14,8 @@ signature
       Argument
       Expression
       Primitive
-      StructVar
-      StructVarCall
+      LeftExpr
+      RightExpr
       OperatorTerm
       OperatorFactor
       OperatorComparator
@@ -25,12 +25,12 @@ signature
       Program : ID * List(Program) -> Start 
       __Variable2Program__ : Variable -> Program {implicit}
       Structure : List(Variable) * ID -> Program 
+      StructureArray : List(Variable) * ID * INT -> Program 
       Function : Type * ID * List(Parameter) * CodeBlock -> Program 
       Block : List(Statement) -> CodeBlock 
       If : Expression * Statement * IfElse -> Statement 
       While : Expression * Statement -> Statement 
-      Assignment : ID * Expression -> Statement 
-      StructAssignment : StructVar * Expression -> Statement 
+      Assignment : LeftExpr * RightExpr -> Statement 
       Break : Statement 
       Return : Expression -> Statement 
       __CodeBlock2Statement__ : CodeBlock -> Statement {implicit}
@@ -50,11 +50,12 @@ signature
       IntegerPrim : INT -> Primitive 
       CharPrim : CHAR -> Primitive 
       BoolPrim : BOOLEAN -> Primitive 
-      IdentifierPrim : ID -> Primitive 
       PrimitiveFunction : ID * List(Argument) -> Primitive 
-      StructPrim : StructVar -> Primitive 
-      Call : List(StructVarCall) * ID -> StructVar 
-      Depth : ID -> StructVarCall 
+      VariableCall : ID -> LeftExpr 
+      ArrayCall : LeftExpr * RightExpr -> LeftExpr 
+      FieldCall : LeftExpr * ID -> LeftExpr 
+      LeftExpressionTerm : LeftExpr -> RightExpr 
+      ExpressionTerm : Expression -> RightExpr 
       Add : OperatorTerm 
       Sub : OperatorTerm 
       Mul : OperatorFactor 

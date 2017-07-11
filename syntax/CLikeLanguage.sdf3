@@ -14,17 +14,16 @@ context-free syntax
   
   Start.Program = "program" ID "{" Program* "}"
   
-  //Done!
   Program = Variable
   Program.Structure = "struct" "{" Variable* "}" ID ";"
+  Program.StructureArray = "struct" "{" Variable* "}" ID "[" INT "]" ";"
   Program.Function = Type ID "(" Parameter* ")" CodeBlock
     
   CodeBlock.Block = "{" Statement* "}"
   
   Statement.If = "if" "(" Expression ")" Statement IfElse?
   Statement.While = "while" "(" Expression ")" Statement
-  Statement.Assignment = ID "=" Expression ";"
-  Statement.StructAssignment = StructVar "=" Expression ";"
+  Statement.Assignment = LeftExpr "=" RightExpr ";"
   Statement.Break = "break;"
   Statement.Return = "return" Expression? ";"
   Statement = CodeBlock
@@ -49,12 +48,14 @@ context-free syntax
   Primitive.IntegerPrim = INT
   Primitive.CharPrim = CHAR
   Primitive.BoolPrim = BOOLEAN
-  Primitive.IdentifierPrim = ID
   Primitive.PrimitiveFunction = ID "(" Argument* ")"
-  Primitive.StructPrim = StructVar
     
-  StructVar.Call =  StructVarCall+ ID
-  StructVarCall.Depth = ID "."
+  LeftExpr.VariableCall = ID
+  LeftExpr.ArrayCall = LeftExpr "[" RightExpr "]"
+  LeftExpr.FieldCall = LeftExpr "." ID
+  
+  RightExpr.LeftExpressionTerm = LeftExpr
+  RightExpr.ExpressionTerm = Expression
   
   OperatorTerm.Add = "+"
   OperatorTerm.Sub = "-"

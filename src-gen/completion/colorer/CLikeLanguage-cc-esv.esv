@@ -11,13 +11,13 @@ colorer
   _.Statement-Plhdr          : gray   
   _.Variable-Plhdr           : gray   
   _.Parameter-Plhdr          : gray   
-  _.Expression-Plhdr         : gray   
   _.INT-Plhdr                : gray   
   _.CHAR-Plhdr               : gray   
   _.BOOLEAN-Plhdr            : gray   
   _.Argument-Plhdr           : gray   
-  _.StructVar-Plhdr          : gray   
-  _.StructVarCall-Plhdr      : gray   
+  _.LeftExpr-Plhdr           : gray   
+  _.RightExpr-Plhdr          : gray   
+  _.Expression-Plhdr         : gray   
   _.OperatorTerm-Plhdr       : gray   
   _.OperatorFactor-Plhdr     : gray   
   _.OperatorComparator-Plhdr : gray   

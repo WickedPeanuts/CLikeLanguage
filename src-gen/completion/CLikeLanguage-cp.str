@@ -47,6 +47,18 @@ rules
 
   suggest-completions(|completions):
     Program-Plhdr() -> <add-completions(
+                        | ( "StructureArray"
+                          , StructureArray(
+                              CURSOR_ELEMENT()
+                            , <try(inline-completions(|Program-Plhdr()))> ID-Plhdr()
+                            , <try(inline-completions(|Program-Plhdr()))> INT-Plhdr()
+                            )
+                          )
+                        )
+                        ; fail> completions
+
+  suggest-completions(|completions):
+    Program-Plhdr() -> <add-completions(
                         | ( "Function"
                           , Function(
                               <try(inline-completions(|Program-Plhdr()))> Type-Plhdr()
@@ -91,19 +103,8 @@ rules
     Statement-Plhdr() -> <add-completions(
                           | ( "Assignment"
                             , Assignment(
-                                <try(inline-completions(|Statement-Plhdr()))> ID-Plhdr()
-                              , <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
-
-  suggest-completions(|completions):
-    Statement-Plhdr() -> <add-completions(
-                          | ( "StructAssignment"
-                            , StructAssignment(
-                                <try(inline-completions(|Statement-Plhdr()))> StructVar-Plhdr()
-                              , <try(inline-completions(|Statement-Plhdr()))> Expression-Plhdr()
+                                <try(inline-completions(|Statement-Plhdr()))> LeftExpr-Plhdr()
+                              , <try(inline-completions(|Statement-Plhdr()))> RightExpr-Plhdr()
                               )
                             )
                           )
@@ -303,16 +304,6 @@ rules
 
   suggest-completions(|completions):
     Primitive-Plhdr() -> <add-completions(
-                          | ( "IdentifierPrim"
-                            , IdentifierPrim(
-                                <try(inline-completions(|Primitive-Plhdr()))> ID-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
-
-  suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
                           | ( "PrimitiveFunction"
                             , PrimitiveFunction(
                                 <try(inline-completions(|Primitive-Plhdr()))> ID-Plhdr()
@@ -323,36 +314,56 @@ rules
                           ; fail> completions
 
   suggest-completions(|completions):
-    Primitive-Plhdr() -> <add-completions(
-                          | ( "StructPrim"
-                            , StructPrim(
-                                <try(inline-completions(|Primitive-Plhdr()))> StructVar-Plhdr()
+    LeftExpr-Plhdr() -> <add-completions(
+                         | ( "VariableCall"
+                           , VariableCall(
+                               <try(inline-completions(|LeftExpr-Plhdr()))> ID-Plhdr()
+                             )
+                           )
+                         )
+                         ; fail> completions
+
+  suggest-completions(|completions):
+    LeftExpr-Plhdr() -> <add-completions(
+                         | ( "ArrayCall"
+                           , ArrayCall(
+                               <try(inline-completions(|LeftExpr-Plhdr()))> LeftExpr-Plhdr()
+                             , <try(inline-completions(|LeftExpr-Plhdr()))> RightExpr-Plhdr()
+                             )
+                           )
+                         )
+                         ; fail> completions
+
+  suggest-completions(|completions):
+    LeftExpr-Plhdr() -> <add-completions(
+                         | ( "FieldCall"
+                           , FieldCall(
+                               <try(inline-completions(|LeftExpr-Plhdr()))> LeftExpr-Plhdr()
+                             , <try(inline-completions(|LeftExpr-Plhdr()))> ID-Plhdr()
+                             )
+                           )
+                         )
+                         ; fail> completions
+
+  suggest-completions(|completions):
+    RightExpr-Plhdr() -> <add-completions(
+                          | ( "LeftExpressionTerm"
+                            , LeftExpressionTerm(
+                                <try(inline-completions(|RightExpr-Plhdr()))> LeftExpr-Plhdr()
                               )
                             )
                           )
                           ; fail> completions
 
   suggest-completions(|completions):
-    StructVar-Plhdr() -> <add-completions(
-                          | ( "Call"
-                            , Call(
-                                [ <try(inline-completions(|StructVar-Plhdr()))> StructVarCall-Plhdr()
-                                ]
-                              , <try(inline-completions(|StructVar-Plhdr()))> ID-Plhdr()
+    RightExpr-Plhdr() -> <add-completions(
+                          | ( "ExpressionTerm"
+                            , ExpressionTerm(
+                                <try(inline-completions(|RightExpr-Plhdr()))> Expression-Plhdr()
                               )
                             )
                           )
                           ; fail> completions
-
-  suggest-completions(|completions):
-    StructVarCall-Plhdr() -> <add-completions(
-                              | ( "Depth"
-                                , Depth(
-                                    <try(inline-completions(|StructVarCall-Plhdr()))> ID-Plhdr()
-                                  )
-                                )
-                              )
-                              ; fail> completions
 
   suggest-completions(|completions):
     OperatorTerm-Plhdr() -> <add-completions(|("Add", Add()))
@@ -495,6 +506,36 @@ rules
                           )
                           ; fail> completions
     where <is-Expression-completion-sort> sort
+
+  suggest-completions-left-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "ArrayCall"
+                            , ArrayCall(
+                                orig-term
+                              , <try(inline-completions(|LeftExpr-Plhdr()))> RightExpr-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-LeftExpr-completion-sort> sort
+
+  is-left-recursive :
+    "LeftExpr" -> <id>
+
+  suggest-completions-left-rec(|completions):
+    (sort, orig-term) -> <add-completions(
+                          | ( "FieldCall"
+                            , FieldCall(
+                                orig-term
+                              , <try(inline-completions(|LeftExpr-Plhdr()))> ID-Plhdr()
+                              )
+                            )
+                          )
+                          ; fail> completions
+    where <is-LeftExpr-completion-sort> sort
+
+  is-LeftExpr-completion-sort :
+    "LeftExpr" -> <id>
 
   is-right-recursive :
     "Statement" -> <id>
@@ -655,26 +696,37 @@ rules
     "BOOLEAN" -> <id>
 
   is-left-recursive :
-    "ID" -> <is-left-recursive> "Primitive"
+    "ID" -> <is-left-recursive> "LeftExpr"
     where <not(is-lexical-completion-sort)> "ID"
 
   is-right-recursive :
-    "ID" -> <is-right-recursive> "Primitive"
+    "ID" -> <is-right-recursive> "LeftExpr"
     where <not(is-lexical-completion-sort)> "ID"
 
-  is-Primitive-completion-sort :
+  is-LeftExpr-completion-sort :
     "ID" -> <id>
 
   is-left-recursive :
-    "StructVar" -> <is-left-recursive> "Primitive"
-    where <not(is-lexical-completion-sort)> "StructVar"
+    "LeftExpr" -> <is-left-recursive> "RightExpr"
+    where <not(is-lexical-completion-sort)> "LeftExpr"
 
   is-right-recursive :
-    "StructVar" -> <is-right-recursive> "Primitive"
-    where <not(is-lexical-completion-sort)> "StructVar"
+    "LeftExpr" -> <is-right-recursive> "RightExpr"
+    where <not(is-lexical-completion-sort)> "LeftExpr"
 
-  is-Primitive-completion-sort :
-    "StructVar" -> <id>
+  is-RightExpr-completion-sort :
+    "LeftExpr" -> <id>
+
+  is-left-recursive :
+    "Expression" -> <is-left-recursive> "RightExpr"
+    where <not(is-lexical-completion-sort)> "Expression"
+
+  is-right-recursive :
+    "Expression" -> <is-right-recursive> "RightExpr"
+    where <not(is-lexical-completion-sort)> "Expression"
+
+  is-RightExpr-completion-sort :
+    "Expression" -> <id>
 
 
 rules
@@ -701,9 +753,6 @@ rules
     ?Parameter-Plhdr()
 
   is-SDF-placeholder =
-    ?Expression-Plhdr()
-
-  is-SDF-placeholder =
     ?INT-Plhdr()
 
   is-SDF-placeholder =
@@ -716,10 +765,13 @@ rules
     ?Argument-Plhdr()
 
   is-SDF-placeholder =
-    ?StructVar-Plhdr()
+    ?LeftExpr-Plhdr()
 
   is-SDF-placeholder =
-    ?StructVarCall-Plhdr()
+    ?RightExpr-Plhdr()
+
+  is-SDF-placeholder =
+    ?Expression-Plhdr()
 
   is-SDF-placeholder =
     ?OperatorTerm-Plhdr()
