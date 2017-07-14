@@ -82,7 +82,10 @@ rules // Debugging
   gera-expression:
    (Primitive, register, parentNode) ->
    $[lw	$[register],[<gera-primitive> Primitive]]
-         
+  
+  //Primitive Function [<gera-argument> argList]
+  gera-primitiveFunction:
+   PrimitiveFunction(ident, argList) -> $[jal [ident]] 
          
          
   //Primitives
@@ -107,7 +110,7 @@ rules // Debugging
   //Primitive Char OK!
   gera-primitive:
    CharPrim(arg1) ->
-   $[[arg1]]
+   $[[<gera-char-c> (arg1, 0)]]
   
   //Primitive Boolean OK!
   gera-primitive:
@@ -117,7 +120,8 @@ rules // Debugging
   //Primitive.PrimitiveFunction OK!
   gera-primitive:
    PrimitiveFunction(varName, args) ->
-   $[[<gera-argument> args]]
+   $[$2 #fluxo não esperado, esta operção não faz anda
+   jal	[varName]]
   
   
   
@@ -258,58 +262,63 @@ rules // Debugging
   gera-statement:
    ([Return(Some(expr))|tail], loopCount, functName, globalVariables) ->
    $[[<gera-expression> (expr, 2, "return")]
-   j	$END_FUNCTION_[functName]]
+   j	$31]
   
   //Return (VOID) OK! 
   gera-statement:
    ([Return(None())|tail], loopCount, functName, globalVariables) ->
-   $[j	$END_FUNCTION_[functName]]
+   $[j	$31]
   
   //Assignment Work in progress...
   gera-statement:
    ([Assignment(leftExpr, rightExpr) | tail], loopCount, functName, globalVariables) ->
-   $[[<gera-rightexpr> (rightExpr, startingValRegister, "assignment", globalVariables)]
-   [<gera-leftexpr> (leftExpr, startingVarRegister, "assignment", globalVariables)]
-   la $2,[<pegar-nome> leftExpr]
-   add $2,$[startingVarRegister],$2
-   sw $2,$[startingValRegister]
-   [<gera-statement> (tail, loopCount, functName, globalVariables)]]
+   $[li	$16,0
+   [<gera-rightexpr> (rightExpr, startingValRegister, "assignment", globalVariables)]
+   [code]
+   [<gera-statement> (tail, loopCount, functName, globalVariables)]
+   sw	$2,$16]
    with
      startingValRegister := 4;
-     startingVarRegister := 16
+     startingVarRegister := 16;
+     (identifier, code) := <gera-leftexpr> (leftExpr, startingVarRegister, "assignment", globalVariables)
   
   gera-leftexpr:
    (ArrayCall(leftExpr, rightExpr), register, opType, globalVariables) ->
+   (identifier,
    $[[<gera-rightexpr> (rightExpr, register, opType, globalVariables)]
-   [<gera-leftexpr> (leftExpr, register, opType, globalVariables)]]
+   lw	$3, [varSize]
+   mult	$3,$[register]
+   mflo	$3
+   add	$[register],$2,$[register]
+   [code]
+   ])
    with
-     varSpace := "3"
+     (identifier, code) := <gera-leftexpr> (leftExpr, register, opType, globalVariables);
+     varType := <hashtable-get(|identifier)> globalVariables;
+     varSize := <calcular-tamanho> (varType, "0")
   
   gera-leftexpr:
    (FieldCall(leftExpr, ident), register, opType, globalVariables) ->
-   $[[<gera-leftexpr> (leftExpr, register, opType, globalVariables)]]
+   <gera-leftexpr> (leftExpr, register, opType, globalVariables)
    with
      varSpace := "0"
      
   gera-leftexpr:
    (VariableCall(ident), register, opType, globalVariables) ->
-   $[sw $2, [ident]+[varSpace]]
-   with
-     varSpace := "0"
+   (ident, $[la	$2, [ident]])
    
   gera-rightexpr:
    (LeftExpressionTerm(leftExpr), register, opType, globalVariables) ->
-   $[[<gera-leftexpr> (leftExpr, newRegister, opType, globalVariables)]
-   move $[register],$[newRegister]
-   ]
+   $[[code]
+   move	$[register],$[newRegister]]
    with
-     newRegister := <add> (register, 1)
+     newRegister := <add> (register, 1);
+     (identifier, code) := [<gera-leftexpr> (leftExpr, newRegister, opType, globalVariables)]
   
   gera-rightexpr:
    (ExpressionTerm(expr), register, opType, globalVariables) ->
    $[[<gera-expression> (expr, 2, opType)]
-   move $[register],$2
-   ]
+   add	$[register],$2,$[register]]
    
    
   
@@ -332,9 +341,7 @@ rules // Debugging
    $[[<gera-parameter> [leftParam]]
    [<gera-parameter> [rightParam]]
    [<gera-parameter> tail]]
-  
-  
-  
+
   //Argument (não sei se está no escopo do pj)
   
   
@@ -372,7 +379,6 @@ rules // Debugging
 	.type	[ident], @function
     [<gera-parameter> paramList]
     [<gera-statement> (stmtList, None(), funcName, globalVariables)]
-    $END_FUNCTION_[funcName]:
     .end	[ident]
 	.size	[ident], .-[ident]
 	[<gera-program>(tail, "", globalVariables)]]
@@ -428,7 +434,8 @@ rules // Debugging
     $[.comm	[ident],[varSize],4
     [<gera-program>(tail, ".text", globalVariables)]]
     with
-      varSize := <calcular-tamanho-primitivo> varType
+      varSize := <calcular-tamanho-primitivo> varType;
+      <hashtable-put(|ident, varType)> globalVariables
   
   //Program.Variable.DeclarationArray OK
   gera-program:
@@ -436,7 +443,8 @@ rules // Debugging
     $[.comm	[ident],[memSize],4
     [<gera-program>(tail, ".text", globalVariables)]]
     with
-      memSize := <calcular-tamanho> [DeclarationArray(varType, ident, varSize)]
+      memSize := <calcular-tamanho> ([DeclarationArray(varType, ident, varSize)], "0");
+      <hashtable-put(|ident, varType)> globalVariables
       
   
   
@@ -444,18 +452,24 @@ rules // Debugging
   
   
   
-  pegar-tipo:
-   VariableCall(varName) -> $[]
+  //Converte char para ascii
+  gera-char-c:
+   ([], _) -> $[]
   
-  pegar-tipo:
-   ArrayCall(leftExpr, rightExpr) -> $[]
+  gera-char-c:
+   (a, 0) -> $[[<gera-char-c> (explodedValue, 1)]]
+   with
+     explodedValue := <explode-string> a
   
-  pegar-tipo:
-   FieldCall(leftExpr, rightExpr) -> $[]
+  gera-char-c:
+   ([x|tail], 1) -> $[[<gera-char-c> (tail, 2)]]
+   
+  gera-char-c: 
+   ([x|tail], 2) -> $[[x]]
   
   //Descobrir nome da variável
   pegar-nome:
-   VariableCall(varName) -> $[varName]
+   VariableCall(varName) -> $[[varName]]
   
   pegar-nome:
    ArrayCall(leftExpr, rightExpr) -> $[[<pegar-nome> leftExpr]]
@@ -466,18 +480,24 @@ rules // Debugging
   //Calcular Tamanho De uma Variável  
   calcular-tamanho:
    ([],size) -> $[[size]]
-     
+        
   calcular-tamanho:
    ([head|tail], size) -> $[[<calcular-tamanho> (tail, memSize)]]
    with
      varSize := <calcular-tamanho-primitivo> head;
      memSize := <addS> (varSize, size)
+   
+  calcular-tamanho:
+   (head, size) -> $[[<calcular-tamanho> ([head], size)]]
        
   calcular-tamanho-primitivo:
    DeclarationArray(type, _, size) -> $[[memSize]]
    with
      varSize := <calcular-tamanho-primitivo> type;
      memSize := <mulS> (size, varSize)
+     
+  calcular-tamanho-primitivo:
+   Declaration(type, _) -> $[[<calcular-tamanho-primitivo> type]]
     
   calcular-tamanho-primitivo:
    Integer() -> $[4] 
