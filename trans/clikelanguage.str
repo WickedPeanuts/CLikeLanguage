@@ -76,12 +76,12 @@ rules // Debugging
   //Primitive (Caso seja inteiro) OK!
   gera-expression:
    (IntegerPrim(args1), register, parentNode) ->
-   $[li	$[register],[<gera-primitive> IntegerPrim(args1)]]
+   $[[<gera-primitive> (register, IntegerPrim(args1), "Var")]]
   
   //Primitive (Caso seja variável) OK!
   gera-expression:
    (Primitive, register, parentNode) ->
-   $[lw	$[register],[<gera-primitive> Primitive]]
+   $[[<gera-primitive> (register, Primitive, "Prim")]]
   
   //Primitive Function [<gera-argument> argList]
   gera-primitiveFunction:
@@ -92,38 +92,47 @@ rules // Debugging
   
   
   
+  //Primitive
+  gera-primitive:
+   IntegerPrim(arg1) -> $[[arg1]]
+   
+  gera-primitive:
+   CharPrim(arg1) -> $[[<gera-char-c> (arg1, 0)]]
+  
   //True OK!
   gera-primitive:
-   "true" ->
-   $[1]
+   (register, "true", _) ->
+   $[li $[register],1]
   
   //False OK!
   gera-primitive:
-   "false" ->
-   $[0]
+   (register, "false", _) ->
+   $[li $[register],0]
   
-  //Primitive Int OK!
+  //Primitive Int OK! (caso prim)
   gera-primitive:
-   IntegerPrim(arg1) ->
-   $[[arg1]]
+   (register, IntegerPrim(arg1), "Prim") ->
+   $[li $[register],[arg1]]
+   
+  //Primitive Int OK! (caso var)
+  gera-primitive:
+   (register, IntegerPrim(arg1), "Var") ->
+   $[lw	$[register],[arg1]]
   
-  //Primitive Char OK!
+  //Primitive Char OK! (caso prim)
   gera-primitive:
-   CharPrim(arg1) ->
-   $[[<gera-char-c> (arg1, 0)]]
-  
-  //Primitive Boolean OK!
+   (register, CharPrim(arg1), "Prim") ->
+   $[li $[register],[<gera-char-c> (arg1, 0)]]
+
+  //Primitive Char OK! (caso var)
   gera-primitive:
-   BoolPrim(arg1) ->
-   $[[arg1]]
-        
+   (register, CharPrim(arg1), "Var") ->
+   $[lw	$[register],[<gera-char-c> (arg1, 0)]]
+          
   //Primitive.PrimitiveFunction OK!
   gera-primitive:
-   PrimitiveFunction(varName, args) ->
-   $[$2 #fluxo não esperado, esta operção não faz anda
-   jal	[varName]]
-  
-  
+   (register, PrimitiveFunction(varName, args), _) ->
+   $[jal [varName]]
   
   //Operators
   
@@ -190,11 +199,11 @@ rules // Debugging
    slt	$2,$2,$3
    xori	$2,$2,0x1]
    
-  //OperationComparator.And (Muito complicado!)
+  //OperationComparator.And (fora do escopo do pj)
   gera-operatorCmp:
    And() -> $[&&]
   
-  //OperationComparator (Muito complicado!)
+  //OperationComparator (fora do escopo do pj)
   gera-operatorCmp:
    Or() -> $[||]
   
@@ -273,10 +282,10 @@ rules // Debugging
   gera-statement:
    ([Assignment(leftExpr, rightExpr) | tail], loopCount, functName, globalVariables) ->
    $[li	$16,0
-   [<gera-rightexpr> (rightExpr, startingValRegister, "assignment", globalVariables)]
    [code]
-   [<gera-statement> (tail, loopCount, functName, globalVariables)]
-   sw	$2,$16]
+   [<gera-rightexpr> (rightExpr, startingValRegister, "assignment", globalVariables)]
+   sw	$2,$16
+   [<gera-statement> (tail, loopCount, functName, globalVariables)]]
    with
      startingValRegister := 4;
      startingVarRegister := 16;
@@ -285,13 +294,12 @@ rules // Debugging
   gera-leftexpr:
    (ArrayCall(leftExpr, rightExpr), register, opType, globalVariables) ->
    (identifier,
-   $[[<gera-rightexpr> (rightExpr, register, opType, globalVariables)]
-   lw	$3, [varSize]
-   mult	$3,$[register]
+   $[[code]
+   [<gera-rightexpr> (rightExpr, register, opType, globalVariables)]
+   lw	$3,[varSize]
+   mult	$3,$2
    mflo	$3
-   add	$[register],$2,$[register]
-   [code]
-   ])
+   addu	$[register],$2,$[register]])
    with
      (identifier, code) := <gera-leftexpr> (leftExpr, register, opType, globalVariables);
      varType := <hashtable-get(|identifier)> globalVariables;
@@ -299,13 +307,16 @@ rules // Debugging
   
   gera-leftexpr:
    (FieldCall(leftExpr, ident), register, opType, globalVariables) ->
-   <gera-leftexpr> (leftExpr, register, opType, globalVariables)
+   (newIdentifier, code)
    with
-     varSpace := "0"
+     (identifier, code) := <gera-leftexpr> (leftExpr, register, opType, globalVariables);
+     newIdentifier := <concat-strings> [identifier, ".", ident]
      
   gera-leftexpr:
    (VariableCall(ident), register, opType, globalVariables) ->
-   (ident, $[la	$2, [ident]])
+   (ident,
+   $[la	$2,[ident]
+   addu	$16,$2,$16])
    
   gera-rightexpr:
    (LeftExpressionTerm(leftExpr), register, opType, globalVariables) ->
@@ -317,8 +328,7 @@ rules // Debugging
   
   gera-rightexpr:
    (ExpressionTerm(expr), register, opType, globalVariables) ->
-   $[[<gera-expression> (expr, 2, opType)]
-   add	$[register],$2,$[register]]
+   $[[<gera-expression> (expr, 2, opType)]]
    
    
   
@@ -373,7 +383,7 @@ rules // Debugging
     $[[ident]:
     [hasText]
     .align	2
-	.globl	calcular
+	.globl	main
 	.set	nomips16
 	.ent	[ident]
 	.type	[ident], @function
@@ -400,7 +410,8 @@ rules // Debugging
     [<gera-program>(tail, ".text", globalVariables)]]
     with
       memSize := <calcular-tamanho> (varList, "0");
-      <hashtable-put(|ident, varList)> globalVariables
+      <hashtable-put(|ident, varList)> globalVariables;
+      <adiciona-atributos-hashmap> (ident, globalVariables, varList)
       
   //Program.StructureArray
   gera-program:
@@ -410,7 +421,8 @@ rules // Debugging
    with
      tamanhoAtributo := <calcular-tamanho> (varList, "0");
      memSize := <mulS> (tamanhoAtributo, arraySize);
-     <hashtable-put(|ident, varList)> globalVariables
+     <hashtable-put(|ident, varList)> globalVariables;
+     <adiciona-atributos-hashmap> (ident, globalVariables, varList)
   
   //Variables
     
@@ -423,7 +435,7 @@ rules // Debugging
 	.type	[ident], @object
 	.size	[ident], [varSize]
 	[ident]:
-	.word	 [<gera-primitive> staticValue]
+	.word	[<gera-primitive> staticValue]
     [<gera-program>(tail, ".text", globalVariables)]]
     with
       varSize := <calcular-tamanho-primitivo> varType
@@ -452,6 +464,27 @@ rules // Debugging
   
   
   
+  //Adiciona os valores dos atributos ao hashmap
+  adiciona-atributos-hashmap:
+  (_, _, []) -> $[]   
+  
+  adiciona-atributos-hashmap:
+  (structName, globalVariables, [vHead | vTail]) ->
+  <adiciona-atributos-hashmap>(structName, globalVariables, vTail)
+  with
+    varName := <concat-strings> [structName, ".", (<extrair-nome> vHead)];
+    vHeadPrim := <extrair-tipo> vHead;
+    <hashtable-put(|varName, vHeadPrim)> globalVariables
+    
+  extrair-tipo:
+    Declaration(varType, _) -> varType
+    
+  extrair-tipo:
+    DeclarationArray(varType, _, _) -> varType
+    
+  extrair-tipo:
+    DeclarationInst(varType, _, _) -> varType
+  
   //Converte char para ascii
   gera-char-c:
    ([], _) -> $[]
@@ -476,6 +509,16 @@ rules // Debugging
   
   pegar-nome:
    FieldCall(leftExpr, varName) -> $[[<pegar-nome> leftExpr]]
+   
+  //Extrair nome da declaração
+  extrair-nome:
+   Declaration(varType, varID) -> varID
+   
+  extrair-nome:
+   DeclarationArray(varType, varID, varSize) -> varID
+   
+  extrair-nome:
+   DeclarationInst(varType, varID, primit) -> varID
   
   //Calcular Tamanho De uma Variável  
   calcular-tamanho:
