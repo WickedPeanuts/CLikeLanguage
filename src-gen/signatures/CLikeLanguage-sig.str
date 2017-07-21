@@ -34,6 +34,7 @@ signature
     LogicExpr                : Expression * OperatorComparator * Expression -> Expression
     ParenthesisExpression    : Expression -> Expression
                              : Primitive -> Expression
+                             : LeftExpr -> Expression
     IntegerPrim              : INT -> Primitive
     CharPrim                 : CHAR -> Primitive
     BoolPrim                 : BOOLEAN -> Primitive
@@ -41,7 +42,6 @@ signature
     VariableCall             : ID -> LeftExpr
     ArrayCall                : LeftExpr * RightExpr -> LeftExpr
     FieldCall                : LeftExpr * ID -> LeftExpr
-    LeftExpressionTerm       : LeftExpr -> RightExpr
     ExpressionTerm           : Expression -> RightExpr
     Add                      : OperatorTerm
     Sub                      : OperatorTerm

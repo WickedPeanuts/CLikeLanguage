@@ -39,48 +39,48 @@ rules // Debugging
   
   //AddExpr OK!
   gera-expression:
-   (AddExpr(expr1, oprTerm, expr2), register, parentNode) ->
-   $[[<gera-expression> (expr1, 2, parentNode)]
-   [<gera-expression> (expr2, 3, parentNode)]
+   (AddExpr(expr1, oprTerm, expr2), register, parentNode, globalVariables) ->
+   $[[<gera-expression> (expr1, 2, parentNode, globalVariables)]
+   [<gera-expression> (expr2, 3, parentNode, globalVariables)]
    [<gera-operatorTerm> oprTerm]]
   
   //MulExpr OK!
   gera-expression:
-   (MulExpr(expr1, oprFact, expr2), register, parentNode) ->
-   $[[<gera-expression> (expr1, 2, parentNode)]
-   [<gera-expression> (expr2, 3, parentNode)]
+   (MulExpr(expr1, oprFact, expr2), register, parentNode, globalVariables) ->
+   $[[<gera-expression> (expr1, 2, parentNode, globalVariables)]
+   [<gera-expression> (expr2, 3, parentNode, globalVariables)]
    [<gera-operatorFact> oprFact]] 
   
   //LogicExpr OK! (caso derive de atribuição)
   gera-expression:
-   (LogicExpr(expr1, oprCmp, expr2), register, "assignment") ->
+   (LogicExpr(expr1, oprCmp, expr2), register, "assignment", globalVariables) ->
    $[
-   [<gera-expression> (expr1, 2)]
-   [<gera-expression> (expr2, 3)]
+   [<gera-expression> (expr1, 2, "assignment", globalVariables)]
+   [<gera-expression> (expr2, 3, "assignment", globalVariables)]
    [<gera-operatorCmp> (oprCmp)]
    andi	$2,$2,0x00ff]
    
   //LogicExpr OK!
   gera-expression:
-   (LogicExpr(expr1, oprCmp, expr2), register, parentNode) ->
-   $[[<gera-expression> (expr1, 2, parentNode)]
-   [<gera-expression> (expr2, 3, parentNode)]
+   (LogicExpr(expr1, oprCmp, expr2), register, parentNode, globalVariables) ->
+   $[[<gera-expression> (expr1, 2, parentNode, globalVariables)]
+   [<gera-expression> (expr2, 3, parentNode, globalVariables)]
    [<gera-operatorCmp> (oprCmp)]]
    
       
   //ParenthesisExpression OK!
   gera-expression:
-   (ParenthesisExpression(expr), register, parentNode) ->
-   $[[<gera-expression>(expr, 2, parentNode)]]
+   (ParenthesisExpression(expr), register, parentNode, globalVariables) ->
+   $[[<gera-expression>(expr, 2, parentNode, globalVariables)]]
   
   //Primitive (Caso seja inteiro) OK!
   gera-expression:
-   (IntegerPrim(args1), register, parentNode) ->
+   (IntegerPrim(args1), register, parentNode, globalVariables) ->
    $[[<gera-primitive> (register, IntegerPrim(args1), "Var")]]
   
   //Primitive (Caso seja variável) OK!
   gera-expression:
-   (Primitive, register, parentNode) ->
+   (Primitive, register, parentNode, globalVariables) ->
    $[[<gera-primitive> (register, Primitive, "Prim")]]
   
   //Primitive Function [<gera-argument> argList]
@@ -248,10 +248,10 @@ rules // Debugging
      new-counter => ifCount
   //IFElse OK!
   gera-ifelse:
-   (None(), _, _) -> $[]
+   (None(), _, _, _) -> $[]
   gera-ifelse:
    (Some(Single(stmt)), loopCount, functName, globalVariables) ->
-   $[[<gera-statement>(stmt, loopCount, functName, globalVariables)]]
+   $[[<gera-statement>([stmt], loopCount, functName, globalVariables)]]
   
   //While OK!
   gera-statement:
@@ -261,7 +261,7 @@ rules // Debugging
    $While_[newLoopCount]_BEGIN:
    [<gera-statement>(stmt, newLoopCount, functName, globalVariables)]
    $While_[newLoopCount]_END:
-   [<gera-expression> (expr, 2, "loop")]
+   [<gera-expression> (expr, 2, "loop", globalVariables)]
    bne $2,$0,$While_[newLoopCount]_BEGIN
    [<gera-statement>(tail, loopCount, functName, globalVariables)]]
    with
@@ -270,7 +270,7 @@ rules // Debugging
   //Return OK!
   gera-statement:
    ([Return(Some(expr))|tail], loopCount, functName, globalVariables) ->
-   $[[<gera-expression> (expr, 2, "return")]
+   $[[<gera-expression> (expr, 2, "return", globalVariables)]
    j	$31]
   
   //Return (VOID) OK! 
@@ -319,19 +319,14 @@ rules // Debugging
    addu	$16,$2,$16])
    
   gera-rightexpr:
-   (LeftExpressionTerm(leftExpr), register, opType, globalVariables) ->
-   $[[code]
-   move	$[register],$[newRegister]]
-   with
-     newRegister := <add> (register, 1);
-     (identifier, code) := [<gera-leftexpr> (leftExpr, newRegister, opType, globalVariables)]
-  
-  gera-rightexpr:
    (ExpressionTerm(expr), register, opType, globalVariables) ->
-   $[[<gera-expression> (expr, 2, opType)]]
+   $[[<gera-expression> (expr, 2, opType, globalVariables)]]
    
+  gera-expression:
+   (x, register, opType, globalVariables) -> $[[code]]
+   with
+   	(identifier, code) := <gera-leftexpr> (x, register, opType, globalVariables)
    
-  
   //Parameter (não sei se está no escopo do pj)
   
   

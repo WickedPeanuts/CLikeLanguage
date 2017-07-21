@@ -169,6 +169,7 @@ exports
     Expression OperatorComparator Expression      -> Expression         {cons("LogicExpr"), left}
     "(" Expression ")"                            -> Expression         {cons("ParenthesisExpression")}
     Primitive                                     -> Expression         
+    LeftExpr                                      -> Expression         
     INT                                           -> Primitive          {cons("IntegerPrim")}
     CHAR                                          -> Primitive          {cons("CharPrim")}
     BOOLEAN                                       -> Primitive          {cons("BoolPrim")}
@@ -176,7 +177,6 @@ exports
     ID                                            -> LeftExpr           {cons("VariableCall")}
     LeftExpr "[" RightExpr "]"                    -> LeftExpr           {cons("ArrayCall")}
     LeftExpr "." ID                               -> LeftExpr           {cons("FieldCall")}
-    LeftExpr                                      -> RightExpr          {cons("LeftExpressionTerm")}
     Expression                                    -> RightExpr          {cons("ExpressionTerm")}
     "+"                                           -> OperatorTerm       {cons("Add")}
     "-"                                           -> OperatorTerm       {cons("Sub")}

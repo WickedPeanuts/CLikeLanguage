@@ -1453,6 +1453,15 @@ strategies
     where not(is-CLikeLanguage-Expression)
     where t1__' := <pp-one-Z(prettyprint-CLikeLanguage-Primitive) <+ pp-one-Z(prettyprint-completion-aux)> t1__
 
+  prettyprint-CLikeLanguage-Expression :
+    t1__ -> [ H(
+                [SOpt(HS(), "0")]
+              , [t1__']
+              )
+            ]
+    where not(is-CLikeLanguage-Expression)
+    where t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
+
   prettyprint-CLikeLanguage-Primitive :
     IntegerPrim(t1__) -> [ H(
                              [SOpt(HS(), "0")]
@@ -1786,50 +1795,6 @@ strategies
              ws := ""
            case ?2 :
              ws := " "
-           otherwise :
-             ws := ""
-         end
-
-  prettyprint-CLikeLanguage-RightExpr :
-    LeftExpressionTerm(t1__) -> [ H(
-                                    [SOpt(HS(), "0")]
-                                  , [t1__']
-                                  )
-                                ]
-    with t1__' := <pp-one-Z(prettyprint-CLikeLanguage-LeftExpr) <+ pp-one-Z(prettyprint-completion-aux)> t1__
-
-  is-CLikeLanguage-RightExpr =
-    ?LeftExpressionTerm(_)
-
-  CLikeLanguage-get-indent :
-    (t@LeftExpressionTerm(t1__), index) -> indent
-    where sort := <ia-get-sort> t
-          ; <?"RightExpr"> sort
-    with switch !index
-           case ?1 :
-             indent := ""
-           otherwise :
-             indent := ""
-         end
-
-  CLikeLanguage-get-separator :
-    (t@LeftExpressionTerm(t1__), index) -> separator
-    where sort := <ia-get-sort> t
-          ; <?"RightExpr"> sort
-    with switch !index
-           case ?1 :
-             separator := ""
-           otherwise :
-             separator := ""
-         end
-
-  CLikeLanguage-get-leading-ws :
-    (t@LeftExpressionTerm(t1__), index) -> ws
-    where sort := <ia-get-sort> t
-          ; <?"RightExpr"> sort
-    with switch !index
-           case ?1 :
-             ws := ""
            otherwise :
              ws := ""
          end

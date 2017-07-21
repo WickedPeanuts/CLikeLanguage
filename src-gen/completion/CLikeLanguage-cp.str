@@ -273,6 +273,14 @@ rules
             )
 
   suggest-completions(|completions):
+    Expression-Plhdr() -> <suggest-completions(|completions)> LeftExpr-Plhdr()
+    where <not(is-expanded)> (Expression-Plhdr(), LeftExpr-Plhdr())
+          ; rules (
+              is-expanded :
+                (Expression-Plhdr(), LeftExpr-Plhdr()) -> <id>
+            )
+
+  suggest-completions(|completions):
     Primitive-Plhdr() -> <add-completions(
                           | ( "IntegerPrim"
                             , IntegerPrim(
@@ -344,16 +352,6 @@ rules
                            )
                          )
                          ; fail> completions
-
-  suggest-completions(|completions):
-    RightExpr-Plhdr() -> <add-completions(
-                          | ( "LeftExpressionTerm"
-                            , LeftExpressionTerm(
-                                <try(inline-completions(|RightExpr-Plhdr()))> LeftExpr-Plhdr()
-                              )
-                            )
-                          )
-                          ; fail> completions
 
   suggest-completions(|completions):
     RightExpr-Plhdr() -> <add-completions(
@@ -663,6 +661,17 @@ rules
     "Primitive" -> <id>
 
   is-left-recursive :
+    "LeftExpr" -> <is-left-recursive> "Expression"
+    where <not(is-lexical-completion-sort)> "LeftExpr"
+
+  is-right-recursive :
+    "LeftExpr" -> <is-right-recursive> "Expression"
+    where <not(is-lexical-completion-sort)> "LeftExpr"
+
+  is-Expression-completion-sort :
+    "LeftExpr" -> <id>
+
+  is-left-recursive :
     "INT" -> <is-left-recursive> "Primitive"
     where <not(is-lexical-completion-sort)> "INT"
 
@@ -705,17 +714,6 @@ rules
 
   is-LeftExpr-completion-sort :
     "ID" -> <id>
-
-  is-left-recursive :
-    "LeftExpr" -> <is-left-recursive> "RightExpr"
-    where <not(is-lexical-completion-sort)> "LeftExpr"
-
-  is-right-recursive :
-    "LeftExpr" -> <is-right-recursive> "RightExpr"
-    where <not(is-lexical-completion-sort)> "LeftExpr"
-
-  is-RightExpr-completion-sort :
-    "LeftExpr" -> <id>
 
   is-left-recursive :
     "Expression" -> <is-left-recursive> "RightExpr"
