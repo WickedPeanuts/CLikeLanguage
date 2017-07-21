@@ -232,6 +232,10 @@ rules // Debugging
    (Block(stmt), loopCount, functName, globalVariables) -> 
    $[[<gera-statement>(stmt, loopCount, functName, globalVariables)]]
    
+  gera-statement:
+   ([Block(stmt)|tail], loopCount, functName, globalVariables) -> 
+   $[[<gera-statement>(stmt, loopCount, functName, globalVariables)]]
+   
   //If OK!
   gera-statement:
    ([If(expr, stmt, ifElseCond)|tail], loopCount, functName, globalVariables) ->
@@ -249,6 +253,7 @@ rules // Debugging
   //IFElse OK!
   gera-ifelse:
    (None(), _, _, _) -> $[]
+   
   gera-ifelse:
    (Some(Single(stmt)), loopCount, functName, globalVariables) ->
    $[[<gera-statement>([stmt], loopCount, functName, globalVariables)]]
